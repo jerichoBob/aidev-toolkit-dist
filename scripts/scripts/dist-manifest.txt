@@ -1,0 +1,15 @@
+# dist-manifest.txt
+# Allowlist of paths copied from the private source repo to aidev-toolkit-dist.
+# One path per line. Directories are copied recursively.
+# Lines starting with # are comments.
+
+architecture-principles/
+docs/
+LICENSE
+modules/
+.markdownlint.json
+scripts/
+skills/
+templates/
+tests/
+VERSION
