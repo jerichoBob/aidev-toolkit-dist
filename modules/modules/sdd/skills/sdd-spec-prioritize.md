@@ -32,14 +32,14 @@ Skip specs with status `🔀 Consolidated` or `⏸ Deferred` unless no other can
 
 Apply this rubric to rank candidates:
 
-| Factor | Weight | Notes |
-|--------|--------|-------|
-| **Type** | High | Bug fixes > new features > enhancements > living specs |
-| **Scope** | High | Fewer tasks = faster to ship = higher rank |
-| **Value** | High | Direct user-facing pain > internal tooling > nice-to-have |
-| **Blockers** | Critical | Skip or deprioritize any spec with unresolved `depends_on` |
-| **Status** | Medium | In Progress > Draft > Deferred |
-| **Independence** | Medium | Standalone work preferred over work that requires other specs first |
+| Factor           | Weight   | Notes                                                               |
+| ---------------- | -------- | ------------------------------------------------------------------- |
+| **Type**         | High     | Bug fixes > new features > enhancements > living specs              |
+| **Scope**        | High     | Fewer tasks = faster to ship = higher rank                          |
+| **Value**        | High     | Direct user-facing pain > internal tooling > nice-to-have           |
+| **Blockers**     | Critical | Skip or deprioritize any spec with unresolved `depends_on`          |
+| **Status**       | Medium   | In Progress > Draft > Deferred                                      |
+| **Independence** | Medium   | Standalone work preferred over work that requires other specs first |
 
 ## Step 4: Display Top N
 

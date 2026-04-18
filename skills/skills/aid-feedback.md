@@ -160,12 +160,12 @@ What feedback do you have? Please include:
 
 #### Step 2: Map Type to Label
 
-| Input | GitHub label |
-|-------|-------------|
-| bug | `bug` |
-| feature | `enhancement` |
-| enhancement | `enhancement` |
-| doc | `documentation` |
+| Input       | GitHub label    |
+| ----------- | --------------- |
+| bug         | `bug`           |
+| feature     | `enhancement`   |
+| enhancement | `enhancement`   |
+| doc         | `documentation` |
 
 TYPE badge for title/body: bug → BUG, feature → FEATURE, enhancement → ENHANCEMENT, doc → DOC
 

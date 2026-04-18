@@ -7,12 +7,12 @@
 
 ### Support Model
 
-| Element | Current State | Required State | Gap |
-|---------|---------------|----------------|-----|
-| Support Hours | {{CURRENT}} | {{REQUIRED}} | {{GAP}} |
-| SLA Targets | {{CURRENT}} | {{REQUIRED}} | {{GAP}} |
-| Escalation Path | {{CURRENT}} | {{REQUIRED}} | {{GAP}} |
-| Monitoring | {{CURRENT}} | {{REQUIRED}} | {{GAP}} |
+| Element         | Current State | Required State | Gap     |
+| --------------- | ------------- | -------------- | ------- |
+| Support Hours   | {{CURRENT}}   | {{REQUIRED}}   | {{GAP}} |
+| SLA Targets     | {{CURRENT}}   | {{REQUIRED}}   | {{GAP}} |
+| Escalation Path | {{CURRENT}}   | {{REQUIRED}}   | {{GAP}} |
+| Monitoring      | {{CURRENT}}   | {{REQUIRED}}   | {{GAP}} |
 
 ### Operational Requirements
 
@@ -35,9 +35,9 @@
 
 **Current vs Required:**
 
-| Capability | Current | Required | Gap Analysis |
-|------------|---------|----------|--------------|
-| {{CAPABILITY}} | {{CURRENT}} | {{REQUIRED}} | {{GAP}} |
+| Capability     | Current     | Required     | Gap Analysis |
+| -------------- | ----------- | ------------ | ------------ |
+| {{CAPABILITY}} | {{CURRENT}} | {{REQUIRED}} | {{GAP}}      |
 
 **Recommended Approach:**
 

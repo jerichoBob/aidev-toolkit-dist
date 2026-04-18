@@ -65,7 +65,7 @@ Done! Version 1.2.4 pushed.
    - Commit version bump
    - Verify clean state
 
-2. **Automatically push** (do not ask):
+3. **Automatically push** (do not ask):
 
    a. Check authentication:
 
@@ -82,29 +82,29 @@ Done! Version 1.2.4 pushed.
    ```
 
    c. **If no remote configured** (command returned nothing or error):
-      - Check if the remote URL would be GitHub (ask user to confirm)
-      - Ask for org/account using `AskUserQuestion`: "No remote configured. Create a new GitHub repo and push? Choose an account/org:" — list orgs from `gh auth status`
-      - Ask for visibility: "Public or private?"
-      - Run:
+   - Check if the remote URL would be GitHub (ask user to confirm)
+   - Ask for org/account using `AskUserQuestion`: "No remote configured. Create a new GitHub repo and push? Choose an account/org:" — list orgs from `gh auth status`
+   - Ask for visibility: "Public or private?"
+   - Run:
 
-        ```bash
-        gh repo create {name} --{visibility} --source . --remote origin --push
-        ```
+     ```bash
+     gh repo create {name} --{visibility} --source . --remote origin --push
+     ```
 
-      - Report: "Created {org}/{name} on GitHub and pushed."
+   - Report: "Created {org}/{name} on GitHub and pushed."
 
    d. **If remote is configured** (check if it's GitHub):
-      - If remote URL contains `github.com`: push normally with `git push`
-      - If remote URL does not contain `github.com` (non-GitHub remote): push with `git push` (skip `gh`)
+   - If remote URL contains `github.com`: push normally with `git push`
+   - If remote URL does not contain `github.com` (non-GitHub remote): push with `git push` (skip `gh`)
 
-3. **Report completion** (see Output Style above)
+4. **Report completion** (see Output Style above)
 
 ## Difference from /commit
 
-| Command | Version Bump | Changelog | Push |
-|---------|--------------|-----------|------|
-| `/commit` | Always | Always (README.md default) | Asks first |
-| `/commit-push` | Always | Always (README.md default) | Automatic |
+| Command        | Version Bump | Changelog                  | Push       |
+| -------------- | ------------ | -------------------------- | ---------- |
+| `/commit`      | Always       | Always (README.md default) | Asks first |
+| `/commit-push` | Always       | Always (README.md default) | Automatic  |
 
 See `/commit` for full documentation on grouping, versioning, and release notes.
 

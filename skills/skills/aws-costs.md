@@ -180,9 +180,11 @@ If file exists and `alertThreshold` is set, compare current month total against 
 If mode = `all`:
 
 1. Parse profile names from `~/.aws/config`:
+
    ```bash
    grep '^\[profile ' ~/.aws/config 2>/dev/null | sed 's/\[profile //;s/\]//'
    ```
+
    Also include `default` profile.
 
 2. For each profile, run Steps 2–7 (skip unauthenticated ones with a warning).

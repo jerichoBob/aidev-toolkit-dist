@@ -39,10 +39,10 @@ Questions that need answers before final decision:
 
 ## Question Tracking
 
-| # | Question | Category | Asked To | Status | Answer |
-|---|----------|----------|----------|--------|--------|
-| 1 | {{QUESTION}} | {{CAT}} | {{PERSON}} | Open | - |
-| 2 | {{QUESTION}} | {{CAT}} | {{PERSON}} | Open | - |
+| #   | Question     | Category | Asked To   | Status | Answer |
+| --- | ------------ | -------- | ---------- | ------ | ------ |
+| 1   | {{QUESTION}} | {{CAT}}  | {{PERSON}} | Open   | -      |
+| 2   | {{QUESTION}} | {{CAT}}  | {{PERSON}} | Open   | -      |
 
 ## Blocking Questions
 

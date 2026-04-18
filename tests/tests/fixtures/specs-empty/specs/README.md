@@ -2,9 +2,9 @@
 
 ## Quick Status
 
-| Version | Name | Progress | Status |
-|---------|------|----------|--------|
-| v1 | No Tasks | 0/0 | ✏️ Draft |
+| Version | Name     | Progress | Status   |
+| ------- | -------- | -------- | -------- |
+| v1      | No Tasks | 0/0      | ✏️ Draft |
 
 ---
 

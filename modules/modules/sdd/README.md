@@ -28,8 +28,8 @@ Token usage is stored as HTML comments in `specs/README.md`, invisible when rend
 \`\`\`markdown
 
 - [x] Task description
-<!-- task-meta: v=17,t=1,in=12453,out=8921,cache=45231,start=2026-02-15T10:30:00Z,end=2026-02-15T10:45:00Z,commit=abc1234 -->
-\`\`\`
+  <!-- task-meta: v=17,t=1,in=12453,out=8921,cache=45231,start=2026-02-15T10:30:00Z,end=2026-02-15T10:45:00Z,commit=abc1234 -->
+  \`\`\`
 
 **Fields**:
 
@@ -62,15 +62,16 @@ This displays:
 
 \`\`\`
 
-| Spec | Name                    | Progress | Status | In Tokens | Out Tokens | Cache   | Duration |
-|------|-------------------------|----------|--------|-----------|------------|---------|----------|
-| v14  | SDD Plain Text Output   | 6/6      | ✅ Complete | 10,755 | 6,231      | 23,199  | 0:45:20  |
+| Spec | Name                  | Progress | Status      | In Tokens | Out Tokens | Cache  | Duration |
+| ---- | --------------------- | -------- | ----------- | --------- | ---------- | ------ | -------- |
+| v14  | SDD Plain Text Output | 6/6      | ✅ Complete | 10,755    | 6,231      | 23,199 | 0:45:20  |
 
 ---
+
 Estimated Cost: \$2.15
-  Input:  \$0.03 @ \$3.00/MTok
-  Output: \$0.09 @ \$15.00/MTok
-  Cache:  \$2.03 @ \$0.30/MTok
+Input: \$0.03 @ \$3.00/MTok
+Output: \$0.09 @ \$15.00/MTok
+Cache: \$2.03 @ \$0.30/MTok
 \`\`\`
 
 ### Automatic Tracking
@@ -101,13 +102,13 @@ Tokens are captured from \`~/.claude/stats-cache.json\`:
 
 Anthropic official rates used in cost calculations:
 
-| Model | Input | Output | Cache Read |
-|-------|-------|--------|------------|
-| Opus 4.6 | \$3.00/MTok | \$15.00/MTok | \$0.30/MTok |
+| Model      | Input       | Output       | Cache Read  |
+| ---------- | ----------- | ------------ | ----------- |
+| Opus 4.6   | \$3.00/MTok | \$15.00/MTok | \$0.30/MTok |
 | Sonnet 4.5 | \$3.00/MTok | \$15.00/MTok | \$0.30/MTok |
-| Haiku 4.5 | \$0.80/MTok | \$4.00/MTok | \$0.10/MTok |
+| Haiku 4.5  | \$0.80/MTok | \$4.00/MTok  | \$0.10/MTok |
 
-*Note: Aggregate costs shown use Opus rates; actual project costs depend on which models are used.*
+_Note: Aggregate costs shown use Opus rates; actual project costs depend on which models are used._
 
 ---
 
@@ -134,17 +135,18 @@ Shows:
 
 \`\`\`
 
-| Spec | Name                      | Progress | Status | Owner |
-|------|---------------------------|----------|--------|-------|
-| v14  | SDD Plain Text Output     | 6/6      | ✅ Complete | — |
-| v15  | Spec Owner & Checkout     | 0/19     | ✏️ Draft | <bob@parallaxintelligence.com> |
+| Spec | Name                  | Progress | Status      | Owner                          |
+| ---- | --------------------- | -------- | ----------- | ------------------------------ |
+| v14  | SDD Plain Text Output | 6/6      | ✅ Complete | —                              |
+| v15  | Spec Owner & Checkout | 0/19     | ✏️ Draft    | <bob@parallaxintelligence.com> |
+
 \`\`\`
 
 ---
 
 ## Specs and Phases
 
-Each spec is a markdown file (\`specs/spec-v{N}-*.md\`) with:
+Each spec is a markdown file (\`specs/spec-v{N}-\*.md\`) with:
 
 - **Why**: Problem statement and context
 - **What**: Requirements and acceptance criteria
@@ -176,7 +178,7 @@ Example structure:
 ### Phase 2: {Name}
 
 - Task 1
-\`\`\`
+  \`\`\`
 
 ---
 
@@ -185,15 +187,15 @@ Example structure:
 ### Step 1: View Available Specs
 
 \`\`\`bash
-/sdd-specs        # Fast view (default)
+/sdd-specs # Fast view (default)
 /sdd-specs --deep # Full scan with validation
 \`\`\`
 
 ### Step 2: Start Implementation
 
 \`\`\`bash
-/sdd-code-spec v17          # Implement spec v17
-/sdd-code-spec v17 --no-stats  # Without token tracking
+/sdd-code-spec v17 # Implement spec v17
+/sdd-code-spec v17 --no-stats # Without token tracking
 \`\`\`
 
 This will:
@@ -208,15 +210,15 @@ This will:
 ### Step 3: Check What's Next
 
 \`\`\`bash
-/sdd-next        # Show next unchecked task
-/sdd-next-phase  # Show all tasks in current phase
+/sdd-next # Show next unchecked task
+/sdd-next-phase # Show all tasks in current phase
 \`\`\`
 
 ### Step 4: View Statistics
 
 \`\`\`bash
-/sdd-specs --stats    # Token usage and cost
-/sdd-specs --verify   # Full validation scan
+/sdd-specs --stats # Token usage and cost
+/sdd-specs --verify # Full validation scan
 \`\`\`
 
 ---

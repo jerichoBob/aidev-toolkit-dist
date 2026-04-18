@@ -83,17 +83,17 @@ Update both when bumping versions.
 
 ## File Purposes
 
-| File | Purpose |
-|------|---------|
-| `scripts/install.sh` | Clones repo, symlinks skills, configures permissions |
-| `scripts/uninstall.sh` | Removes symlinks and toolkit directory |
-| `scripts/clean-install.sh` | Fresh reinstall |
-| `scripts/test-install.sh` | Installation test script for CI/validation |
-| `scripts/package-skill.sh` | Package a skill into a single .skill file for Claude Desktop |
-| `skills/SKILL-TEMPLATE.md` | Reference for creating new skills |
-| `templates/deal-desk/` | Output templates for /deal-desk skill |
-| `templates/markdownlint.json` | Default config for /lint skill |
-| `modules/sdd/` | Spec-Driven Development module (skills, parse script, template) |
+| File                          | Purpose                                                         |
+| ----------------------------- | --------------------------------------------------------------- |
+| `scripts/install.sh`          | Clones repo, symlinks skills, configures permissions            |
+| `scripts/uninstall.sh`        | Removes symlinks and toolkit directory                          |
+| `scripts/clean-install.sh`    | Fresh reinstall                                                 |
+| `scripts/test-install.sh`     | Installation test script for CI/validation                      |
+| `scripts/package-skill.sh`    | Package a skill into a single .skill file for Claude Desktop    |
+| `skills/SKILL-TEMPLATE.md`    | Reference for creating new skills                               |
+| `templates/deal-desk/`        | Output templates for /deal-desk skill                           |
+| `templates/markdownlint.json` | Default config for /lint skill                                  |
+| `modules/sdd/`                | Spec-Driven Development module (skills, parse script, template) |
 
 ## Development Methodology
 

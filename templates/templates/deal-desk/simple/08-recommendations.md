@@ -48,11 +48,11 @@ Items to address in contracting:
 
 ## Prioritized Action Plan
 
-| Priority | Action | Owner | Timeline | Status |
-|----------|--------|-------|----------|--------|
-| 1 | {{ACTION}} | {{OWNER}} | {{TIMELINE}} | Not Started |
-| 2 | {{ACTION}} | {{OWNER}} | {{TIMELINE}} | Not Started |
-| 3 | {{ACTION}} | {{OWNER}} | {{TIMELINE}} | Not Started |
+| Priority | Action     | Owner     | Timeline     | Status      |
+| -------- | ---------- | --------- | ------------ | ----------- |
+| 1        | {{ACTION}} | {{OWNER}} | {{TIMELINE}} | Not Started |
+| 2        | {{ACTION}} | {{OWNER}} | {{TIMELINE}} | Not Started |
+| 3        | {{ACTION}} | {{OWNER}} | {{TIMELINE}} | Not Started |
 
 ## Decision Framework
 

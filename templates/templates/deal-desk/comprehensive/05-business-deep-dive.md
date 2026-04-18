@@ -7,12 +7,12 @@
 
 ### Contract Economics
 
-| Metric | Value | Risk |
-|--------|-------|------|
-| Total Contract Value | {{TCV}} | {{RISK}} |
-| Payment Terms | {{TERMS}} | {{RISK}} |
-| Margin Estimate | {{MARGIN}} | {{RISK}} |
-| Cash Flow Impact | {{CASHFLOW}} | {{RISK}} |
+| Metric               | Value        | Risk     |
+| -------------------- | ------------ | -------- |
+| Total Contract Value | {{TCV}}      | {{RISK}} |
+| Payment Terms        | {{TERMS}}    | {{RISK}} |
+| Margin Estimate      | {{MARGIN}}   | {{RISK}} |
+| Cash Flow Impact     | {{CASHFLOW}} | {{RISK}} |
 
 ### Cost Drivers
 
@@ -22,10 +22,10 @@
 
 ### Financial Scenarios
 
-| Scenario | Assumptions | Outcome |
-|----------|-------------|---------|
-| Best Case | {{ASSUMPTIONS}} | {{OUTCOME}} |
-| Expected | {{ASSUMPTIONS}} | {{OUTCOME}} |
+| Scenario   | Assumptions     | Outcome     |
+| ---------- | --------------- | ----------- |
+| Best Case  | {{ASSUMPTIONS}} | {{OUTCOME}} |
+| Expected   | {{ASSUMPTIONS}} | {{OUTCOME}} |
 | Worst Case | {{ASSUMPTIONS}} | {{OUTCOME}} |
 
 ## R5: Financial Risks - Detailed Analysis
@@ -54,9 +54,9 @@
 
 **Stakeholder Impact:**
 
-| Stakeholder Group | Impact | Change Required | Readiness |
-|-------------------|--------|-----------------|-----------|
-| {{GROUP}} | {{IMPACT}} | {{CHANGE}} | {{READINESS}} |
+| Stakeholder Group | Impact     | Change Required | Readiness     |
+| ----------------- | ---------- | --------------- | ------------- |
+| {{GROUP}}         | {{IMPACT}} | {{CHANGE}}      | {{READINESS}} |
 
 **Change Management Considerations:**
 

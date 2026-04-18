@@ -35,7 +35,6 @@ Check in order, use first that exists:
 **If no version found anywhere:** Add a `## Changelog` section to `README.md` with initial version:
 
 ```markdown
-
 ---
 
 ## Changelog
@@ -75,11 +74,11 @@ If `version_override` provided, use that directly.
 
 Otherwise, increment based on `bump_type`:
 
-| bump_type | Current | New |
-|-----------|---------|-----|
-| `major` | 1.2.3 | 2.0.0 |
-| `minor` | 1.2.3 | 1.3.0 |
-| `patch` | 1.2.3 | 1.2.4 |
+| bump_type | Current | New   |
+| --------- | ------- | ----- |
+| `major`   | 1.2.3   | 2.0.0 |
+| `minor`   | 1.2.3   | 1.3.0 |
+| `patch`   | 1.2.3   | 1.2.4 |
 
 ### 5. Update Version File
 

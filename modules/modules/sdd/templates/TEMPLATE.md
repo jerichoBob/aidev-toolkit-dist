@@ -68,8 +68,8 @@ tags: []
 ### Risks & Mitigations
 
 | Risk | Mitigation |
-|------|------------|
-| ... | ... |
+| ---- | ---------- |
+| ...  | ...        |
 
 ---
 
@@ -82,6 +82,6 @@ tags: []
 
 ## Changelog
 
-| Date | Change |
-|------|--------|
+| Date       | Change        |
+| ---------- | ------------- |
 | YYYY-MM-DD | Initial draft |

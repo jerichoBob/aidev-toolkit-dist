@@ -52,7 +52,7 @@ Untested code is a liability. Tests catch regressions before they reach producti
 class OrderService {
   constructor(
     private paymentGateway: PaymentGateway,
-    private inventory: InventoryService
+    private inventory: InventoryService,
   ) {}
 
   async processOrder(order: Order): Promise<Result> {
@@ -61,8 +61,8 @@ class OrderService {
 }
 
 // Clear test with AAA pattern
-describe('OrderService', () => {
-  it('should reject order when inventory insufficient', async () => {
+describe("OrderService", () => {
+  it("should reject order when inventory insufficient", async () => {
     // Arrange
     const mockInventory = { check: jest.fn().mockResolvedValue(false) };
     const service = new OrderService(mockPayment, mockInventory);
@@ -72,17 +72,17 @@ describe('OrderService', () => {
 
     // Assert
     expect(result.success).toBe(false);
-    expect(result.reason).toBe('INSUFFICIENT_INVENTORY');
+    expect(result.reason).toBe("INSUFFICIENT_INVENTORY");
   });
 });
 
 // Integration test for API endpoint
-describe('POST /api/orders', () => {
-  it('should create order and return 201', async () => {
+describe("POST /api/orders", () => {
+  it("should create order and return 201", async () => {
     const response = await request(app)
-      .post('/api/orders')
+      .post("/api/orders")
       .send(validOrderPayload)
-      .set('Authorization', `Bearer ${testToken}`);
+      .set("Authorization", `Bearer ${testToken}`);
 
     expect(response.status).toBe(201);
     expect(response.body.orderId).toBeDefined();
@@ -96,27 +96,29 @@ describe('POST /api/orders', () => {
 // Untestable: hardcoded dependencies
 class OrderService {
   async processOrder(order: Order) {
-    const inventory = new InventoryService();  // Can't mock
-    const result = await fetch('https://payment.api/charge');  // Can't mock
+    const inventory = new InventoryService(); // Can't mock
+    const result = await fetch("https://payment.api/charge"); // Can't mock
     // ...
   }
 }
 
 // Flaky test: depends on timing
-it('should process quickly', async () => {
+it("should process quickly", async () => {
   const start = Date.now();
   await processOrder(order);
-  expect(Date.now() - start).toBeLessThan(100);  // Will fail randomly
+  expect(Date.now() - start).toBeLessThan(100); // Will fail randomly
 });
 
 // Test with no assertions
-it('should work', async () => {
+it("should work", async () => {
   await createUser(userData);
   // No assertions - test always passes
 });
 
 // Unclear test name
-it('test1', () => { /* ... */ });
+it("test1", () => {
+  /* ... */
+});
 ```
 
 ## Validation Checklist

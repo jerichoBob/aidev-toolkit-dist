@@ -99,10 +99,10 @@ Check for `.aid/arch-review.yaml` config file. If it exists, read it for persist
 
 ```yaml
 # .aid/arch-review.yaml
-scope: []              # Default --scope paths (e.g., ["src/", "lib/"])
-ignore: []             # Default --ignore patterns (e.g., ["vendor/", "*.test.ts"])
-principles_dir: null   # Override custom principles directory
-retention_days: 90     # Auto-prune reviews older than N days
+scope: [] # Default --scope paths (e.g., ["src/", "lib/"])
+ignore: [] # Default --ignore patterns (e.g., ["vendor/", "*.test.ts"])
+principles_dir: null # Override custom principles directory
+retention_days: 90 # Auto-prune reviews older than N days
 ```
 
 Command-line arguments override config file values.
@@ -237,8 +237,8 @@ Exit code: {0|1|2} (see CI Integration section)
   ],
   "summary": {
     "total_violations": 1,
-    "by_principle": {"AP-001": 1, "AP-002": 0, "AP-003": 0, "AP-004": 0},
-    "by_severity": {"required": 1, "recommended": 0}
+    "by_principle": { "AP-001": 1, "AP-002": 0, "AP-003": 0, "AP-004": 0 },
+    "by_severity": { "required": 1, "recommended": 0 }
   },
   "exit_code": 2
 }
@@ -289,8 +289,8 @@ If not `--dry-run`:
   ],
   "summary": {
     "total_violations": 1,
-    "by_principle": {"AP-001": 1},
-    "by_severity": {"required": 1}
+    "by_principle": { "AP-001": 1 },
+    "by_severity": { "required": 1 }
   }
 }
 ```

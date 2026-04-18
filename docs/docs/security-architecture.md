@@ -134,6 +134,7 @@ User runs: scripts/auth.sh login
 **Attack:** Attacker crafts a URL with a known state token, tricks user into completing a forged OAuth flow.
 
 **Mitigation:**
+
 - State tokens are 32-byte random hex (256-bit entropy)
 - Stored in Cloudflare KV with 5-minute TTL
 - Deleted on first use (single-use)
@@ -148,6 +149,7 @@ User runs: scripts/auth.sh login
 **Attack:** Malware or another process reads `~/.claude/aidev-toolkit/.auth`.
 
 **Mitigation:**
+
 - File permissions `chmod 600` — owner-readable only
 - 30-day expiry limits the window
 - No long-lived refresh tokens stored locally
@@ -162,6 +164,7 @@ User runs: scripts/auth.sh login
 **Attack:** Another process on the machine binds to the same port before `auth.sh`, captures the JWT.
 
 **Mitigation:**
+
 - Bind to `127.0.0.1` only (not `0.0.0.0`)
 - Random port (1024–65535) — hard to predict
 - 60-second timeout; server exits immediately after capturing one request
@@ -175,6 +178,7 @@ User runs: scripts/auth.sh login
 **Attack:** Client secret leaked → attacker can impersonate the OAuth App and exchange codes for tokens.
 
 **Mitigation:**
+
 - Secret stored ONLY in Cloudflare Worker environment variables
 - Never committed to the repo (even accidentally — repo does not contain a `.env` with secrets)
 - If leaked: rotate immediately via GitHub OAuth App settings
@@ -188,6 +192,7 @@ User runs: scripts/auth.sh login
 **Attack:** A valid GitHub user who is not an authorized toolkit user authenticates successfully.
 
 **Mitigation:**
+
 - Worker checks `ALLOWED_GITHUB_USERS` (comma-separated) or `ALLOWED_GITHUB_ORG` before issuing JWT
 - Non-allowlisted users receive a 403 with a clear message — no JWT issued
 
@@ -200,6 +205,7 @@ User runs: scripts/auth.sh login
 **Attack:** Flood `/login` or `/callback` to exhaust rate limits or degrade availability.
 
 **Mitigation:**
+
 - Cloudflare rate limiting: max 10 requests/IP/hour on auth routes
 - Cloudflare DDoS protection is automatic (it's Cloudflare)
 - State token KV TTL means stale requests fail fast
@@ -244,12 +250,12 @@ Feature flags become JWT claims. No code changes needed in CLI — just new clai
 
 ## What Is NOT Stored on User Machines
 
-| Item | Location |
-|------|----------|
-| GitHub OAuth client_secret | Cloudflare Worker env only |
-| JWT signing key | Cloudflare Worker env only |
-| User allowlist | Cloudflare Worker env only |
-| Cloudflare API token | Maintainer's machine only (deploy-time) |
+| Item                       | Location                                |
+| -------------------------- | --------------------------------------- |
+| GitHub OAuth client_secret | Cloudflare Worker env only              |
+| JWT signing key            | Cloudflare Worker env only              |
+| User allowlist             | Cloudflare Worker env only              |
+| Cloudflare API token       | Maintainer's machine only (deploy-time) |
 
 ---
 
@@ -278,13 +284,13 @@ UX. `gh auth login` and Claude Code both use local callback. Users expect it. Th
 
 ## File Reference
 
-| File | Purpose |
-|------|---------|
-| `scripts/auth.sh` | CLI auth: login, status, logout, token, refresh |
-| `infra/auth-worker/` | Cloudflare Worker source |
-| `infra/auth-worker/README.md` | Worker deployment guide |
-| `docs/auth-setup.md` | GitHub OAuth App creation guide (maintainer) |
-| `~/.claude/aidev-toolkit/.auth` | Stored JWT (user machine, chmod 600) |
+| File                            | Purpose                                         |
+| ------------------------------- | ----------------------------------------------- |
+| `scripts/auth.sh`               | CLI auth: login, status, logout, token, refresh |
+| `infra/auth-worker/`            | Cloudflare Worker source                        |
+| `infra/auth-worker/README.md`   | Worker deployment guide                         |
+| `docs/auth-setup.md`            | GitHub OAuth App creation guide (maintainer)    |
+| `~/.claude/aidev-toolkit/.auth` | Stored JWT (user machine, chmod 600)            |
 
 ---
 

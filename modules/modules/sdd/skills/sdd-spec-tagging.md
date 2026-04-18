@@ -26,11 +26,11 @@ Implements log_interaction() method in MongoLogger.
 
 `[v{VERSION}:p{PHASE}:s{STEP}]`
 
-| Part | Description | Example |
-|------|-------------|---------|
-| VERSION | Spec version number | v7 |
-| PHASE | Phase number within spec | p1 |
-| STEP | Step/checkbox number within phase | s5 |
+| Part    | Description                       | Example |
+| ------- | --------------------------------- | ------- |
+| VERSION | Spec version number               | v7      |
+| PHASE   | Phase number within spec          | p1      |
+| STEP    | Step/checkbox number within phase | s5      |
 
 ### Examples
 

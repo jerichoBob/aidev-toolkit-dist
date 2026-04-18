@@ -61,14 +61,13 @@ Create `specs/README.md` with the standard Quick Status table header and an Arch
 ## Quick Status
 
 | Spec | Name | Progress | Status | Owner |
-|------|------|----------|--------|-------|
+| ---- | ---- | -------- | ------ | ----- |
 
 ---
 
 ## Architecture
 
 > Document key architecture decisions and constraints here.
-
 ```
 
 Use the current directory name as `{Project Name}` (run `basename $(pwd)` to get it).

@@ -38,35 +38,35 @@ Low (1-2):     {{LOW_BAR}}   {{LOW_COUNT}} risks
 
 ## Heat Map by Dimension
 
-| Dimension | Low | Medium | High | Total |
-|-----------|-----|--------|------|-------|
-| R1: Technical | {{R1_LOW}} | {{R1_MED}} | {{R1_HIGH}} | {{R1_TOTAL}} |
-| R2: Schedule | {{R2_LOW}} | {{R2_MED}} | {{R2_HIGH}} | {{R2_TOTAL}} |
-| R3: Scope | {{R3_LOW}} | {{R3_MED}} | {{R3_HIGH}} | {{R3_TOTAL}} |
-| R4: Resource | {{R4_LOW}} | {{R4_MED}} | {{R4_HIGH}} | {{R4_TOTAL}} |
-| R5: Financial | {{R5_LOW}} | {{R5_MED}} | {{R5_HIGH}} | {{R5_TOTAL}} |
-| R6: Compliance | {{R6_LOW}} | {{R6_MED}} | {{R6_HIGH}} | {{R6_TOTAL}} |
-| R7: Integration | {{R7_LOW}} | {{R7_MED}} | {{R7_HIGH}} | {{R7_TOTAL}} |
-| **Total** | **{{TOTAL_LOW}}** | **{{TOTAL_MED}}** | **{{TOTAL_HIGH}}** | **{{GRAND_TOTAL}}** |
+| Dimension       | Low               | Medium            | High               | Total               |
+| --------------- | ----------------- | ----------------- | ------------------ | ------------------- |
+| R1: Technical   | {{R1_LOW}}        | {{R1_MED}}        | {{R1_HIGH}}        | {{R1_TOTAL}}        |
+| R2: Schedule    | {{R2_LOW}}        | {{R2_MED}}        | {{R2_HIGH}}        | {{R2_TOTAL}}        |
+| R3: Scope       | {{R3_LOW}}        | {{R3_MED}}        | {{R3_HIGH}}        | {{R3_TOTAL}}        |
+| R4: Resource    | {{R4_LOW}}        | {{R4_MED}}        | {{R4_HIGH}}        | {{R4_TOTAL}}        |
+| R5: Financial   | {{R5_LOW}}        | {{R5_MED}}        | {{R5_HIGH}}        | {{R5_TOTAL}}        |
+| R6: Compliance  | {{R6_LOW}}        | {{R6_MED}}        | {{R6_HIGH}}        | {{R6_TOTAL}}        |
+| R7: Integration | {{R7_LOW}}        | {{R7_MED}}        | {{R7_HIGH}}        | {{R7_TOTAL}}        |
+| **Total**       | **{{TOTAL_LOW}}** | **{{TOTAL_MED}}** | **{{TOTAL_HIGH}}** | **{{GRAND_TOTAL}}** |
 
 ## High Risks Summary
 
 ### High Risks (Immediate Attention Required)
 
-| ID | Risk | Score | Dimension |
-|----|------|-------|-----------|
+| ID     | Risk           | Score     | Dimension     |
+| ------ | -------------- | --------- | ------------- |
 | {{ID}} | {{RISK_TITLE}} | {{SCORE}} | {{DIMENSION}} |
 
 ## Risk Trend Indicators
 
-| Dimension | Trend | Rationale |
-|-----------|-------|-----------|
-| Technical | {{ARROW}} | {{RATIONALE}} |
-| Schedule | {{ARROW}} | {{RATIONALE}} |
-| Scope | {{ARROW}} | {{RATIONALE}} |
-| Resource | {{ARROW}} | {{RATIONALE}} |
-| Financial | {{ARROW}} | {{RATIONALE}} |
-| Compliance | {{ARROW}} | {{RATIONALE}} |
+| Dimension   | Trend     | Rationale     |
+| ----------- | --------- | ------------- |
+| Technical   | {{ARROW}} | {{RATIONALE}} |
+| Schedule    | {{ARROW}} | {{RATIONALE}} |
+| Scope       | {{ARROW}} | {{RATIONALE}} |
+| Resource    | {{ARROW}} | {{RATIONALE}} |
+| Financial   | {{ARROW}} | {{RATIONALE}} |
+| Compliance  | {{ARROW}} | {{RATIONALE}} |
 | Integration | {{ARROW}} | {{RATIONALE}} |
 
 <!--
@@ -82,19 +82,19 @@ TREND ARROWS:
 
 <!-- Include if multiple workstreams -->
 
-| Workstream | Risk Count | Highest Risk |
-|------------|------------|--------------|
-| {{WO1_NAME}} | {{WO1_COUNT}} | {{WO1_HIGHEST}} |
-| {{WO2_NAME}} | {{WO2_COUNT}} | {{WO2_HIGHEST}} |
+| Workstream       | Risk Count      | Highest Risk      |
+| ---------------- | --------------- | ----------------- |
+| {{WO1_NAME}}     | {{WO1_COUNT}}   | {{WO1_HIGHEST}}   |
+| {{WO2_NAME}}     | {{WO2_COUNT}}   | {{WO2_HIGHEST}}   |
 | Cross-Workstream | {{CROSS_COUNT}} | {{CROSS_HIGHEST}} |
 
 ### By Phase
 
-| Phase | Risk Count | Highest Risk |
-|-------|------------|--------------|
-| Define | {{DEFINE_COUNT}} | {{DEFINE_HIGHEST}} |
-| Design | {{DESIGN_COUNT}} | {{DESIGN_HIGHEST}} |
-| Cross-Phase | {{CROSS_COUNT}} | {{CROSS_HIGHEST}} |
+| Phase       | Risk Count       | Highest Risk       |
+| ----------- | ---------------- | ------------------ |
+| Define      | {{DEFINE_COUNT}} | {{DEFINE_HIGHEST}} |
+| Design      | {{DESIGN_COUNT}} | {{DESIGN_HIGHEST}} |
+| Cross-Phase | {{CROSS_COUNT}}  | {{CROSS_HIGHEST}}  |
 
 ## Visual Risk Summary
 

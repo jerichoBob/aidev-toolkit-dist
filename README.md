@@ -85,64 +85,64 @@ These are symlinked to `~/.claude/commands/` and `~/.claude/skills/` so you can 
 
 **Toolkit**
 
-| Command | Description |
-|---------|-------------|
-| `/aid` | Show this help, or help for a specific command |
-| `/aid-update` | Pull latest updates from GitHub |
-| `/docs-update` | Update README.md and CLAUDE.md |
-| `/aid-feedback` | Submit feedback or feature requests |
+| Command         | Description                                    |
+| --------------- | ---------------------------------------------- |
+| `/aid`          | Show this help, or help for a specific command |
+| `/aid-update`   | Pull latest updates from GitHub                |
+| `/docs-update`  | Update README.md and CLAUDE.md                 |
+| `/aid-feedback` | Submit feedback or feature requests            |
 
 **Analysis**
 
-| Command | Description |
-|---------|-------------|
-| `/arch-review` | Validate codebase against architecture principles |
-| `/deal-desk` | Deal qualification and risk assessment |
-| `/inspect` | Analyze any codebase - identity, architecture, tech stack |
-| `/sdlc-plan` | Analyze business documents (RFQ, RFP, PRD, SOW) for planning |
+| Command        | Description                                                  |
+| -------------- | ------------------------------------------------------------ |
+| `/arch-review` | Validate codebase against architecture principles            |
+| `/deal-desk`   | Deal qualification and risk assessment                       |
+| `/inspect`     | Analyze any codebase - identity, architecture, tech stack    |
+| `/sdlc-plan`   | Analyze business documents (RFQ, RFP, PRD, SOW) for planning |
 
 **Development**
 
-| Command | Description |
-|---------|-------------|
-| `/code-stats` | Count lines of code by language using cloc |
-| `/commit` | Smart commit with grouping, versioning, changelog |
-| `/commit-push` | Same as /commit but auto-pushes |
-| `/lint` | Lint and fix markdown files |
-| `/should-i-trust-it` | Verify skill safety before installation |
+| Command              | Description                                       |
+| -------------------- | ------------------------------------------------- |
+| `/code-stats`        | Count lines of code by language using cloc        |
+| `/commit`            | Smart commit with grouping, versioning, changelog |
+| `/commit-push`       | Same as /commit but auto-pushes                   |
+| `/lint`              | Lint and fix markdown files                       |
+| `/should-i-trust-it` | Verify skill safety before installation           |
 
 **Spec-Driven Development (SDD)**
 
-| Command | Description |
-|---------|-------------|
-| `/sdd-specs` | Show specs status, staleness, progress summary |
-| `/sdd-specs-update` | Sync project with SDD infrastructure |
-| `/sdd-spec` | Create a new specification document |
-| `/sdd-next` | Show the next task to implement |
-| `/sdd-next-phase` | Show all tasks in the current phase |
-| `/sdd-code` | Implement the next single task |
-| `/sdd-code-phase` | Implement all tasks in current phase |
-| `/sdd-code-spec` | Implement all remaining tasks in a spec |
-| `/sdd-spec-tagging` | Commit tagging convention reference |
+| Command             | Description                                    |
+| ------------------- | ---------------------------------------------- |
+| `/sdd-specs`        | Show specs status, staleness, progress summary |
+| `/sdd-specs-update` | Sync project with SDD infrastructure           |
+| `/sdd-spec`         | Create a new specification document            |
+| `/sdd-next`         | Show the next task to implement                |
+| `/sdd-next-phase`   | Show all tasks in the current phase            |
+| `/sdd-code`         | Implement the next single task                 |
+| `/sdd-code-phase`   | Implement all tasks in current phase           |
+| `/sdd-code-spec`    | Implement all remaining tasks in a spec        |
+| `/sdd-spec-tagging` | Commit tagging convention reference            |
 
 ### Support Skills
 
 These are called by other skills and are not intended to be invoked directly.
 
-| Skill | Used By | Description |
-|-------|---------|-------------|
+| Skill             | Used By   | Description                            |
+| ----------------- | --------- | -------------------------------------- |
 | `analyze-changes` | `/commit` | Analyzes git tree for commit groupings |
-| `version-bump` | `/commit` | Bumps version and updates changelog |
+| `version-bump`    | `/commit` | Bumps version and updates changelog    |
 
 ### Scripts
 
-| Script | Description |
-|--------|-------------|
-| `scripts/install.sh` | Clone repo, symlink skills, configure permissions, provision Slack webhook |
-| `scripts/uninstall.sh` | Remove symlinks and toolkit directory |
-| `scripts/clean-install.sh` | Fresh reinstall (remove + install) |
-| `scripts/test-install.sh` | Installation test script for CI/validation |
-| `scripts/package-skill.sh` | Package a skill into a single .skill file for Claude Desktop |
+| Script                     | Description                                                                |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `scripts/install.sh`       | Clone repo, symlink skills, configure permissions, provision Slack webhook |
+| `scripts/uninstall.sh`     | Remove symlinks and toolkit directory                                      |
+| `scripts/clean-install.sh` | Fresh reinstall (remove + install)                                         |
+| `scripts/test-install.sh`  | Installation test script for CI/validation                                 |
+| `scripts/package-skill.sh` | Package a skill into a single .skill file for Claude Desktop               |
 
 ## Updating
 
@@ -162,12 +162,12 @@ cd ~/.claude/aidev-toolkit && git pull
 
 The `/arch-review` command evaluates a codebase against these architectural principles:
 
-| ID | Principle | Focus |
-|----|-----------|-------|
-| AP-001 | Security by Default | Input validation, secrets, auth, injection prevention |
-| AP-002 | Observable Systems | Structured logging, correlation IDs, health endpoints |
-| AP-003 | Intentional Error Handling | No silent failures, consistent error responses |
-| AP-004 | Test Critical Paths | Critical path coverage, testable architecture |
+| ID     | Principle                  | Focus                                                 |
+| ------ | -------------------------- | ----------------------------------------------------- |
+| AP-001 | Security by Default        | Input validation, secrets, auth, injection prevention |
+| AP-002 | Observable Systems         | Structured logging, correlation IDs, health endpoints |
+| AP-003 | Intentional Error Handling | No silent failures, consistent error responses        |
+| AP-004 | Test Critical Paths        | Critical path coverage, testable architecture         |
 
 See `architecture-principles/` for full documentation.
 
@@ -189,11 +189,16 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.47.0
+0.48.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.48.0 (2026-04-18)
+
+- feat(v52): GitHub OAuth auth — Cloudflare Worker, auth.sh CLI, JWT identity in user-email.sh [`8342a82`]
+- style: markdownlint/prettier bulk reformat across all docs and skills [`92ce955`]
 
 #### v0.47.0 (2026-04-18)
 

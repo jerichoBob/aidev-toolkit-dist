@@ -51,7 +51,7 @@ class ApiError extends Error {
     public statusCode: number,
     public code: string,
     public userMessage: string,
-    public context?: Record<string, unknown>
+    public context?: Record<string, unknown>,
   ) {
     super(userMessage);
   }
@@ -59,23 +59,23 @@ class ApiError extends Error {
 
 // Centralized error handler
 app.use((err, req, res, next) => {
-  const correlationId = req.headers['x-correlation-id'];
+  const correlationId = req.headers["x-correlation-id"];
 
   // Log full details server-side
   logger.error({
     correlationId,
     error: err.message,
     stack: err.stack,
-    context: err.context
+    context: err.context,
   });
 
   // Return sanitized response to client
   res.status(err.statusCode || 500).json({
     error: {
-      code: err.code || 'INTERNAL_ERROR',
-      message: err.userMessage || 'An unexpected error occurred',
-      correlationId
-    }
+      code: err.code || "INTERNAL_ERROR",
+      message: err.userMessage || "An unexpected error occurred",
+      correlationId,
+    },
   });
 });
 
@@ -84,7 +84,7 @@ try {
   await processPayment(order);
 } catch (error) {
   logger.error({ orderId: order.id, error: error.message });
-  throw new ApiError(500, 'PAYMENT_FAILED', 'Unable to process payment');
+  throw new ApiError(500, "PAYMENT_FAILED", "Unable to process payment");
 }
 ```
 
@@ -102,15 +102,15 @@ try {
 app.use((err, req, res, next) => {
   res.status(500).json({
     error: err.message,
-    stack: err.stack,  // Exposes internals
-    query: err.sql     // Exposes database details
+    stack: err.stack, // Exposes internals
+    query: err.sql, // Exposes database details
   });
 });
 
 // Inconsistent error responses
-res.status(400).send('bad request');  // One endpoint
-res.status(400).json({ msg: 'Invalid' });  // Another endpoint
-res.status(400).json({ error: { message: 'Wrong' } });  // Yet another
+res.status(400).send("bad request"); // One endpoint
+res.status(400).json({ msg: "Invalid" }); // Another endpoint
+res.status(400).json({ error: { message: "Wrong" } }); // Yet another
 ```
 
 ## Validation Checklist

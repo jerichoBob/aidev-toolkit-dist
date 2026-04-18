@@ -46,10 +46,7 @@ Security vulnerabilities are expensive to fix post-deployment and can cause cata
 
 ```typescript
 // Parameterized query - safe from SQL injection
-const user = await db.query(
-  'SELECT * FROM users WHERE id = $1',
-  [userId]
-);
+const user = await db.query("SELECT * FROM users WHERE id = $1", [userId]);
 
 // Environment-based secrets
 const apiKey = process.env.STRIPE_API_KEY;
@@ -57,7 +54,7 @@ const apiKey = process.env.STRIPE_API_KEY;
 // Input validation with schema
 const schema = z.object({
   email: z.string().email(),
-  age: z.number().min(0).max(150)
+  age: z.number().min(0).max(150),
 });
 const validated = schema.parse(request.body);
 ```
@@ -66,12 +63,10 @@ const validated = schema.parse(request.body);
 
 ```typescript
 // String concatenation - SQL injection vulnerability
-const user = await db.query(
-  `SELECT * FROM users WHERE id = '${userId}'`
-);
+const user = await db.query(`SELECT * FROM users WHERE id = '${userId}'`);
 
 // Hardcoded secret
-const apiKey = 'sk_live_abc123...';
+const apiKey = "sk_live_abc123...";
 
 // No input validation
 const { email, age } = request.body;
