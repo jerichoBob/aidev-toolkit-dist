@@ -1,0 +1,87 @@
+---
+version: X
+name: short-name
+display_name: "Human Readable Name"
+status: draft
+created: YYYY-MM-DD
+depends_on: []
+tags: []
+---
+
+# {Display Name}
+
+## Why (Problem Statement)
+
+> As a {role}, I want to {goal} so that I can {benefit}.
+
+### Context
+
+- Background information
+- Current pain points
+- Business value
+
+---
+
+## What (Requirements)
+
+### User Stories
+
+- **US-1**: As a {role}, I want {feature} so that {benefit}
+- **US-2**: ...
+
+### Acceptance Criteria
+
+- AC-1: Given {context}, when {action}, then {expected result}
+- AC-2: ...
+
+### Out of Scope
+
+- Items explicitly not included in this version
+
+---
+
+## How (Approach)
+
+### Phase 1: {Phase Name}
+
+- Task 1
+- Task 2
+
+### Phase 2: {Phase Name}
+
+- Task 1
+- Task 2
+
+---
+
+## Technical Notes
+
+### Architecture Decisions
+
+- Decision 1: Rationale
+
+### Dependencies
+
+- External services
+- Libraries
+
+### Risks & Mitigations
+
+| Risk | Mitigation |
+|------|------------|
+| ... | ... |
+
+---
+
+## Open Questions
+
+1. Question 1?
+2. Question 2?
+
+---
+
+## Changelog
+
+| Date | Change |
+|------|--------|
+| YYYY-MM-DD | Initial draft |
