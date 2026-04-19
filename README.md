@@ -101,6 +101,12 @@ These are symlinked to `~/.claude/commands/` and `~/.claude/skills/` so you can 
 | `/inspect`     | Analyze any codebase - identity, architecture, tech stack    |
 | `/sdlc-plan`   | Analyze business documents (RFQ, RFP, PRD, SOW) for planning |
 
+**Browser Automation**
+
+| Command             | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| `/browser-harness`  | Direct Chrome CDP control — install, connect, and run tasks  |
+
 **Development**
 
 | Command              | Description                                       |
@@ -189,11 +195,16 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.48.0
+0.49.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.49.0 (2026-04-19)
+
+- feat: add /browser-harness skill for direct Chrome CDP control [`c30a5d3`]
+- feat(aws-costs): enrich active resources with Project/Environment/Owner tags [`003aedc`]
 
 #### v0.48.0 (2026-04-18)
 

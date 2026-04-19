@@ -120,41 +120,55 @@ Show ↑/↓ delta indicator vs prior day. Show `—` if cost is $0.00.
 
 ### Step 6: Active Resources
 
-Query running resources for each profile:
+Query running resources for each profile, pulling `Name`, `Project`, `Environment`, and `Owner` tags:
 
 ```bash
-# EC2 running instances
+# EC2 running instances (with tags)
 aws ec2 describe-instances \
   --filters Name=instance-state-name,Values=running \
-  --query 'Reservations[].Instances[].[InstanceId,InstanceType,Tags[?Key==`Name`].Value|[0]]' \
-  --output text [--profile <name>] 2>&1
+  --query 'Reservations[].Instances[].[InstanceId,InstanceType,Tags[?Key==`Name`].Value|[0],Tags[?Key==`Project`].Value|[0],Tags[?Key==`Environment`].Value|[0],Tags[?Key==`Owner`].Value|[0]]' \
+  --output json [--profile <name>] 2>&1
 
-# NAT Gateways
+# NAT Gateways (with tags)
 aws ec2 describe-nat-gateways \
   --filter Name=state,Values=available \
-  --query 'NatGateways[].NatGatewayId' \
-  --output text [--profile <name>] 2>&1
+  --query 'NatGateways[].[NatGatewayId,Tags[?Key==`Project`].Value|[0],Tags[?Key==`Environment`].Value|[0],Tags[?Key==`Owner`].Value|[0]]' \
+  --output json [--profile <name>] 2>&1
 
-# ALBs
+# ALBs (with tags via separate call)
 aws elbv2 describe-load-balancers \
-  --query 'LoadBalancers[].LoadBalancerName' \
-  --output text [--profile <name>] 2>&1
+  --query 'LoadBalancers[].[LoadBalancerName,LoadBalancerArn]' \
+  --output json [--profile <name>] 2>&1
+# Then for each ALB ARN, fetch tags:
+aws elbv2 describe-tags \
+  --resource-arns <arn> \
+  --query 'TagDescriptions[].Tags' \
+  --output json [--profile <name>] 2>&1
 
-# RDS instances
+# RDS instances (with tags)
 aws rds describe-db-instances \
-  --query 'DBInstances[?DBInstanceStatus==`available`].[DBInstanceIdentifier,DBInstanceClass]' \
-  --output text [--profile <name>] 2>&1
+  --query 'DBInstances[?DBInstanceStatus==`available`].[DBInstanceIdentifier,DBInstanceClass,TagList[?Key==`Project`].Value|[0],TagList[?Key==`Environment`].Value|[0],TagList[?Key==`Owner`].Value|[0]]' \
+  --output json [--profile <name>] 2>&1
 ```
+
+**Group resources by `Project` tag.** For each project group, list its resources with type, ID, instance size, environment, and estimated hourly cost. Resources missing a `Project` tag go in an `[untagged]` group flagged with ⚠️.
 
 Display:
 
 ```text
-Active Resources (estimated hourly)
-------------------------------------
-EC2:  i-0abc123  t3.medium  "web-server"   ~$0.042/hr
-NAT:  nat-0xyz   (1 gateway)               ~$0.045/hr
-ALB:  my-alb     (1 load balancer)         ~$0.008/hr
-RDS:  (none running)
+Active Resources — by Project
+------------------------------
+[llm-gateway]
+  EC2:  i-0abc123  t3.medium   [env:prod]     ~$0.041/hr
+  ALB:  llm-gateway-alb        [env:prod]     ~$0.008/hr
+  RDS:  llm-gateway-db  db.t4g.micro          ~$0.015/hr
+
+[welo]
+  EC2:  i-0a10d9e5  t3.medium  [env:staging]  ~$0.041/hr
+  NAT:  nat-0cf093  (1 gateway)               ~$0.045/hr
+
+[untagged]  ⚠️  these resources have no Project tag — review for shutdown
+  NAT:  nat-0xyz  (no tags)                   ~$0.045/hr
 ```
 
 If a query fails (insufficient permissions), show `[permission denied]` for that resource type and continue.
