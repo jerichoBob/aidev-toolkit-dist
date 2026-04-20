@@ -1,7 +1,6 @@
 ---
 name: sdd-code-spec
 description: "Implement ALL remaining phases and tasks in a spec without stopping"
-disable-model-invocation: true
 argument-hint: "[spec-version] [--no-stats]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git:*), Bash(date:*), AskUserQuestion
 ---

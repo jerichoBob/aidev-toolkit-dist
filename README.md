@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.49.2
+0.49.3
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.49.3 (2026-04-20)
+
+- fix(sdd-code-spec): remove disable-model-invocation to allow skill chaining [`8e8b37f`]
 
 #### v0.49.2 (2026-04-20)
 
