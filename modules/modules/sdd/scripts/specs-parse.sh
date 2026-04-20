@@ -29,6 +29,8 @@ cmd_status() {
   require_readme
 
   local version="" name="" done=0 total=0 first=1
+  local temp_output
+  temp_output=$(mktemp)
 
   while IFS= read -r line; do
     # Match spec headers: ## v{N}: {Name} or ## v{N} — {Name} or ## v{N} - {Name}
@@ -46,7 +48,7 @@ cmd_status() {
         else
           status="In Progress"
         fi
-        printf "%s\t%s\t%d\t%d\t%s\n" "$version" "$name" "$done" "$total" "$status"
+        printf "%s\t%s\t%d\t%d\t%s\n" "$version" "$name" "$done" "$total" "$status" >> "$temp_output"
       fi
       version="v${BASH_REMATCH[1]}"
       name="${BASH_REMATCH[3]}"
@@ -76,8 +78,11 @@ cmd_status() {
     else
       status="In Progress"
     fi
-    printf "%s\t%s\t%d\t%d\t%s\n" "$version" "$name" "$done" "$total" "$status"
+    printf "%s\t%s\t%d\t%d\t%s\n" "$version" "$name" "$done" "$total" "$status" >> "$temp_output"
   fi
+
+  sort -V -k1 "$temp_output"
+  rm -f "$temp_output"
 }
 
 # Find the first unchecked task with full context

@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.49.4
+0.49.5
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.49.5 (2026-04-20)
+
+- fix(specs-parse): sort status output numerically instead of lexicographically [`40f7a5b`]
 
 #### v0.49.4 (2026-04-20)
 
