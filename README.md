@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.49.0
+0.49.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.49.1 (2026-04-19)
+
+- docs: add AWS costs report for 2026-04-19 [`1f8c2c9`]
 
 #### v0.49.0 (2026-04-19)
 
