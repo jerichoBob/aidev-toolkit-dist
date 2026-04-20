@@ -195,11 +195,17 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.49.1
+0.49.2
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.49.2 (2026-04-20)
+
+- fix(sdd): use sort -V in specs-parse.sh for correct spec version ordering [`717c6bd`]
+- fix(aid-feedback): bootstrap required labels before issue create or ingest [`d8ea5a5`]
+- feat(specs): add v54 — specs-parse.sh numeric version sort [`d90924f`]
 
 #### v0.49.1 (2026-04-19)
 

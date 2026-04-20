@@ -260,6 +260,9 @@ cmd_spec_list() {
   local search_dirs=("specs")
   (( include_completed )) && search_dirs+=("specs/completed")
 
+  local temp_output
+  temp_output=$(mktemp)
+
   for dir in "${search_dirs[@]}"; do
     [[ -d "$dir" ]] || continue
     for f in "$dir"/spec-v*.md; do
@@ -270,7 +273,10 @@ cmd_spec_list() {
         printf "v%s\t%s\n" "${BASH_REMATCH[1]}" "$f"
       fi
     done
-  done
+  done | sort -V -k1 > "$temp_output"
+
+  cat "$temp_output"
+  rm -f "$temp_output"
 }
 
 # --- Main dispatch ---
