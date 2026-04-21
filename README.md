@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.50.0
+0.50.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.50.1 (2026-04-21)
+
+- feat: add /dist-publish project command for aidev-toolkit-dist publishing [`86f6a6d`]
 
 #### v0.50.0 (2026-04-21)
 
