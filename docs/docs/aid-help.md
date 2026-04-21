@@ -15,6 +15,13 @@
 - `/aid-feedback` — Submit feedback or feature requests
 - `/docs-update` — Update README.md and CLAUDE.md
 
+### Identity & Auth
+
+- `scripts/auth.sh login` — Authenticate via browser-based GitHub OAuth; stores a JWT at `~/.claude/aidev-toolkit/.auth`
+- `scripts/auth.sh status` — Show who is logged in and when the token expires
+- `scripts/auth.sh logout` — Remove stored auth token
+- `scripts/auth.sh refresh` — Silently renew token when within 7 days of expiry
+
 ### Analysis & Review
 
 - `/inspect [options]` — Analyze and describe the current codebase
@@ -1432,6 +1439,52 @@ Save a piece of knowledge, preference, or instruction to persistent memory so it
 /remember --user always use pnpm, not npm
 /remember --project the API rate limit is 100 req/min per tenant
 /remember the design system uses 8px grid spacing
+```
+
+<!-- /OUTPUT -->
+
+---
+
+### If `$ARGUMENTS` is "auth"
+
+<!-- OUTPUT -->
+
+## `scripts/auth.sh` — Identity & Authentication
+
+**Usage:** `~/.claude/aidev-toolkit/scripts/auth.sh <command>`
+
+Authenticate aidev toolkit via browser-based GitHub OAuth. Stores a signed JWT at `~/.claude/aidev-toolkit/.auth` (chmod 600).
+
+**Commands:**
+
+| Command   | Description                                                              |
+| --------- | ------------------------------------------------------------------------ |
+| `login`   | Open browser → GitHub OAuth → capture JWT → store at `.auth`            |
+| `status`  | Decode and display `@github_login`, name, email, and token expiry        |
+| `logout`  | Remove stored `.auth` file                                               |
+| `token`   | Print raw JWT (for debugging or API calls)                               |
+| `refresh` | Renew token silently when within 7 days of expiry                        |
+
+**Login flow:**
+
+1. Opens a browser tab to the aidev auth Worker
+2. You approve access on GitHub
+3. A short-lived JWT is captured and stored locally
+4. `user-email.sh` automatically uses the JWT identity going forward
+
+**Security:**
+
+- The GitHub OAuth client secret lives **only** in the Cloudflare Worker — never on your machine
+- The JWT is stored at `chmod 600` — readable only by your user
+- Token expires after 30 days; refresh renews automatically
+
+**Examples:**
+
+```text
+scripts/auth.sh login      Authenticate (opens browser)
+scripts/auth.sh status     Who am I? When does my token expire?
+scripts/auth.sh logout     Sign out / revoke local token
+scripts/auth.sh refresh    Renew token without re-authenticating
 ```
 
 <!-- /OUTPUT -->

@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.49.5
+0.50.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.50.0 (2026-04-21)
+
+- feat(auth): complete v52 Phase 4–5 — install hint, aid-help auth docs, logout verified [`0e611a1`]
 
 #### v0.49.5 (2026-04-20)
 
