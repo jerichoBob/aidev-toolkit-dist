@@ -76,6 +76,7 @@ Read the architectural principles from `architecture-principles/*.md`:
 - `architecture-principles/02-observability.md` (AP-002)
 - `architecture-principles/03-error-handling.md` (AP-003)
 - `architecture-principles/04-testing.md` (AP-004)
+- `architecture-principles/05-security-first-sdd.md` (AP-005)
 
 Also check for **custom project-level principles** in `.aid/principles/`:
 
@@ -177,6 +178,20 @@ For each principle, check the validation checklist items.
 - Hardcoded dependencies: `new Service()` instead of injection
 - Unclear test names: `test1`, `it('works')`, etc.
 
+#### AP-005: Security-First Spec Design
+
+- [ ] Spec contains a `## Security` section
+- [ ] Authentication subsection has an explicit decision (not placeholder text)
+- [ ] Authorization subsection has an explicit decision (not placeholder text)
+- [ ] Audit Logging subsection has an explicit decision (not placeholder text)
+- [ ] Any "Not applicable" entries include a rationale
+
+**Search patterns** (scan `specs/` directory):
+
+- Spec files missing `## Security` section entirely
+- Security subsections containing placeholder text: lines matching `\(e\.g\.,` or `\{e\.g\.,` that were never replaced
+- Subsection headers with no content on the following lines
+
 ### Step 4: Assign Violation IDs
 
 For each finding, compute the violation ID:
@@ -205,7 +220,7 @@ Checking AP-002: Observable Systems...
 ... (continue for each principle)
 
 Summary
-  Principles: 4 checked (+ N custom)
+  Principles: 5 checked (+ N custom)
   Violations: X found
     AP-001: X
     AP-002: X

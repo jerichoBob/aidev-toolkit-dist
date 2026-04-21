@@ -195,11 +195,16 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.50.1
+0.51.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.51.0 (2026-04-21)
+
+- feat(v55): security-first SDD — mandatory AuthZ/N and audit logging in every spec [`34744ba`]
+- feat(v55): add Security-First SDD spec — AuthZ/N and audit logging baked into every spec [`3506632`]
 
 #### v0.50.1 (2026-04-21)
 

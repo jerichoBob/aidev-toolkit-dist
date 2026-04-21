@@ -25,6 +25,27 @@ Implement the single next task from the specs checklist.
 
 2. **Read the spec file** shown in `spec_file` for full implementation context.
 
+2.3. **Surface the Security section** (always required):
+
+Read the `## Security` section from the spec file. Display it as a reminder before implementing any task:
+
+```text
+Security Requirements (from spec)
+  AuthN: {value}
+  AuthZ: {value}
+  Audit: {value}
+```
+
+**Boilerplate check**: If the Security section is missing, blank, or contains only template placeholder text (e.g., lines containing `{e.g.,` or `(e.g.,` with no actual decision text, or subsection headers with no content), halt with:
+
+```text
+⛔ Security section incomplete in spec v{N}.
+Fill in the Authentication, Authorization, and Audit Logging subsections before implementing.
+Even "Not applicable — [rationale]" is acceptable, but the decision must be explicit.
+```
+
+Do not proceed with implementation until the user updates the spec and re-runs `/sdd-code`.
+
 2.5. **Check task against coding rules** (only if rules were loaded):
 
 - If the task would violate a loaded rule (e.g., "write mock-based tests" violates a no-mocks rule), surface the violation

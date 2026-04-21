@@ -176,6 +176,7 @@ Validate the codebase against aidev toolkit architectural principles and documen
 | AP-002 | Observable Systems         | Structured logs, correlation IDs, health checks |
 | AP-003 | Intentional Error Handling | No silent failures, consistent errors           |
 | AP-004 | Test Critical Paths        | Test coverage, testable architecture            |
+| AP-005 | Security-First Spec Design | Mandatory AuthN/AuthZ/audit section in every spec |
 
 Custom project-level principles can be added in `.aid/principles/` (same YAML frontmatter format).
 
