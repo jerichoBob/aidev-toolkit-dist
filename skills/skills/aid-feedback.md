@@ -63,7 +63,7 @@ These labels are required for ingestion filtering and processing. The `--force` 
 Check these conditions:
 
 1. `$ARGUMENTS` is empty OR `$ARGUMENTS` is `--ingest`
-2. A `modules/sdd/` directory exists in the current working directory (confirms we're in aidev-toolkit)
+2. The authenticated GitHub user is the maintainer — run `gh api user --jq .login` and confirm it returns `jerichoBob`. (Optionally verify `modules/sdd/` exists in the cwd as a secondary sanity check.)
 
 **If both conditions are met, run ingestion mode:**
 

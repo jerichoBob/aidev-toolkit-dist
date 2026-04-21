@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.51.0
+0.51.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.51.1 (2026-04-21)
+
+- fix(aid-feedback): use GitHub user identity for ingestion gate [`051aad1`]
 
 #### v0.51.0 (2026-04-21)
 
