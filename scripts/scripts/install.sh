@@ -334,9 +334,47 @@ chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/stats-parse.sh" 2>/dev/null || true
 if [ "$QUIET" = false ]; then
     echo ""
     echo -e "Configuring user email for spec ownership..."
-    if "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" ensure > /dev/null 2>&1; then
-        USER_EMAIL=$("$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" get)
-        echo -e "User email: ${YELLOW}$USER_EMAIL${NC} ${GREEN}✓${NC}"
+
+    EXISTING_EMAIL=$("$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" get 2>/dev/null || echo "")
+    if [[ -n "$EXISTING_EMAIL" ]]; then
+        echo -e "  User email: ${YELLOW}$EXISTING_EMAIL${NC} ${GREEN}✓${NC} (already configured)"
+    elif [ -t 0 ]; then
+        # Interactive TTY — prompt the user explicitly
+        DETECTED_EMAIL=$(git config user.email 2>/dev/null || echo "")
+        echo -e "  ${BLUE}Used for spec ownership tracking (/sdd-spec, /sdd-spec-owner)${NC}"
+        if [[ -n "$DETECTED_EMAIL" ]]; then
+            echo -e "  Detected: ${YELLOW}$DETECTED_EMAIL${NC}"
+            echo -n "  Accept this email? [Y/n/custom]: "
+            read -r REPLY
+            case "${REPLY:-Y}" in
+                [Yy]|"")
+                    "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" set "$DETECTED_EMAIL"
+                    echo -e "  ${GREEN}✓${NC} Spec ownership email set to: $DETECTED_EMAIL"
+                    ;;
+                [Nn])
+                    echo -e "  ${YELLOW}Skipped.${NC} Set later: ~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh set <email>"
+                    ;;
+                *)
+                    "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" set "$REPLY"
+                    echo -e "  ${GREEN}✓${NC} Spec ownership email set to: $REPLY"
+                    ;;
+            esac
+        else
+            echo -n "  Enter your email (or press Enter to skip): "
+            read -r USER_INPUT
+            if [[ -n "$USER_INPUT" ]]; then
+                "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" set "$USER_INPUT"
+                echo -e "  ${GREEN}✓${NC} Spec ownership email set to: $USER_INPUT"
+            else
+                echo -e "  ${YELLOW}Skipped.${NC} Set later: ~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh set <email>"
+            fi
+        fi
+    else
+        # Non-interactive (piped/CI) — detect and set silently
+        if "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" ensure > /dev/null 2>&1; then
+            USER_EMAIL=$("$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" get)
+            echo -e "  User email: ${YELLOW}$USER_EMAIL${NC} ${GREEN}✓${NC}"
+        fi
     fi
 fi
 

@@ -195,11 +195,17 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.51.1
+0.52.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.52.0 (2026-04-21)
+
+- feat(version-bump): add Xcode Info.plist variable detection and fix [`0c4b9bc`]
+- feat(install): interactive email prompt for spec ownership [`dc337a4`]
+- docs(sdd-template): add two-file model checkbox convention note [`e8fc2ac`]
 
 #### v0.51.1 (2026-04-21)
 

@@ -42,6 +42,8 @@ tags: []
 
 ## How (Approach)
 
+> **Two-file model — no checkboxes here.** Tasks below are plain bullets. Checkboxes (`- [ ]` / `- [x]`) belong only in `specs/README.md`, which is the single source of truth for progress tracking. `specs-parse.sh` counts from README only.
+
 ### Phase 1: {Phase Name}
 
 - Task 1
