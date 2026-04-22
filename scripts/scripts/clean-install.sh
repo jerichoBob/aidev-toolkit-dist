@@ -20,8 +20,6 @@ NC='\033[0m'
 CLAUDE_DIR="$HOME/.claude"
 TOOLKIT_DIR="$CLAUDE_DIR/aidev-toolkit"
 COMMANDS_DIR="$CLAUDE_DIR/commands"
-REPO_URL="git@github.com:jerichoBob/aidev-toolkit.git"
-REPO_URL_HTTPS="https://github.com/jerichoBob/aidev-toolkit.git"
 
 echo ""
 echo -e "${BLUE}aidev toolkit Clean Install${NC}"
@@ -34,33 +32,31 @@ if ! command -v git &> /dev/null; then
     exit 1
 fi
 
+# Check for gh CLI (required)
+if ! command -v gh &> /dev/null; then
+    echo -e "${RED}Error: GitHub CLI (gh) is required but not installed.${NC}"
+    echo ""
+    echo "Install it and authenticate:"
+    echo "  brew install gh && gh auth login"
+    exit 1
+fi
+
+# Authenticate if needed (skip if already logged in)
+if ! gh auth status &> /dev/null 2>&1; then
+    echo -e "GitHub CLI is not authenticated. Running gh auth login..."
+    gh auth login
+fi
+
 # Step 1: Clone to temp location first (so we have scripts even if old install is broken)
 echo -n "Fetching fresh copy... "
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf '$TEMP_DIR'" EXIT
 
-if command -v gh &> /dev/null && gh auth status &> /dev/null 2>&1; then
-    if gh repo clone jerichoBob/aidev-toolkit "$TEMP_DIR/aidev-toolkit" -- --quiet 2>/dev/null; then
-        echo -e "${GREEN}✓${NC} (gh)"
-    elif git clone --quiet "$REPO_URL" "$TEMP_DIR/aidev-toolkit" 2>/dev/null; then
-        echo -e "${GREEN}✓${NC} (SSH)"
-    elif git clone --quiet "$REPO_URL_HTTPS" "$TEMP_DIR/aidev-toolkit" 2>/dev/null; then
-        echo -e "${GREEN}✓${NC} (HTTPS)"
-    else
-        echo -e "${RED}✗${NC}"
-        echo -e "${RED}Failed to clone repository.${NC}"
-        exit 1
-    fi
-elif git clone --quiet "$REPO_URL" "$TEMP_DIR/aidev-toolkit" 2>/dev/null; then
-    echo -e "${GREEN}✓${NC} (SSH)"
-elif git clone --quiet "$REPO_URL_HTTPS" "$TEMP_DIR/aidev-toolkit" 2>/dev/null; then
-    echo -e "${GREEN}✓${NC} (HTTPS)"
+if gh repo clone jerichoBob/aidev-toolkit "$TEMP_DIR/aidev-toolkit" -- --quiet 2>/dev/null; then
+    echo -e "${GREEN}✓${NC}"
 else
     echo -e "${RED}✗${NC}"
     echo -e "${RED}Failed to clone repository.${NC}"
-    echo ""
-    echo "For private repos, install GitHub CLI:"
-    echo "  brew install gh && gh auth login"
     exit 1
 fi
 
