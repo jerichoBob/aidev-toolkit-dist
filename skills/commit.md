@@ -142,29 +142,23 @@ Ask user: "Push to origin? (y/n)"
 
 If yes:
 
-   a. Check authentication:
+a. Check authentication:
 
-   ```bash
-   gh auth status 2>&1
-   ```
+```bash
+gh auth status 2>&1
+```
 
-   If `gh` is not authenticated, stop and instruct user to run `gh auth login`.
+If `gh` is not authenticated, stop and instruct user to run `gh auth login`.
 
-   b. Check if a remote is configured:
+b. Check if a remote is configured:
 
-   ```bash
-   git remote get-url origin 2>/dev/null
-   ```
+```bash
+git remote get-url origin 2>/dev/null
+```
 
-   c. **If no remote configured**:
-      - Use `AskUserQuestion` to ask: "No remote configured. Create a new GitHub repo and push? Choose an account/org:" — list orgs from `gh auth status`
-      - Ask for visibility: "Public or private?"
-      - Run: `gh repo create {name} --{visibility} --source . --remote origin --push`
-      - Report: "Created {org}/{name} on GitHub and pushed."
+c. **If no remote configured**: - Use `AskUserQuestion` to ask: "No remote configured. Create a new GitHub repo and push? Choose an account/org:" — list orgs from `gh auth status` - Ask for visibility: "Public or private?" - Run: `gh repo create {name} --{visibility} --source . --remote origin --push` - Report: "Created {org}/{name} on GitHub and pushed."
 
-   d. **If remote is configured**:
-      - If remote URL contains `github.com`: run `git push`
-      - If non-GitHub remote: run `git push`
+d. **If remote is configured**: - If remote URL contains `github.com`: run `git push` - If non-GitHub remote: run `git push`
 
 ---
 
@@ -194,11 +188,11 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Semantic Version Rules
 
-| Highest Type in Batch | Version Bump |
-|-----------------------|--------------|
-| `feat!:` or BREAKING | Major (X.0.0) |
-| `feat:` | Minor (x.Y.0) |
-| Everything else | Patch (x.y.Z) |
+| Highest Type in Batch | Version Bump  |
+| --------------------- | ------------- |
+| `feat!:` or BREAKING  | Major (X.0.0) |
+| `feat:`               | Minor (x.Y.0) |
+| Everything else       | Patch (x.y.Z) |
 
 ---
 

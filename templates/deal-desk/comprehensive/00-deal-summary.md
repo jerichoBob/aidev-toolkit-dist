@@ -62,14 +62,14 @@ Example for 6/10: ██████░░░░
 
 ### Contract Structure
 
-| Element | Details |
-|---------|---------|
-| **Pricing Model** | {{PRICING_MODEL}} |
-| **Per-WO Cap** | {{WO_CAP}} |
-| **Total Maximum** | {{TOTAL_MAX}} |
-| **Monthly Range** | {{MONTHLY_RANGE}} |
-| **Duration** | {{DURATION}} |
-| **Termination** | {{TERMINATION_TERMS}} |
+| Element           | Details               |
+| ----------------- | --------------------- |
+| **Pricing Model** | {{PRICING_MODEL}}     |
+| **Per-WO Cap**    | {{WO_CAP}}            |
+| **Total Maximum** | {{TOTAL_MAX}}         |
+| **Monthly Range** | {{MONTHLY_RANGE}}     |
+| **Duration**      | {{DURATION}}          |
+| **Termination**   | {{TERMINATION_TERMS}} |
 
 ### Workstream Details
 
@@ -83,8 +83,8 @@ Example for 6/10: ██████░░░░
 
 ### Strengths
 
-| Strength | Impact |
-|----------|--------|
+| Strength       | Impact       |
+| -------------- | ------------ |
 | {{STRENGTH_1}} | {{IMPACT_1}} |
 | {{STRENGTH_2}} | {{IMPACT_2}} |
 | {{STRENGTH_3}} | {{IMPACT_3}} |
@@ -92,12 +92,12 @@ Example for 6/10: ██████░░░░
 
 ### Concerns
 
-| Concern | Severity | Mitigation |
-|---------|----------|------------|
-| {{CONCERN_1}} | {{SEV_1}} | {{MIT_1}} |
-| {{CONCERN_2}} | {{SEV_2}} | {{MIT_2}} |
-| {{CONCERN_3}} | {{SEV_3}} | {{MIT_3}} |
-| {{CONCERN_4}} | {{SEV_4}} | {{MIT_4}} |
+| Concern       | Severity  | Mitigation |
+| ------------- | --------- | ---------- |
+| {{CONCERN_1}} | {{SEV_1}} | {{MIT_1}}  |
+| {{CONCERN_2}} | {{SEV_2}} | {{MIT_2}}  |
+| {{CONCERN_3}} | {{SEV_3}} | {{MIT_3}}  |
+| {{CONCERN_4}} | {{SEV_4}} | {{MIT_4}}  |
 
 ### Financial Analysis
 

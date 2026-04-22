@@ -24,12 +24,6 @@ TARGET="${1:-**/*.md}"
 echo "Fixing: $TARGET"
 markdownlint --fix "$TARGET" 2>&1 || true
 
-# Optional prettier prose-wrap pass
-if command -v prettier &>/dev/null; then
-  echo "Running prettier prose-wrap pass..."
-  prettier --prose-wrap always --write "$TARGET" 2>/dev/null || true
-fi
-
 # Final check
 echo ""
 echo "Remaining issues:"

@@ -6,11 +6,11 @@
 
 ## Quick Status
 
-| Spec | Name | Progress | Status |
-|------|------|----------|--------|
-| v1 | [Company Onboarding](spec-v1-company-onboarding.md) | 34/34 | ✅ Complete |
-| v2 | [User Dashboard](spec-v2-user-dashboard.md) | 12/20 | 🔧 In Progress |
-| v3 | [API Integration](spec-v3-api-integration.md) | 0/8 | ✏️ Draft |
+| Spec | Name                                                | Progress | Status         |
+| ---- | --------------------------------------------------- | -------- | -------------- |
+| v1   | [Company Onboarding](spec-v1-company-onboarding.md) | 34/34    | ✅ Complete    |
+| v2   | [User Dashboard](spec-v2-user-dashboard.md)         | 12/20    | 🔧 In Progress |
+| v3   | [API Integration](spec-v3-api-integration.md)       | 0/8      | ✏️ Draft       |
 
 ---
 

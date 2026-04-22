@@ -42,15 +42,15 @@ Identify the project by checking for:
 
 Read key files to extract information:
 
-| File | Extract |
-|------|---------|
-| Package manifest | Name, version, dependencies, scripts |
-| `README.md` | Description, setup instructions |
-| `CLAUDE.md` | AI guidance, architecture notes |
-| Directory structure | Architecture pattern, organization |
-| Config files | `.env.example`, `docker-compose.yml`, etc. |
-| Source entry points | Main files, API routes |
-| Test files | Testing patterns, coverage |
+| File                | Extract                                    |
+| ------------------- | ------------------------------------------ |
+| Package manifest    | Name, version, dependencies, scripts       |
+| `README.md`         | Description, setup instructions            |
+| `CLAUDE.md`         | AI guidance, architecture notes            |
+| Directory structure | Architecture pattern, organization         |
+| Config files        | `.env.example`, `docker-compose.yml`, etc. |
+| Source entry points | Main files, API routes                     |
+| Test files          | Testing patterns, coverage                 |
 
 ### Step 3: Produce Output
 
@@ -88,6 +88,7 @@ Output a full structured report in markdown:
 <Describe the architecture pattern: monolith, microservice, serverless, etc.>
 
 Key directories:
+
 - `<dir>/` - <purpose>
 - `<dir>/` - <purpose>
 
@@ -120,6 +121,7 @@ Environment: <reference .env.example or list key vars>
 <What problem does this solve?>
 
 Key entities:
+
 - **<Entity>**: <description>
 - **<Entity>**: <description>
 ```
@@ -132,17 +134,21 @@ Include everything from standard, plus:
 ## Code Patterns
 
 ### Error Handling
+
 <Describe observed error handling patterns>
 
 ### Logging
+
 <Describe logging approach>
 
 ### Testing
+
 <Describe testing patterns and coverage>
 
 ## Dependency Analysis
 
 Key dependencies and their purposes:
+
 - `<package>` - <why it's used>
 - `<package>` - <why it's used>
 
@@ -153,12 +159,14 @@ Key dependencies and their purposes:
 ## Architecture Decisions
 
 Based on the code, these design decisions were made:
+
 - <Decision 1 and apparent rationale>
 - <Decision 2 and apparent rationale>
 
 ## Technical Debt
 
 Observed issues or inconsistencies:
+
 - <Issue 1>
 - <Issue 2>
 ```

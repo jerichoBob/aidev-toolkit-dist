@@ -48,7 +48,7 @@ Find the row for the specified version.
 **For `set` action:**
 
 - Replace the Owner column value with `$EMAIL`
-- If the spec was owned by someone else, report: "⚠️  Spec was previously owned by {previous_email}"
+- If the spec was owned by someone else, report: "⚠️ Spec was previously owned by {previous_email}"
 
 **For `unset` action:**
 

@@ -7,9 +7,9 @@
 
 ### Applicable Regulations
 
-| Regulation | Applicability | Current Status | Gap |
-|------------|---------------|----------------|-----|
-| {{REGULATION}} | {{WHY_APPLICABLE}} | {{STATUS}} | {{GAP}} |
+| Regulation     | Applicability      | Current Status | Gap     |
+| -------------- | ------------------ | -------------- | ------- |
+| {{REGULATION}} | {{WHY_APPLICABLE}} | {{STATUS}}     | {{GAP}} |
 
 ### Certification Requirements
 
@@ -21,9 +21,9 @@
 
 ### Data Classification
 
-| Data Type | Classification | Handling Requirements |
-|-----------|----------------|----------------------|
-| {{DATA_TYPE}} | {{PII/PHI/PCI/etc}} | {{REQUIREMENTS}} |
+| Data Type     | Classification      | Handling Requirements |
+| ------------- | ------------------- | --------------------- |
+| {{DATA_TYPE}} | {{PII/PHI/PCI/etc}} | {{REQUIREMENTS}}      |
 
 ### Data Flow
 
@@ -48,9 +48,9 @@
 
 **Compliance Requirements:**
 
-| Requirement | Current State | Required State | Effort |
-|-------------|---------------|----------------|--------|
-| {{REQUIREMENT}} | {{CURRENT}} | {{REQUIRED}} | {{EFFORT}} |
+| Requirement     | Current State | Required State | Effort     |
+| --------------- | ------------- | -------------- | ---------- |
+| {{REQUIREMENT}} | {{CURRENT}}   | {{REQUIRED}}   | {{EFFORT}} |
 
 **Recommended Approach:**
 

@@ -2,9 +2,9 @@
 
 ## Quick Status
 
-| Version | Name | Progress | Status |
-|---------|------|----------|--------|
-| v1 | Bad Checkboxes | 1/5 | 🚀 In Progress |
+| Version | Name           | Progress | Status         |
+| ------- | -------------- | -------- | -------------- |
+| v1      | Bad Checkboxes | 1/5      | 🚀 In Progress |
 
 ---
 
@@ -15,7 +15,6 @@
 ### Phase 1: Testing
 
 - [x] Valid checkbox
-- [X] Wrong uppercase X
+- [x] Wrong uppercase X
 - [] Missing space
-- [ ] Too many spaces
--[ ] No space before bracket
+- [ ] Too many spaces -[ ] No space before bracket

@@ -11,12 +11,12 @@
 
 ### Technology Stack
 
-| Layer | Technology | Risk Level | Notes |
-|-------|------------|------------|-------|
-| Frontend | {{TECH}} | {{LEVEL}} | {{NOTES}} |
-| Backend | {{TECH}} | {{LEVEL}} | {{NOTES}} |
-| Database | {{TECH}} | {{LEVEL}} | {{NOTES}} |
-| Integration | {{TECH}} | {{LEVEL}} | {{NOTES}} |
+| Layer       | Technology | Risk Level | Notes     |
+| ----------- | ---------- | ---------- | --------- |
+| Frontend    | {{TECH}}   | {{LEVEL}}  | {{NOTES}} |
+| Backend     | {{TECH}}   | {{LEVEL}}  | {{NOTES}} |
+| Database    | {{TECH}}   | {{LEVEL}}  | {{NOTES}} |
+| Integration | {{TECH}}   | {{LEVEL}}  | {{NOTES}} |
 
 ### Technical Debt Indicators
 
@@ -55,8 +55,8 @@
 
 **Integration Points:**
 
-| System | Direction | Protocol | SLA | Risk |
-|--------|-----------|----------|-----|------|
+| System     | Direction       | Protocol         | SLA     | Risk     |
+| ---------- | --------------- | ---------------- | ------- | -------- |
 | {{SYSTEM}} | {{IN/OUT/BOTH}} | {{API/FILE/etc}} | {{SLA}} | {{RISK}} |
 
 **Dependency Map:**

@@ -34,9 +34,9 @@ Extract the content to remember (everything after the flag, or all of `$ARGUMENT
 
 > Where should I save this?
 
-| Option | Description |
-|--------|-------------|
-| Global | Saved to `~/.claude/CLAUDE.md` — applies to ALL projects |
+| Option         | Description                                                              |
+| -------------- | ------------------------------------------------------------------------ |
+| Global         | Saved to `~/.claude/CLAUDE.md` — applies to ALL projects                 |
 | Project memory | Saved to the project's `memory/MEMORY.md` — applies only to this project |
 
 **If scope = `global`** or user chose Global: proceed to Step 3a.

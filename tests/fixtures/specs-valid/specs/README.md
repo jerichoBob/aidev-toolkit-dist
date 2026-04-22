@@ -2,11 +2,11 @@
 
 ## Quick Status
 
-| Version | Name | Progress | Status |
-|---------|------|----------|--------|
-| v1 | Feature Alpha | 2/3 | 🚀 In Progress |
-| v2 | Feature Beta | 0/2 | ✏️ Draft |
-| v3 | Feature Gamma | 3/3 | ✅ Complete |
+| Version | Name          | Progress | Status         |
+| ------- | ------------- | -------- | -------------- |
+| v1      | Feature Alpha | 2/3      | 🚀 In Progress |
+| v2      | Feature Beta  | 0/2      | ✏️ Draft       |
+| v3      | Feature Gamma | 3/3      | ✅ Complete    |
 
 ---
 

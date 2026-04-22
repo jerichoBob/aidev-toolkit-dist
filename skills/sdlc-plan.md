@@ -28,12 +28,12 @@ Analyze business documents and produce structured analysis for implementation pl
 
 ## Supported Document Types
 
-| Type | Description | Key Extraction Focus |
-|------|-------------|---------------------|
-| **RFQ/RFP** | Request for Quotation/Proposal | Phases, evaluation criteria, cost buckets |
-| **PRD** | Product Requirements Document | Features, user stories, acceptance criteria |
-| **SOW** | Statement of Work | Deliverables, milestones, acceptance |
-| **Technical Spec** | Architecture/design document | Components, integrations, constraints |
+| Type               | Description                    | Key Extraction Focus                        |
+| ------------------ | ------------------------------ | ------------------------------------------- |
+| **RFQ/RFP**        | Request for Quotation/Proposal | Phases, evaluation criteria, cost buckets   |
+| **PRD**            | Product Requirements Document  | Features, user stories, acceptance criteria |
+| **SOW**            | Statement of Work              | Deliverables, milestones, acceptance        |
+| **Technical Spec** | Architecture/design document   | Components, integrations, constraints       |
 
 The skill adapts extraction based on document type but produces **consistent output structure**.
 
@@ -62,12 +62,12 @@ If additional analysis is needed beyond these 6 documents, create appendices num
 
 Read all provided documents thoroughly. Classify the primary document type:
 
-| Signal | Likely Type |
-|--------|-------------|
-| "Request for Quotation/Proposal", evaluation criteria, bid instructions | RFQ/RFP |
-| User stories, personas, feature lists, wireframes | PRD |
-| Deliverables, payment schedule, acceptance procedures | SOW |
-| System diagrams, API specs, data schemas | Technical Spec |
+| Signal                                                                  | Likely Type    |
+| ----------------------------------------------------------------------- | -------------- |
+| "Request for Quotation/Proposal", evaluation criteria, bid instructions | RFQ/RFP        |
+| User stories, personas, feature lists, wireframes                       | PRD            |
+| Deliverables, payment schedule, acceptance procedures                   | SOW            |
+| System diagrams, API specs, data schemas                                | Technical Spec |
 
 Note: A single document may contain elements of multiple types. Extract all relevant information regardless of classification.
 
@@ -93,6 +93,7 @@ Before generating files, present a summary for validation:
 **Document type:** <RFQ/RFP | PRD | SOW | Technical Spec>
 
 **Core data entities:**
+
 - <Entity 1>
 - <Entity 2>
 - <Entity 3>
@@ -160,14 +161,14 @@ Generate each document following the specifications below.
 
 ## Documents
 
-| # | Document | Description |
-|---|----------|-------------|
-| 01 | [Executive Summary](01-executive-summary.md) | Business context and success criteria |
-| 02 | [Requirements Matrix](02-requirements-matrix.md) | Full requirements with priorities |
-| 03 | [Technical Architecture](03-technical-architecture.md) | System design and integrations |
-| 04 | [Data Model](04-data-model.md) | Entities and relationships |
-| 05 | [Complexity Estimate](05-complexity-estimate.md) | Risk factors and open questions |
-| 06 | [Implementation Phases](06-implementation-phases.md) | Sprint breakdown and tasks |
+| #   | Document                                               | Description                           |
+| --- | ------------------------------------------------------ | ------------------------------------- |
+| 01  | [Executive Summary](01-executive-summary.md)           | Business context and success criteria |
+| 02  | [Requirements Matrix](02-requirements-matrix.md)       | Full requirements with priorities     |
+| 03  | [Technical Architecture](03-technical-architecture.md) | System design and integrations        |
+| 04  | [Data Model](04-data-model.md)                         | Entities and relationships            |
+| 05  | [Complexity Estimate](05-complexity-estimate.md)       | Risk factors and open questions       |
+| 06  | [Implementation Phases](06-implementation-phases.md)   | Sprint breakdown and tasks            |
 
 ## Next Steps
 
@@ -178,15 +179,15 @@ Generate each document following the specifications below.
 
 ### 01-executive-summary.md
 
-| Section | Content |
-|---------|---------|
-| **One-Sentence Goal** | Clear statement of what and why |
-| **Business Context** | Problem being solved, market context |
-| **Target Users** | Personas with primary goals |
-| **Success Criteria** | How success will be measured |
-| **Key Constraints** | Timeline, budget, technology, compliance |
+| Section                   | Content                                                  |
+| ------------------------- | -------------------------------------------------------- |
+| **One-Sentence Goal**     | Clear statement of what and why                          |
+| **Business Context**      | Problem being solved, market context                     |
+| **Target Users**          | Personas with primary goals                              |
+| **Success Criteria**      | How success will be measured                             |
+| **Key Constraints**       | Timeline, budget, technology, compliance                 |
 | **Critical Dependencies** | External systems, third parties, client responsibilities |
-| **Risks Summary** | Top 3-5 risks (detailed in 05-complexity-estimate.md) |
+| **Risks Summary**         | Top 3-5 risks (detailed in 05-complexity-estimate.md)    |
 
 ### 02-requirements-matrix.md
 
@@ -194,28 +195,28 @@ Organize requirements by priority, then by category within each priority.
 
 **Priority Framework:**
 
-| Priority | Meaning | Typical Source Language |
-|----------|---------|------------------------|
-| P0 | Essential - system doesn't work without it | "Required", "Must have", "MVP", "Pilot" |
-| P1 | Must-have for target workflows | "Needed for rollout", "Phase 2" |
-| P2 | Important, adds significant value | "Should have", "Post-pilot" |
-| P3 | Nice-to-have, can defer | "Optional", "Future", "Nice-to-have" |
+| Priority | Meaning                                    | Typical Source Language                 |
+| -------- | ------------------------------------------ | --------------------------------------- |
+| P0       | Essential - system doesn't work without it | "Required", "Must have", "MVP", "Pilot" |
+| P1       | Must-have for target workflows             | "Needed for rollout", "Phase 2"         |
+| P2       | Important, adds significant value          | "Should have", "Post-pilot"             |
+| P3       | Nice-to-have, can defer                    | "Optional", "Future", "Nice-to-have"    |
 
 **Table Format:**
 
 ```markdown
 ## P0 - Essential
 
-| ID | Category | Requirement | Acceptance Criteria | Dependencies |
-|----|----------|-------------|---------------------|--------------|
-| R-001 | Auth | User can log in via SSO | SAML 2.0 integration works | Identity provider config |
-| R-002 | Core | ... | ... | ... |
+| ID    | Category | Requirement             | Acceptance Criteria        | Dependencies             |
+| ----- | -------- | ----------------------- | -------------------------- | ------------------------ |
+| R-001 | Auth     | User can log in via SSO | SAML 2.0 integration works | Identity provider config |
+| R-002 | Core     | ...                     | ...                        | ...                      |
 
 ## P1 - Must-Have
 
-| ID | Category | Requirement | Acceptance Criteria | Dependencies |
-|----|----------|-------------|---------------------|--------------|
-| R-010 | Reporting | ... | ... | ... |
+| ID    | Category  | Requirement | Acceptance Criteria | Dependencies |
+| ----- | --------- | ----------- | ------------------- | ------------ |
+| R-010 | Reporting | ...         | ...                 | ...          |
 ```
 
 **Preserve original IDs** from source documents where available. If no IDs exist, generate sequential IDs (R-001, R-002, etc.).
@@ -228,15 +229,15 @@ Organize requirements by priority, then by category within each priority.
 
 ### 03-technical-architecture.md
 
-| Section | Content |
-|---------|---------|
-| **System Overview** | ASCII diagram showing major components |
-| **Component Breakdown** | Table: Component, Responsibility, Technology, Phase |
-| **Integration Points** | External systems, APIs, data flows |
-| **Data Flow Diagram** | ASCII diagram showing how data moves |
-| **Security Architecture** | Auth, authorization, data protection approach |
-| **Infrastructure** | Hosting, scaling, environments |
-| **Technology Stack** | Languages, frameworks, databases (if specified) |
+| Section                   | Content                                             |
+| ------------------------- | --------------------------------------------------- |
+| **System Overview**       | ASCII diagram showing major components              |
+| **Component Breakdown**   | Table: Component, Responsibility, Technology, Phase |
+| **Integration Points**    | External systems, APIs, data flows                  |
+| **Data Flow Diagram**     | ASCII diagram showing how data moves                |
+| **Security Architecture** | Auth, authorization, data protection approach       |
+| **Infrastructure**        | Hosting, scaling, environments                      |
+| **Technology Stack**      | Languages, frameworks, databases (if specified)     |
 
 **ASCII Diagram Example:**
 
@@ -271,15 +272,15 @@ Organize requirements by priority, then by category within each priority.
 
 ### 04-data-model.md
 
-| Section | Content |
-|---------|---------|
-| **Entity Overview** | List of core entities with descriptions |
-| **ER Diagram** | ASCII diagram showing relationships |
-| **Entity Details** | For each entity: attributes, types, constraints |
-| **Relationships** | Cardinality, foreign keys, indexes |
-| **Access Patterns** | Key queries the system will perform |
-| **Multi-tenancy** | Data isolation approach (if applicable) |
-| **Compliance** | Data retention, PII handling, audit requirements |
+| Section             | Content                                          |
+| ------------------- | ------------------------------------------------ |
+| **Entity Overview** | List of core entities with descriptions          |
+| **ER Diagram**      | ASCII diagram showing relationships              |
+| **Entity Details**  | For each entity: attributes, types, constraints  |
+| **Relationships**   | Cardinality, foreign keys, indexes               |
+| **Access Patterns** | Key queries the system will perform              |
+| **Multi-tenancy**   | Data isolation approach (if applicable)          |
+| **Compliance**      | Data retention, PII handling, audit requirements |
 
 **ER Diagram Example:**
 
@@ -306,31 +307,31 @@ Organize requirements by priority, then by category within each priority.
 
 ### 05-complexity-estimate.md
 
-| Section | Content |
-|---------|---------|
-| **Complexity by Module** | Table: Module, Complexity (L/M/H), Reasoning |
-| **Risk Factors** | Technical, schedule, scope, resource risks |
-| **Skill Requirements** | What expertise is needed |
-| **External Dependencies** | Third parties, client responsibilities |
-| **Open Questions** | Items requiring answers before accurate estimation |
-| **Cost Drivers** | What makes this expensive or cheap |
+| Section                   | Content                                            |
+| ------------------------- | -------------------------------------------------- |
+| **Complexity by Module**  | Table: Module, Complexity (L/M/H), Reasoning       |
+| **Risk Factors**          | Technical, schedule, scope, resource risks         |
+| **Skill Requirements**    | What expertise is needed                           |
+| **External Dependencies** | Third parties, client responsibilities             |
+| **Open Questions**        | Items requiring answers before accurate estimation |
+| **Cost Drivers**          | What makes this expensive or cheap                 |
 
 **Complexity Rating Guide:**
 
-| Rating | Meaning | Indicators |
-|--------|---------|------------|
-| Low | Well-understood, standard patterns | CRUD operations, simple integrations |
-| Medium | Some unknowns, moderate complexity | Custom business logic, multiple integrations |
-| High | Significant unknowns, novel approaches | AI/ML, complex algorithms, many integrations |
+| Rating | Meaning                                | Indicators                                   |
+| ------ | -------------------------------------- | -------------------------------------------- |
+| Low    | Well-understood, standard patterns     | CRUD operations, simple integrations         |
+| Medium | Some unknowns, moderate complexity     | Custom business logic, multiple integrations |
+| High   | Significant unknowns, novel approaches | AI/ML, complex algorithms, many integrations |
 
 ### 06-implementation-phases.md
 
-| Section | Content |
-|---------|---------|
-| **Phase Overview** | Table: Phase, Duration, Goals, Key Deliverables |
-| **Phase Details** | For each phase: goals, requirements, tasks, dependencies |
-| **Milestone Markers** | Key decision/review points |
-| **MVP Definition** | What constitutes minimum viable product |
+| Section               | Content                                                  |
+| --------------------- | -------------------------------------------------------- |
+| **Phase Overview**    | Table: Phase, Duration, Goals, Key Deliverables          |
+| **Phase Details**     | For each phase: goals, requirements, tasks, dependencies |
+| **Milestone Markers** | Key decision/review points                               |
+| **MVP Definition**    | What constitutes minimum viable product                  |
 
 **Phase Detail Format:**
 
@@ -338,25 +339,30 @@ Organize requirements by priority, then by category within each priority.
 ## Phase 1: MVP / Pilot
 
 **Goals:**
+
 - <goal 1>
 - <goal 2>
 
 **In-Scope Requirements:** R-001, R-002, R-003, R-010, R-011
 
 **Deliverables:**
+
 - [ ] <deliverable 1>
 - [ ] <deliverable 2>
 
 **Tasks:**
+
 - [ ] Set up project infrastructure
 - [ ] Implement authentication (R-001)
 - [ ] Build core data model
 - [ ] ...
 
 **Dependencies:**
+
 - <what must be ready before this phase>
 
 **Success Criteria / Go-No-Go:**
+
 - <how we know this phase succeeded>
 ```
 
@@ -366,14 +372,14 @@ Organize requirements by priority, then by category within each priority.
 
 When source documents use different terminology, map to P0-P3:
 
-| P0 (Essential) | P1 (Must-Have) | P2 (Important) | P3 (Nice-to-Have) |
-|----------------|----------------|----------------|-------------------|
-| "Required" | "Needed for rollout" | "Should have" | "Optional" |
-| "Must have" | "Phase 2" | "Post-pilot" | "Future" |
-| "MVP" | "Full deployment" | "Enhancement" | "Could have" |
-| "Pilot" | "Scale" | "Improvement" | "Stretch goal" |
-| "Critical" | "High priority" | "Medium priority" | "Low priority" |
-| "Blocking" | "Important" | "Desired" | "Wishlist" |
+| P0 (Essential) | P1 (Must-Have)       | P2 (Important)    | P3 (Nice-to-Have) |
+| -------------- | -------------------- | ----------------- | ----------------- |
+| "Required"     | "Needed for rollout" | "Should have"     | "Optional"        |
+| "Must have"    | "Phase 2"            | "Post-pilot"      | "Future"          |
+| "MVP"          | "Full deployment"    | "Enhancement"     | "Could have"      |
+| "Pilot"        | "Scale"              | "Improvement"     | "Stretch goal"    |
+| "Critical"     | "High priority"      | "Medium priority" | "Low priority"    |
+| "Blocking"     | "Important"          | "Desired"         | "Wishlist"        |
 
 ---
 

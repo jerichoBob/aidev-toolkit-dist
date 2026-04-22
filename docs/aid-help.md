@@ -5,6 +5,7 @@
 ### If `$ARGUMENTS` is empty or blank
 
 <!-- OUTPUT -->
+
 ## aidev toolkit v{VERSION}
 
 ### Toolkit & Documentation
@@ -13,6 +14,13 @@
 - `/aid-update` — Pull latest updates from GitHub
 - `/aid-feedback` — Submit feedback or feature requests
 - `/docs-update` — Update README.md and CLAUDE.md
+
+### Identity & Auth
+
+- `scripts/auth.sh login` — Authenticate via browser-based GitHub OAuth; stores a JWT at `~/.claude/aidev-toolkit/.auth`
+- `scripts/auth.sh status` — Show who is logged in and when the token expires
+- `scripts/auth.sh logout` — Remove stored auth token
+- `scripts/auth.sh refresh` — Silently renew token when within 7 days of expiry
 
 ### Analysis & Review
 
@@ -84,6 +92,7 @@ Run `/aid <command>` for detailed help on any command.
 /sdd-code                Implement the next task
 /sdd-code-phase          Implement entire current phase
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -91,9 +100,11 @@ Run `/aid <command>` for detailed help on any command.
 ### If `$ARGUMENTS` is "update"
 
 <!-- OUTPUT -->
+
 The `/aid update` command has been replaced by `/aid-update`.
 
 Run `/aid-update` to pull the latest toolkit updates.
+
 <!-- /OUTPUT -->
 
 ---
@@ -101,6 +112,7 @@ Run `/aid-update` to pull the latest toolkit updates.
 ### If `$ARGUMENTS` is "inspect"
 
 <!-- OUTPUT -->
+
 ## `/inspect` — Codebase Inspection
 
 **Usage:** `/inspect [--brief | --deep]`
@@ -109,11 +121,11 @@ Analyze the current codebase and provide a structured overview. Think of it as "
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| `--brief` | Essential info only (name, stack, how to run) |
-| *(default)* | Standard report with all sections |
-| `--deep` | Full analysis including code patterns and domain model |
+| Flag        | Description                                            |
+| ----------- | ------------------------------------------------------ |
+| `--brief`   | Essential info only (name, stack, how to run)          |
+| _(default)_ | Standard report with all sections                      |
+| `--deep`    | Full analysis including code patterns and domain model |
 
 **Detail Levels:**
 
@@ -128,6 +140,7 @@ Analyze the current codebase and provide a structured overview. Think of it as "
 /inspect --brief    Quick reference for context switching
 /inspect --deep     Deep dive for new team members
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -135,6 +148,7 @@ Analyze the current codebase and provide a structured overview. Think of it as "
 ### If `$ARGUMENTS` is "arch-review"
 
 <!-- OUTPUT -->
+
 ## `/arch-review` — Architecture Principles Validation
 
 **Usage:** `/arch-review [options]`
@@ -143,25 +157,26 @@ Validate the codebase against aidev toolkit architectural principles and documen
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| `--dry-run` | Report findings without writing to review files |
-| `--principle <id>` | Check only a specific principle (AP-001, AP-002, etc.) |
-| `--fix` | Attempt to auto-fix simple violations |
-| `--status` | Show violation history from previous reviews |
-| `--diff` | Show new/fixed violations since last review |
-| `--scope <path>` | Limit review to files under a specific path |
-| `--ignore <pattern>` | Exclude paths or violation IDs (comma-separated) |
-| `--format json` | Machine-readable JSON output for CI |
+| Flag                 | Description                                            |
+| -------------------- | ------------------------------------------------------ |
+| `--dry-run`          | Report findings without writing to review files        |
+| `--principle <id>`   | Check only a specific principle (AP-001, AP-002, etc.) |
+| `--fix`              | Attempt to auto-fix simple violations                  |
+| `--status`           | Show violation history from previous reviews           |
+| `--diff`             | Show new/fixed violations since last review            |
+| `--scope <path>`     | Limit review to files under a specific path            |
+| `--ignore <pattern>` | Exclude paths or violation IDs (comma-separated)       |
+| `--format json`      | Machine-readable JSON output for CI                    |
 
 **Principles Checked:**
 
-| ID | Name | Covers |
-|----|------|--------|
-| AP-001 | Security by Default | Input validation, secrets, auth, injection |
-| AP-002 | Observable Systems | Structured logs, correlation IDs, health checks |
-| AP-003 | Intentional Error Handling | No silent failures, consistent errors |
-| AP-004 | Test Critical Paths | Test coverage, testable architecture |
+| ID     | Name                       | Covers                                          |
+| ------ | -------------------------- | ----------------------------------------------- |
+| AP-001 | Security by Default        | Input validation, secrets, auth, injection      |
+| AP-002 | Observable Systems         | Structured logs, correlation IDs, health checks |
+| AP-003 | Intentional Error Handling | No silent failures, consistent errors           |
+| AP-004 | Test Critical Paths        | Test coverage, testable architecture            |
+| AP-005 | Security-First Spec Design | Mandatory AuthN/AuthZ/audit section in every spec |
 
 Custom project-level principles can be added in `.aid/principles/` (same YAML frontmatter format).
 
@@ -178,20 +193,20 @@ Console shows pass/fail for each check with violation IDs and details. Results a
 
 **Exit Codes (CI):**
 
-| Code | Meaning |
-|------|---------|
-| 0 | Clean — no violations |
-| 1 | Warnings — only recommended-severity violations |
-| 2 | Failures — required-severity violations found |
+| Code | Meaning                                         |
+| ---- | ----------------------------------------------- |
+| 0    | Clean — no violations                           |
+| 1    | Warnings — only recommended-severity violations |
+| 2    | Failures — required-severity violations found   |
 
 **Config File:**
 
 Persistent settings in `.aid/arch-review.yaml`:
 
 ```yaml
-scope: ["src/"]         # Default scope paths
-ignore: ["vendor/"]     # Default ignore patterns
-retention_days: 90      # Auto-prune old reviews
+scope: ["src/"] # Default scope paths
+ignore: ["vendor/"] # Default ignore patterns
+retention_days: 90 # Auto-prune old reviews
 ```
 
 **Examples:**
@@ -207,6 +222,7 @@ retention_days: 90      # Auto-prune old reviews
 /arch-review --ignore vendor/    Skip vendor directory
 /arch-review --format json       CI-friendly JSON output
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -214,6 +230,7 @@ retention_days: 90      # Auto-prune old reviews
 ### If `$ARGUMENTS` is "commit"
 
 <!-- OUTPUT -->
+
 ## `/commit` — Smart Commit
 
 **Usage:** `/commit [version]`
@@ -222,8 +239,8 @@ Analyze changes, group them logically, commit each group with conventional commi
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
+| Argument  | Description                                                       |
+| --------- | ----------------------------------------------------------------- |
 | `version` | Optional explicit version (e.g., 1.2.3) instead of auto-increment |
 
 **Workflow:**
@@ -238,15 +255,15 @@ Analyze changes, group them logically, commit each group with conventional commi
 
 **Commit Types:**
 
-| Type | Description | Version Bump |
-|------|-------------|-------------|
-| `feat` | New feature | minor |
-| `fix` | Bug fix | patch |
-| `docs` | Documentation | patch |
-| `refactor` | Code restructuring | patch |
-| `test` | Test changes | patch |
-| `chore` | Maintenance | patch |
-| `feat!` | Breaking change | major |
+| Type       | Description        | Version Bump |
+| ---------- | ------------------ | ------------ |
+| `feat`     | New feature        | minor        |
+| `fix`      | Bug fix            | patch        |
+| `docs`     | Documentation      | patch        |
+| `refactor` | Code restructuring | patch        |
+| `test`     | Test changes       | patch        |
+| `chore`    | Maintenance        | patch        |
+| `feat!`    | Breaking change    | major        |
 
 **Examples:**
 
@@ -254,6 +271,7 @@ Analyze changes, group them logically, commit each group with conventional commi
 /commit              Auto-analyze and version bump
 /commit 2.0.0        Force specific version
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -261,6 +279,7 @@ Analyze changes, group them logically, commit each group with conventional commi
 ### If `$ARGUMENTS` is "commit-push"
 
 <!-- OUTPUT -->
+
 ## `/commit-push` — Smart Commit & Push
 
 **Usage:** `/commit-push [version]`
@@ -269,8 +288,8 @@ Same as `/commit` but automatically pushes after committing. Does not ask for co
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
+| Argument  | Description                                                       |
+| --------- | ----------------------------------------------------------------- |
 | `version` | Optional explicit version (e.g., 1.2.3) instead of auto-increment |
 
 See `/aid commit` for full documentation.
@@ -281,6 +300,7 @@ See `/aid commit` for full documentation.
 /commit-push         Commit and push with auto-versioning
 /commit-push 1.5.0   Commit with specific version and push
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -288,6 +308,7 @@ See `/aid commit` for full documentation.
 ### If `$ARGUMENTS` is "code-stats"
 
 <!-- OUTPUT -->
+
 ## `/code-stats` — Code Statistics
 
 **Usage:** `/code-stats [path]`
@@ -296,9 +317,9 @@ Count files and lines of code using cloc.
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
-| `path` | Optional directory to analyze (default: current directory) |
+| Argument | Description                                                |
+| -------- | ---------------------------------------------------------- |
+| `path`   | Optional directory to analyze (default: current directory) |
 
 **Output includes:**
 
@@ -319,6 +340,7 @@ Requires `cloc` to be installed:
 /code-stats          Analyze current directory
 /code-stats src/     Analyze specific directory
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -326,6 +348,7 @@ Requires `cloc` to be installed:
 ### If `$ARGUMENTS` is "lint"
 
 <!-- OUTPUT -->
+
 ## `/lint` — Markdown Linter
 
 **Usage:** `/lint [target]`
@@ -334,12 +357,12 @@ Lint and auto-fix markdown files using markdownlint.
 
 **Arguments:**
 
-| Target | Description |
-|--------|-------------|
-| *(empty)* | Lint all .md files in current directory |
-| `file` | Lint specific file (e.g., `/lint README.md`) |
+| Target      | Description                                           |
+| ----------- | ----------------------------------------------------- |
+| _(empty)_   | Lint all .md files in current directory               |
+| `file`      | Lint specific file (e.g., `/lint README.md`)          |
 | `directory` | Lint all .md files in directory (e.g., `/lint docs/`) |
-| `glob` | Lint matching files (e.g., `/lint "specs/*.md"`) |
+| `glob`      | Lint matching files (e.g., `/lint "specs/*.md"`)      |
 
 **Workflow:**
 
@@ -351,13 +374,13 @@ Lint and auto-fix markdown files using markdownlint.
 
 **Common Rules Fixed:**
 
-| Rule | Description |
-|------|-------------|
-| MD022 | Headings need blank lines before/after |
+| Rule  | Description                               |
+| ----- | ----------------------------------------- |
+| MD022 | Headings need blank lines before/after    |
 | MD031 | Code blocks need blank lines before/after |
-| MD032 | Lists need blank lines before/after |
-| MD040 | Code blocks need language specifier |
-| MD047 | Files should end with newline |
+| MD032 | Lists need blank lines before/after       |
+| MD040 | Code blocks need language specifier       |
+| MD047 | Files should end with newline             |
 
 **aidev toolkit Enhancement:**
 
@@ -382,6 +405,7 @@ aidev toolkit config disables overly strict rules (line length, inline HTML). Pr
 /lint docs/          Lint all markdown in docs/
 /lint "specs/*.md"   Lint matching glob pattern
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -389,9 +413,11 @@ aidev toolkit config disables overly strict rules (line length, inline HTML). Pr
 ### If `$ARGUMENTS` is "risk-analysis"
 
 <!-- OUTPUT -->
+
 The `/risk-analysis` command has been renamed to `/deal-desk`.
 
 Run `/deal-desk ./docs` to analyze deal documents for risks. Run `/aid deal-desk` for full documentation.
+
 <!-- /OUTPUT -->
 
 ---
@@ -399,6 +425,7 @@ Run `/deal-desk ./docs` to analyze deal documents for risks. Run `/aid deal-desk
 ### If `$ARGUMENTS` is "deal-desk"
 
 <!-- OUTPUT -->
+
 ## `/deal-desk` — Deal Qualification & Risk Assessment
 
 **Usage:** `/deal-desk [input] [options]`
@@ -409,29 +436,29 @@ Analyze project documents or codebase to assess risks and provide a Bid/No-Bid r
 
 **Input Modes:**
 
-| Input | Description |
-|-------|-------------|
-| `<directory>` | Analyze all documents in directory |
-| `@<document>` | Analyze a single document |
-| `--codebase` | Analyze current project code health |
+| Input         | Description                         |
+| ------------- | ----------------------------------- |
+| `<directory>` | Analyze all documents in directory  |
+| `@<document>` | Analyze a single document           |
+| `--codebase`  | Analyze current project code health |
 
 **Perspective** (important):
 
-| Flag | Description |
-|------|-------------|
+| Flag            | Description                                            |
+| --------------- | ------------------------------------------------------ |
 | `--side vendor` | We are SELLING (default) — our protections = strengths |
-| `--side buyer` | We are BUYING — vendor protections = risks for us |
+| `--side buyer`  | We are BUYING — vendor protections = risks for us      |
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| `--quick` | Deal score and summary only (no output files) |
-| `--deep` | Comprehensive analysis with all 10 dimensions |
-| `--comprehensive` | Rich format with visual scores, governance |
-| `--category <cat>` | Focus on specific category |
-| `--output <dir>` | Custom output directory (default: `./deal-desk-output/`) |
-| `--pdf` | Generate PDF report in addition to markdown |
+| Flag               | Description                                              |
+| ------------------ | -------------------------------------------------------- |
+| `--quick`          | Deal score and summary only (no output files)            |
+| `--deep`           | Comprehensive analysis with all 10 dimensions            |
+| `--comprehensive`  | Rich format with visual scores, governance               |
+| `--category <cat>` | Focus on specific category                               |
+| `--output <dir>`   | Custom output directory (default: `./deal-desk-output/`) |
+| `--pdf`            | Generate PDF report in addition to markdown              |
 
 **Depth Levels:**
 
@@ -441,40 +468,40 @@ Analyze project documents or codebase to assess risks and provide a Bid/No-Bid r
 
 **Risk Categories:**
 
-| ID | Category | Covers |
-|----|----------|--------|
-| R1 | Technical | Complexity, dependencies, integration |
-| R2 | Schedule | Timeline, milestones, critical path |
-| R3 | Scope | Requirements gaps, ambiguity, creep |
-| R4 | Resource | Skills, availability, team capacity |
-| R5 | Financial | Cost drivers, budget, cash flow |
-| R6 | Compliance | Regulatory, security, data protection |
-| R7 | Integration | External systems, APIs, third-parties |
-| R8 | Operational | Day-2, support, incidents, SLAs |
-| R9 | Organizational | Change management, adoption, training |
+| ID  | Category        | Covers                                   |
+| --- | --------------- | ---------------------------------------- |
+| R1  | Technical       | Complexity, dependencies, integration    |
+| R2  | Schedule        | Timeline, milestones, critical path      |
+| R3  | Scope           | Requirements gaps, ambiguity, creep      |
+| R4  | Resource        | Skills, availability, team capacity      |
+| R5  | Financial       | Cost drivers, budget, cash flow          |
+| R6  | Compliance      | Regulatory, security, data protection    |
+| R7  | Integration     | External systems, APIs, third-parties    |
+| R8  | Operational     | Day-2, support, incidents, SLAs          |
+| R9  | Organizational  | Change management, adoption, training    |
 | R10 | Market/Business | Adoption, competition, value proposition |
 
 **Deal Score (1-10):**
 
-| Score | Verdict | Meaning |
-|-------|---------|---------|
-| 8-10 | GO | Low risk, well-defined, good fit |
-| 5-7 | CONDITIONAL GO | Manageable risks, needs clarification |
-| 3-4 | CAUTION | Significant risks, consider carefully |
-| 1-2 | NO-GO | High risk, unclear scope, poor fit |
+| Score | Verdict        | Meaning                               |
+| ----- | -------------- | ------------------------------------- |
+| 8-10  | GO             | Low risk, well-defined, good fit      |
+| 5-7   | CONDITIONAL GO | Manageable risks, needs clarification |
+| 3-4   | CAUTION        | Significant risks, consider carefully |
+| 1-2   | NO-GO          | High risk, unclear scope, poor fit    |
 
 **Output:**
 
 Creates `deal-desk-output/` directory with:
 
-| File | Contents |
-|------|----------|
-| `README.md` | Summary with deal score and links |
-| `00-deal-summary.md` | Deal score and recommendation |
-| `01-risk-register.md` | Full risk register table |
-| `02-risk-heatmap.md` | Visual likelihood x impact grid |
-| `03-mitigations.md` | Mitigation strategies |
-| `source-docs/` | Copies of input documents |
+| File                  | Contents                          |
+| --------------------- | --------------------------------- |
+| `README.md`           | Summary with deal score and links |
+| `00-deal-summary.md`  | Deal score and recommendation     |
+| `01-risk-register.md` | Full risk register table          |
+| `02-risk-heatmap.md`  | Visual likelihood x impact grid   |
+| `03-mitigations.md`   | Mitigation strategies             |
+| `source-docs/`        | Copies of input documents         |
 
 `--deep` adds files `04` through `09`. Also persists to `.aid/risks.yml` for tracking.
 
@@ -490,6 +517,7 @@ Creates `deal-desk-output/` directory with:
 /deal-desk --category tech          Focus on technical risks
 /deal-desk ./docs --pdf             Generate PDF report
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -497,6 +525,7 @@ Creates `deal-desk-output/` directory with:
 ### If `$ARGUMENTS` is "sdlc-plan"
 
 <!-- OUTPUT -->
+
 ## `/sdlc-plan` — Business Document Analysis
 
 **Usage:** `/sdlc-plan @document [options]`
@@ -505,39 +534,39 @@ Analyze business documents (RFQ, RFP, PRD, SOW) and produce structured analysis 
 
 **Input:**
 
-| Input | Description |
-|-------|-------------|
-| `@<document>` | Analyze a document (PDF, DOCX) |
+| Input         | Description                      |
+| ------------- | -------------------------------- |
+| `@<document>` | Analyze a document (PDF, DOCX)   |
 | `@doc1 @doc2` | Analyze with supplementary files |
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
+| Flag             | Description                                       |
+| ---------------- | ------------------------------------------------- |
 | `--output <dir>` | Custom output directory (default: `./sdlc-plan/`) |
 
 **Supported Document Types:**
 
-| Type | Description |
-|------|-------------|
-| RFQ/RFP | Request for Quotation/Proposal |
-| PRD | Product Requirements Document |
-| SOW | Statement of Work |
-| Tech Spec | Architecture/design document |
+| Type      | Description                    |
+| --------- | ------------------------------ |
+| RFQ/RFP   | Request for Quotation/Proposal |
+| PRD       | Product Requirements Document  |
+| SOW       | Statement of Work              |
+| Tech Spec | Architecture/design document   |
 
 **Output Structure:**
 
 Creates `sdlc-plan/` directory with:
 
-| File | Contents |
-|------|----------|
-| `README.md` | Index and summary |
-| `01-executive-summary.md` | Business context, goals, success criteria |
-| `02-requirements-matrix.md` | Requirements with IDs and priorities |
-| `03-technical-architecture.md` | System design and integrations |
-| `04-data-model.md` | Entities and relationships |
-| `05-complexity-estimate.md` | Risk factors and open questions |
-| `06-implementation-phases.md` | Sprint/phase breakdown |
+| File                           | Contents                                  |
+| ------------------------------ | ----------------------------------------- |
+| `README.md`                    | Index and summary                         |
+| `01-executive-summary.md`      | Business context, goals, success criteria |
+| `02-requirements-matrix.md`    | Requirements with IDs and priorities      |
+| `03-technical-architecture.md` | System design and integrations            |
+| `04-data-model.md`             | Entities and relationships                |
+| `05-complexity-estimate.md`    | Risk factors and open questions           |
+| `06-implementation-phases.md`  | Sprint/phase breakdown                    |
 
 **Workflow:**
 
@@ -554,6 +583,7 @@ Creates `sdlc-plan/` directory with:
 /sdlc-plan @rfq.pdf @reqs.xlsx   Analyze with supplementary files
 /sdlc-plan @sow.pdf --output ./project-analysis/
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -561,9 +591,11 @@ Creates `sdlc-plan/` directory with:
 ### If `$ARGUMENTS` is "analyze"
 
 <!-- OUTPUT -->
+
 The `/analyze` command has been renamed to `/sdlc-plan`.
 
 Run `/sdlc-plan @document` to analyze business documents. Run `/aid sdlc-plan` for full documentation.
+
 <!-- /OUTPUT -->
 
 ---
@@ -571,6 +603,7 @@ Run `/sdlc-plan @document` to analyze business documents. Run `/aid sdlc-plan` f
 ### If `$ARGUMENTS` is "should-i-trust-it"
 
 <!-- OUTPUT -->
+
 ## `/should-i-trust-it` — Skill Security Verification
 
 **Usage:** `/should-i-trust-it <skill> [options]`
@@ -579,27 +612,27 @@ Analyze a Claude Code skill file for potentially malicious patterns before insta
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
-| `<path>` | Local path to skill markdown file |
-| `<url>` | URL to raw skill content (will fetch and analyze) |
+| Argument | Description                                       |
+| -------- | ------------------------------------------------- |
+| `<path>` | Local path to skill markdown file                 |
+| `<url>`  | URL to raw skill content (will fetch and analyze) |
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| `--detailed` | Show full skill content with suspicious lines highlighted |
-| `--json` | Output structured JSON for automation |
-| `--force` | Acknowledge CRITICAL risk (required to proceed with blocked skills) |
+| Flag         | Description                                                         |
+| ------------ | ------------------------------------------------------------------- |
+| `--detailed` | Show full skill content with suspicious lines highlighted           |
+| `--json`     | Output structured JSON for automation                               |
+| `--force`    | Acknowledge CRITICAL risk (required to proceed with blocked skills) |
 
 **Risk Levels:**
 
-| Level | Meaning |
-|-------|---------|
-| LOW | Safe to use — matches trusted aidev-toolkit patterns |
-| MEDIUM | Review recommended — has some unusual patterns |
-| HIGH | Manual review required — suspicious patterns found |
-| CRITICAL | Do not install — likely malicious |
+| Level    | Meaning                                              |
+| -------- | ---------------------------------------------------- |
+| LOW      | Safe to use — matches trusted aidev-toolkit patterns |
+| MEDIUM   | Review recommended — has some unusual patterns       |
+| HIGH     | Manual review required — suspicious patterns found   |
+| CRITICAL | Do not install — likely malicious                    |
 
 **Pattern Categories Checked:**
 
@@ -617,6 +650,7 @@ Analyze a Claude Code skill file for potentially malicious patterns before insta
 /should-i-trust-it https://raw.githubusercontent.com/.../skill.md
 /should-i-trust-it ./suspicious.md --detailed
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -624,6 +658,7 @@ Analyze a Claude Code skill file for potentially malicious patterns before insta
 ### If `$ARGUMENTS` is "aid-feedback" or "feedback"
 
 <!-- OUTPUT -->
+
 ## `/aid-feedback` — Submit Feedback / Ingest Feedback
 
 **Usage:** `/aid-feedback [--ingest]`
@@ -634,19 +669,19 @@ Submit feedback to the aidev toolkit team via GitHub Issues, or (for maintainers
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
-| *(empty)* | Submit feedback interactively — or trigger ingestion mode if inside aidev-toolkit repo |
-| `--ingest` | Force ingestion mode: read open feedback issues and create specs |
+| Argument   | Description                                                                            |
+| ---------- | -------------------------------------------------------------------------------------- |
+| _(empty)_  | Submit feedback interactively — or trigger ingestion mode if inside aidev-toolkit repo |
+| `--ingest` | Force ingestion mode: read open feedback issues and create specs                       |
 
 **Feedback Types (submission mode):**
 
-| Type | Description |
-|------|-------------|
+| Type            | Description                       |
+| --------------- | --------------------------------- |
 | Feature Request | Suggest a new skill or capability |
-| Bug Report | Something isn't working correctly |
-| Improvement | Enhance an existing skill |
-| Documentation | Docs unclear or missing |
+| Bug Report      | Something isn't working correctly |
+| Improvement     | Enhance an existing skill         |
+| Documentation   | Docs unclear or missing           |
 
 **Submission Workflow:**
 
@@ -675,6 +710,7 @@ Ingestion mode triggers automatically when run from inside the aidev-toolkit pro
 /aid-feedback              Submit feedback (or ingest if inside aidev-toolkit)
 /aid-feedback --ingest     Force ingestion mode
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -682,6 +718,7 @@ Ingestion mode triggers automatically when run from inside the aidev-toolkit pro
 ### If `$ARGUMENTS` is "docs-update"
 
 <!-- OUTPUT -->
+
 ## `/docs-update` — Documentation Update
 
 **Usage:** `/docs-update [--deep]`
@@ -690,10 +727,10 @@ Update README.md and CLAUDE.md to reflect the current codebase state.
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
-| *(empty)* | Update top-level README.md and CLAUDE.md only |
-| `--deep` | Scan ALL README.md and CLAUDE.md in repo, plus run deep audit |
+| Argument  | Description                                                   |
+| --------- | ------------------------------------------------------------- |
+| _(empty)_ | Update top-level README.md and CLAUDE.md only                 |
+| `--deep`  | Scan ALL README.md and CLAUDE.md in repo, plus run deep audit |
 
 **What It Does:**
 
@@ -718,11 +755,11 @@ Update README.md and CLAUDE.md to reflect the current codebase state.
 
 **`--deep` Audit (in addition to recursive file scan):**
 
-| Check | What It Does |
-|-------|-------------|
-| Spec cross-reference | Reads `specs/README.md`, updates stale spec rows in project README, adds missing specs |
+| Check                   | What It Does                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------- |
+| Spec cross-reference    | Reads `specs/README.md`, updates stale spec rows in project README, adds missing specs   |
 | Tech stack verification | Compares version claims in README against `package.json`/`go.mod`/etc.; flags mismatches |
-| Path verification | Checks that file paths referenced in README actually exist on disk; flags broken paths |
+| Path verification       | Checks that file paths referenced in README actually exist on disk; flags broken paths   |
 
 **Examples:**
 
@@ -730,6 +767,7 @@ Update README.md and CLAUDE.md to reflect the current codebase state.
 /docs-update           Update top-level docs only
 /docs-update --deep    Update all docs + run deep audit (spec sync, version check, path check)
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -737,6 +775,7 @@ Update README.md and CLAUDE.md to reflect the current codebase state.
 ### If `$ARGUMENTS` is "screenshots"
 
 <!-- OUTPUT -->
+
 ## `/screenshots` — Load Recent Screenshots
 
 **Usage:** `/screenshots [N]`
@@ -745,10 +784,10 @@ Load the N most recent macOS screenshots from ~/Desktop into context. Claude nat
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
-| *(empty)* | Load the most recent screenshot (default: 1) |
-| `N` | Load the N most recent screenshots |
+| Argument  | Description                                  |
+| --------- | -------------------------------------------- |
+| _(empty)_ | Load the most recent screenshot (default: 1) |
+| `N`       | Load the N most recent screenshots           |
 
 **How It Works:**
 
@@ -763,6 +802,7 @@ Load the N most recent macOS screenshots from ~/Desktop into context. Claude nat
 /screenshots 3           Load the last 3 screenshots
 /screenshots 10          Load the last 10 screenshots
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -770,6 +810,7 @@ Load the N most recent macOS screenshots from ~/Desktop into context. Claude nat
 ### If `$ARGUMENTS` is "sdd-specs"
 
 <!-- OUTPUT -->
+
 ## `/sdd-specs` — Specs Status Overview
 
 **Usage:** `/sdd-specs [--stats] [--deep] [--verify]`
@@ -778,12 +819,12 @@ Display specs status with optional token usage metrics and detailed validation.
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| *(default)* | Fast path: status table only |
-| `--stats` | Show token usage columns and cost estimates |
-| `--deep` | Deep scan: staleness detection and validation |
-| `--verify` | Verify all tasks against codebase (implies --deep) |
+| Flag        | Description                                        |
+| ----------- | -------------------------------------------------- |
+| _(default)_ | Fast path: status table only                       |
+| `--stats`   | Show token usage columns and cost estimates        |
+| `--deep`    | Deep scan: staleness detection and validation      |
+| `--verify`  | Verify all tasks against codebase (implies --deep) |
 
 **Paths:**
 
@@ -831,6 +872,7 @@ When specs are implemented with token tracking enabled:
 /sdd-specs --deep        Full scan with staleness report
 /sdd-specs --verify      Full verification against code
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -838,6 +880,7 @@ When specs are implemented with token tracking enabled:
 ### If `$ARGUMENTS` is "sdd-init"
 
 <!-- OUTPUT -->
+
 ## `/sdd-init` — Initialize SDD for a New Project
 
 **Usage:** `/sdd-init [--force]`
@@ -852,10 +895,10 @@ Scaffold the `specs/` directory so it's ready for Spec-Driven Development. This 
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| *(default)* | Safe/idempotent — skips existing files |
-| `--force` | Overwrite existing `specs/README.md` (prints warning first) |
+| Flag        | Description                                                 |
+| ----------- | ----------------------------------------------------------- |
+| _(default)_ | Safe/idempotent — skips existing files                      |
+| `--force`   | Overwrite existing `specs/README.md` (prints warning first) |
 
 **Idempotent:** Safe to run on existing projects. Existing files are skipped unless `--force` is passed.
 
@@ -865,6 +908,7 @@ Scaffold the `specs/` directory so it's ready for Spec-Driven Development. This 
 /sdd-init           Initialize specs/ in a new project
 /sdd-init --force   Reinitialize (overwrites README.md)
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -872,6 +916,7 @@ Scaffold the `specs/` directory so it's ready for Spec-Driven Development. This 
 ### If `$ARGUMENTS` is "sdd-spec-status"
 
 <!-- OUTPUT -->
+
 ## `/sdd-spec-status` — Phase-by-Phase Spec Progress
 
 **Usage:** `/sdd-spec-status <vN>`
@@ -891,11 +936,11 @@ v21: Feedback Ingestion & Spec Generation — 3/15
 
 **Status indicators:**
 
-| Emoji | Meaning |
-|-------|---------|
-| ✅ | All tasks complete |
-| 🔧 | In progress (some tasks done) |
-| ⬜ | Not started |
+| Emoji | Meaning                       |
+| ----- | ----------------------------- |
+| ✅    | All tasks complete            |
+| 🔧    | In progress (some tasks done) |
+| ⬜    | Not started                   |
 
 **Examples:**
 
@@ -903,6 +948,7 @@ v21: Feedback Ingestion & Spec Generation — 3/15
 /sdd-spec-status v21     Show phase breakdown for v21
 /sdd-spec-status 17      Version number without "v" also works
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -910,6 +956,7 @@ v21: Feedback Ingestion & Spec Generation — 3/15
 ### If `$ARGUMENTS` is "sdd-specs-update"
 
 <!-- OUTPUT -->
+
 ## `/sdd-specs-update` — Sync SDD Infrastructure
 
 **Usage:** `/sdd-specs-update [--force]`
@@ -918,10 +965,10 @@ Initialize or sync a project with SDD methodology infrastructure.
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| *(default)* | Add missing structure only |
-| `--force` | Also update existing methodology section in CLAUDE.md |
+| Flag        | Description                                           |
+| ----------- | ----------------------------------------------------- |
+| _(default)_ | Add missing structure only                            |
+| `--force`   | Also update existing methodology section in CLAUDE.md |
 
 **What It Creates/Syncs:**
 
@@ -938,6 +985,7 @@ Initialize or sync a project with SDD methodology infrastructure.
 /sdd-specs-update          Initialize SDD in a project
 /sdd-specs-update --force  Force-update methodology section
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -945,6 +993,7 @@ Initialize or sync a project with SDD methodology infrastructure.
 ### If `$ARGUMENTS` is "sdd-spec"
 
 <!-- OUTPUT -->
+
 ## `/sdd-spec` — Create New Specification
 
 **Usage:** `/sdd-spec <description>`
@@ -953,8 +1002,8 @@ Create a new specification document from a description.
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
+| Argument      | Description                               |
+| ------------- | ----------------------------------------- |
 | `description` | What the spec is about (natural language) |
 
 **Workflow:**
@@ -971,6 +1020,7 @@ Create a new specification document from a description.
 /sdd-spec implement user authentication with OAuth
 /sdd-spec refactor database layer for connection pooling
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -978,6 +1028,7 @@ Create a new specification document from a description.
 ### If `$ARGUMENTS` is "sdd-next"
 
 <!-- OUTPUT -->
+
 ## `/sdd-next` — Show Next Task
 
 **Usage:** `/sdd-next`
@@ -989,6 +1040,7 @@ Show the next task that would be implemented if `/sdd-code` is run. Displays the
 ```text
 /sdd-next                Show what's next to implement
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -996,6 +1048,7 @@ Show the next task that would be implemented if `/sdd-code` is run. Displays the
 ### If `$ARGUMENTS` is "sdd-spec-prioritize"
 
 <!-- OUTPUT -->
+
 ## `/sdd-spec-prioritize` — Prioritize Next Specs
 
 **Usage:** `/sdd-spec-prioritize`
@@ -1008,6 +1061,7 @@ Analyze all active (incomplete) specs and recommend the top N to focus on next (
 /sdd-spec-prioritize          Show top 5 specs to work on next
 /sdd-spec-prioritize 10       Show top 10 specs
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1015,6 +1069,7 @@ Analyze all active (incomplete) specs and recommend the top N to focus on next (
 ### If `$ARGUMENTS` is "sdd-next-phase"
 
 <!-- OUTPUT -->
+
 ## `/sdd-next-phase` — Show Next Phase
 
 **Usage:** `/sdd-next-phase`
@@ -1026,6 +1081,7 @@ Show all tasks in the current working phase with their completion status and pro
 ```text
 /sdd-next-phase          Show all tasks in current phase
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1033,6 +1089,7 @@ Show all tasks in the current working phase with their completion status and pro
 ### If `$ARGUMENTS` is "sdd-code"
 
 <!-- OUTPUT -->
+
 ## `/sdd-code` — Implement Next Task
 
 **Usage:** `/sdd-code`
@@ -1054,6 +1111,7 @@ Implement the single next unchecked task from the specs checklist. Reads the spe
 ```text
 /sdd-code                Implement the next task
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1061,6 +1119,7 @@ Implement the single next unchecked task from the specs checklist. Reads the spe
 ### If `$ARGUMENTS` is "sdd-code-phase"
 
 <!-- OUTPUT -->
+
 ## `/sdd-code-phase` — Implement Current Phase
 
 **Usage:** `/sdd-code-phase`
@@ -1082,6 +1141,7 @@ Implement all remaining tasks in the current phase without stopping. Works throu
 ```text
 /sdd-code-phase          Implement all tasks in current phase
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1089,6 +1149,7 @@ Implement all remaining tasks in the current phase without stopping. Works throu
 ### If `$ARGUMENTS` is "sdd-code-spec"
 
 <!-- OUTPUT -->
+
 ## `/sdd-code-spec` — Implement Complete Spec
 
 **Usage:** `/sdd-code-spec [version]`
@@ -1097,8 +1158,8 @@ Implement all remaining phases and tasks in a spec without stopping.
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
+| Argument  | Description                                                                  |
+| --------- | ---------------------------------------------------------------------------- |
 | `version` | Optional spec version (e.g., `v3`). Defaults to first In Progress/Draft spec |
 
 **Workflow:**
@@ -1117,6 +1178,7 @@ Implement all remaining phases and tasks in a spec without stopping.
 /sdd-code-spec           Implement first active spec
 /sdd-code-spec v3        Implement spec v3 specifically
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1124,6 +1186,7 @@ Implement all remaining phases and tasks in a spec without stopping.
 ### If `$ARGUMENTS` is "sdd-specs-doctor"
 
 <!-- OUTPUT -->
+
 ## `/sdd-specs-doctor` — Migrate Spec Files to Current Format
 
 **Usage:** `/sdd-specs-doctor [--dry-run]`
@@ -1132,18 +1195,18 @@ Scan `specs/spec-v*.md` files and migrate them from the old format (inline metad
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| *(default)* | Detect and fix all format issues |
+| Flag        | Description                                      |
+| ----------- | ------------------------------------------------ |
+| _(default)_ | Detect and fix all format issues                 |
 | `--dry-run` | Report what would change without modifying files |
 
 **What It Detects & Fixes:**
 
-| Issue | Old Format | New Format |
-|-------|-----------|------------|
-| Metadata | `**Version**: v3` inline | YAML frontmatter block |
+| Issue      | Old Format                  | New Format               |
+| ---------- | --------------------------- | ------------------------ |
+| Metadata   | `**Version**: v3` inline    | YAML frontmatter block   |
 | Checkboxes | `- [x] Task` / `- [ ] Task` | `- Task` (plain bullets) |
-| Heading | `## How (Implementation)` | `## How (Approach)` |
+| Heading    | `## How (Implementation)`   | `## How (Approach)`      |
 
 **Idempotent:** Safe to run multiple times. Skips files that are already in the current format.
 
@@ -1155,6 +1218,7 @@ Scan `specs/spec-v*.md` files and migrate them from the old format (inline metad
 /sdd-specs-doctor              Migrate all old-format spec files
 /sdd-specs-doctor --dry-run    Preview changes without modifying
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1162,6 +1226,7 @@ Scan `specs/spec-v*.md` files and migrate them from the old format (inline metad
 ### If `$ARGUMENTS` is "sdd-specs-archive"
 
 <!-- OUTPUT -->
+
 ## `/sdd-specs-archive` — Archive Completed Specs
 
 **Usage:** `/sdd-specs-archive [--dry-run]`
@@ -1170,10 +1235,10 @@ Move all `✅ Complete` spec files from `specs/` to `specs/completed/` and mark 
 
 **Options:**
 
-| Flag | Description |
-|------|-------------|
-| *(default)* | Interactive — shows what will be archived, confirms before moving |
-| `--dry-run` | Preview only — no files moved, no README changes |
+| Flag        | Description                                                       |
+| ----------- | ----------------------------------------------------------------- |
+| _(default)_ | Interactive — shows what will be archived, confirms before moving |
+| `--dry-run` | Preview only — no files moved, no README changes                  |
 
 **After archiving:**
 
@@ -1187,6 +1252,7 @@ Move all `✅ Complete` spec files from `specs/` to `specs/completed/` and mark 
 /sdd-specs-archive              Archive all completed specs
 /sdd-specs-archive --dry-run    Preview what would be archived
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1194,6 +1260,7 @@ Move all `✅ Complete` spec files from `specs/` to `specs/completed/` and mark 
 ### If `$ARGUMENTS` is "sdd-spec-tagging"
 
 <!-- OUTPUT -->
+
 ## `/sdd-spec-tagging` — Commit Tagging Convention
 
 **Status:** PROPOSED (reference document)
@@ -1215,6 +1282,7 @@ feat: add interaction logging [v7:p1:s5]
 - Works with `/sdd-specs --verify`
 
 Run `/sdd-spec-tagging` for full documentation.
+
 <!-- /OUTPUT -->
 
 ---
@@ -1222,6 +1290,7 @@ Run `/sdd-spec-tagging` for full documentation.
 ### If `$ARGUMENTS` is "sdd"
 
 <!-- OUTPUT -->
+
 ## Spec-Driven Development (SDD) — Full Pipeline
 
 SDD is a 3-stage pipeline that takes you from business analysis through coded implementation, with specs as the single source of truth.
@@ -1232,9 +1301,9 @@ SDD is a 3-stage pipeline that takes you from business analysis through coded im
 
 Understand the problem before writing specs.
 
-| Command | Purpose |
-|---------|---------|
-| `/deal-desk` | Risk assessment and Bid/No-Bid recommendation |
+| Command      | Purpose                                               |
+| ------------ | ----------------------------------------------------- |
+| `/deal-desk` | Risk assessment and Bid/No-Bid recommendation         |
 | `/sdlc-plan` | Break business documents into requirements and phases |
 
 ---
@@ -1243,14 +1312,14 @@ Understand the problem before writing specs.
 
 Create and track specifications.
 
-| Command | Purpose |
-|---------|---------|
-| `/sdd-init [--force]` | Scaffold `specs/` for a new project (first command to run) |
-| `/sdd-specs-update` | Sync SDD infrastructure — adds CLAUDE.md methodology section |
-| `/sdd-spec <desc>` | Create a new spec from a description |
-| `/sdd-spec-status <vN>` | Phase-by-phase progress for a specific spec |
-| `/sdd-specs` | Show status table — progress, staleness, completeness |
-| `/sdd-specs-doctor` | Migrate old-format spec files to YAML frontmatter |
+| Command                 | Purpose                                                      |
+| ----------------------- | ------------------------------------------------------------ |
+| `/sdd-init [--force]`   | Scaffold `specs/` for a new project (first command to run)   |
+| `/sdd-specs-update`     | Sync SDD infrastructure — adds CLAUDE.md methodology section |
+| `/sdd-spec <desc>`      | Create a new spec from a description                         |
+| `/sdd-spec-status <vN>` | Phase-by-phase progress for a specific spec                  |
+| `/sdd-specs`            | Show status table — progress, staleness, completeness        |
+| `/sdd-specs-doctor`     | Migrate old-format spec files to YAML frontmatter            |
 
 ---
 
@@ -1258,15 +1327,15 @@ Create and track specifications.
 
 Code against the spec checklist.
 
-| Command | Purpose |
-|---------|---------|
+| Command                    | Purpose                                             |
+| -------------------------- | --------------------------------------------------- |
 | `/sdd-spec-prioritize [N]` | Recommend top N specs to focus on next (default: 5) |
-| `/sdd-next` | Preview the next task to implement |
-| `/sdd-next-phase` | Preview all tasks in the current phase |
-| `/sdd-code` | Implement the single next task |
-| `/sdd-code-phase` | Implement all tasks in the current phase |
-| `/sdd-code-spec [vN]` | Implement an entire spec end-to-end |
-| `/sdd-spec-tagging` | Commit tagging convention (`[vN:pN:sN]`) |
+| `/sdd-next`                | Preview the next task to implement                  |
+| `/sdd-next-phase`          | Preview all tasks in the current phase              |
+| `/sdd-code`                | Implement the single next task                      |
+| `/sdd-code-phase`          | Implement all tasks in the current phase            |
+| `/sdd-code-spec [vN]`      | Implement an entire spec end-to-end                 |
+| `/sdd-spec-tagging`        | Commit tagging convention (`[vN:pN:sN]`)            |
 
 ---
 
@@ -1292,6 +1361,7 @@ Code against the spec checklist.
 ```
 
 Run `/aid <command>` for detailed help on any individual command.
+
 <!-- /OUTPUT -->
 
 ---
@@ -1299,6 +1369,7 @@ Run `/aid <command>` for detailed help on any individual command.
 ### If `$ARGUMENTS` is "aws-costs"
 
 <!-- OUTPUT -->
+
 ## `/aws-costs` — AWS Spend Monitor
 
 **Usage:** `/aws-costs [--profile <name>] [--all-profiles]`
@@ -1307,11 +1378,11 @@ Show current AWS spend broken down by service, daily trend for the last 7 days, 
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
-| *(empty)* | Default AWS profile |
-| `--profile <name>` | Specific named profile from `~/.aws/config` |
-| `--all-profiles` | All configured profiles with combined summary |
+| Argument           | Description                                   |
+| ------------------ | --------------------------------------------- |
+| _(empty)_          | Default AWS profile                           |
+| `--profile <name>` | Specific named profile from `~/.aws/config`   |
+| `--all-profiles`   | All configured profiles with combined summary |
 
 **Output includes:**
 
@@ -1329,7 +1400,7 @@ Show current AWS spend broken down by service, daily trend for the last 7 days, 
 **Threshold config** (`~/.aws-costs-config.json`):
 
 ```json
-{ "alertThreshold": 100.00 }
+{ "alertThreshold": 100.0 }
 ```
 
 **Examples:**
@@ -1339,6 +1410,7 @@ Show current AWS spend broken down by service, daily trend for the last 7 days, 
 /aws-costs --profile work        Specific named profile
 /aws-costs --all-profiles        All profiles, combined summary
 ```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1346,6 +1418,7 @@ Show current AWS spend broken down by service, daily trend for the last 7 days, 
 ### If `$ARGUMENTS` is "remember"
 
 <!-- OUTPUT -->
+
 ## `/remember` — Save to Persistent Memory
 
 **Usage:** `/remember [--user | --project] <content>`
@@ -1354,12 +1427,12 @@ Save a piece of knowledge, preference, or instruction to persistent memory so it
 
 **Arguments:**
 
-| Argument | Description |
-|----------|-------------|
-| `--user` | Save to `~/.claude/CLAUDE.md` (global — applies to ALL projects) |
-| `--project` | Save to the project's `memory/MEMORY.md` (project scope only) |
-| *(no flag)* | Ask interactively: global or project? |
-| `content` | The knowledge, preference, or instruction to save |
+| Argument    | Description                                                      |
+| ----------- | ---------------------------------------------------------------- |
+| `--user`    | Save to `~/.claude/CLAUDE.md` (global — applies to ALL projects) |
+| `--project` | Save to the project's `memory/MEMORY.md` (project scope only)    |
+| _(no flag)_ | Ask interactively: global or project?                            |
+| `content`   | The knowledge, preference, or instruction to save                |
 
 **Examples:**
 
@@ -1368,6 +1441,53 @@ Save a piece of knowledge, preference, or instruction to persistent memory so it
 /remember --project the API rate limit is 100 req/min per tenant
 /remember the design system uses 8px grid spacing
 ```
+
+<!-- /OUTPUT -->
+
+---
+
+### If `$ARGUMENTS` is "auth"
+
+<!-- OUTPUT -->
+
+## `scripts/auth.sh` — Identity & Authentication
+
+**Usage:** `~/.claude/aidev-toolkit/scripts/auth.sh <command>`
+
+Authenticate aidev toolkit via browser-based GitHub OAuth. Stores a signed JWT at `~/.claude/aidev-toolkit/.auth` (chmod 600).
+
+**Commands:**
+
+| Command   | Description                                                              |
+| --------- | ------------------------------------------------------------------------ |
+| `login`   | Open browser → GitHub OAuth → capture JWT → store at `.auth`            |
+| `status`  | Decode and display `@github_login`, name, email, and token expiry        |
+| `logout`  | Remove stored `.auth` file                                               |
+| `token`   | Print raw JWT (for debugging or API calls)                               |
+| `refresh` | Renew token silently when within 7 days of expiry                        |
+
+**Login flow:**
+
+1. Opens a browser tab to the aidev auth Worker
+2. You approve access on GitHub
+3. A short-lived JWT is captured and stored locally
+4. `user-email.sh` automatically uses the JWT identity going forward
+
+**Security:**
+
+- The GitHub OAuth client secret lives **only** in the Cloudflare Worker — never on your machine
+- The JWT is stored at `chmod 600` — readable only by your user
+- Token expires after 30 days; refresh renews automatically
+
+**Examples:**
+
+```text
+scripts/auth.sh login      Authenticate (opens browser)
+scripts/auth.sh status     Who am I? When does my token expire?
+scripts/auth.sh logout     Sign out / revoke local token
+scripts/auth.sh refresh    Renew token without re-authenticating
+```
+
 <!-- /OUTPUT -->
 
 ---
@@ -1375,7 +1495,9 @@ Save a piece of knowledge, preference, or instruction to persistent memory so it
 ### If `$ARGUMENTS` is anything else (unknown command)
 
 <!-- OUTPUT -->
+
 Unknown command: `<argument>`
 
 Run `/aid` to see available commands.
+
 <!-- /OUTPUT -->

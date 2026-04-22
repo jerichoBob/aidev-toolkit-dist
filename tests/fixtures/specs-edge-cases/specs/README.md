@@ -2,10 +2,10 @@
 
 ## Quick Status
 
-| Version | Name | Progress | Status |
-|---------|------|----------|--------|
-| v1 | Multi Phase | 2/6 | 🚀 In Progress |
-| v2 | Whitespace Test | 1/3 | 🚀 In Progress |
+| Version | Name            | Progress | Status         |
+| ------- | --------------- | -------- | -------------- |
+| v1      | Multi Phase     | 2/6      | 🚀 In Progress |
+| v2      | Whitespace Test | 1/3      | 🚀 In Progress |
 
 ---
 
@@ -36,6 +36,6 @@
 
 ### Phase 1: Testing Whitespace
 
-- [x]   Task with extra spaces
+- [x] Task with extra spaces
 - [ ] Task with leading space
 - [ ] Normal task

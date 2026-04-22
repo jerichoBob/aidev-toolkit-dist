@@ -4,18 +4,18 @@ Reference template for creating new aidev toolkit skills.
 
 ## Official Frontmatter Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `name` | string | Skill identifier (lowercase, hyphens, max 64 chars) |
-| `description` | string | **Short** - Single line for menu display (~60-80 chars) |
-| `argument-hint` | string | Hint for expected arguments shown in UI |
-| `allowed-tools` | string | Comma-separated tools without permission prompts |
-| `model` | string | `sonnet`, `opus`, `haiku`, or `inherit` |
-| `context` | string | `fork` for isolated subagent context |
-| `agent` | string | Subagent type: `Explore`, `Plan`, `general-purpose` |
-| `disable-model-invocation` | boolean | Prevent Claude auto-triggering |
-| `user-invocable` | boolean | Hide from `/` menu if `false` |
-| `hooks` | object | Lifecycle hooks (PreToolUse, PostToolUse, Stop) |
+| Field                      | Type    | Description                                             |
+| -------------------------- | ------- | ------------------------------------------------------- |
+| `name`                     | string  | Skill identifier (lowercase, hyphens, max 64 chars)     |
+| `description`              | string  | **Short** - Single line for menu display (~60-80 chars) |
+| `argument-hint`            | string  | Hint for expected arguments shown in UI                 |
+| `allowed-tools`            | string  | Comma-separated tools without permission prompts        |
+| `model`                    | string  | `sonnet`, `opus`, `haiku`, or `inherit`                 |
+| `context`                  | string  | `fork` for isolated subagent context                    |
+| `agent`                    | string  | Subagent type: `Explore`, `Plan`, `general-purpose`     |
+| `disable-model-invocation` | boolean | Prevent Claude auto-triggering                          |
+| `user-invocable`           | boolean | Hide from `/` menu if `false`                           |
+| `hooks`                    | object  | Lifecycle hooks (PreToolUse, PostToolUse, Stop)         |
 
 ## Tool Names for `allowed-tools`
 
@@ -39,12 +39,12 @@ If your skill instructions tell Claude to run commands, those commands MUST be i
 
 Common mistakes:
 
-| Instruction | Missing Permission |
-|-------------|-------------------|
-| `find ... \| xargs ...` | Need both `Bash(find:*)` AND `Bash(xargs:*)` |
-| `awk ...` | Need `Bash(awk:*)` |
-| `grep ...` | Use `Grep` tool instead, or add `Bash(grep:*)` |
-| `cat file` | Use `Read` tool instead |
+| Instruction             | Missing Permission                             |
+| ----------------------- | ---------------------------------------------- |
+| `find ... \| xargs ...` | Need both `Bash(find:*)` AND `Bash(xargs:*)`   |
+| `awk ...`               | Need `Bash(awk:*)`                             |
+| `grep ...`              | Use `Grep` tool instead, or add `Bash(grep:*)` |
+| `cat file`              | Use `Read` tool instead                        |
 
 When adding features that use new commands, update `allowed-tools` in the same commit.
 
@@ -52,13 +52,13 @@ When adding features that use new commands, update `allowed-tools` in the same c
 
 **Always prefer native tools over Bash for file operations.** Native tools require no permission prompts and are faster.
 
-| Operation | Use This | Not This |
-|-----------|----------|----------|
-| Read a file | `Read` | `Bash(cat:*)` |
-| Search file contents | `Grep` | `Bash(grep:*)` |
-| Find files by name | `Glob` | `Bash(find:*)` |
-| Edit/replace text in a file | `Edit` | `Bash(sed:*)` |
-| Write a new file | `Write` | `Bash(echo:*)` |
+| Operation                   | Use This | Not This       |
+| --------------------------- | -------- | -------------- |
+| Read a file                 | `Read`   | `Bash(cat:*)`  |
+| Search file contents        | `Grep`   | `Bash(grep:*)` |
+| Find files by name          | `Glob`   | `Bash(find:*)` |
+| Edit/replace text in a file | `Edit`   | `Bash(sed:*)`  |
+| Write a new file            | `Write`  | `Bash(echo:*)` |
 
 **Reserve `Bash` for:** `git`, `gh`, and external CLIs with no native equivalent.
 
@@ -187,7 +187,7 @@ hooks:
     - matcher: "Edit|Write"
       hooks:
         - type: command
-          command: "prettier --write \"$(jq -r .tool_input.file_path)\""
+          command: 'prettier --write "$(jq -r .tool_input.file_path)"'
   Stop:
     - hooks:
         - type: command

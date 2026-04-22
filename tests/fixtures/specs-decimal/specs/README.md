@@ -2,13 +2,13 @@
 
 ## Quick Status
 
-| Version | Name | Progress | Status |
-|---------|------|----------|--------|
-| v2 | Feature Two | 2/2 | ✅ Complete |
-| v2.1 | Urgent Fix | 1/2 | 🚀 In Progress |
-| v3 | Feature Three | 0/3 | ✏️ Draft |
-| v8.9 | Priority Feature | 0/1 | ✏️ Draft |
-| v9 | Feature Nine | 1/1 | ✅ Complete |
+| Version | Name             | Progress | Status         |
+| ------- | ---------------- | -------- | -------------- |
+| v2      | Feature Two      | 2/2      | ✅ Complete    |
+| v2.1    | Urgent Fix       | 1/2      | 🚀 In Progress |
+| v3      | Feature Three    | 0/3      | ✏️ Draft       |
+| v8.9    | Priority Feature | 0/1      | ✏️ Draft       |
+| v9      | Feature Nine     | 1/1      | ✅ Complete    |
 
 ---
 

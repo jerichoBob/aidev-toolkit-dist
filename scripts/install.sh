@@ -3,7 +3,7 @@
 # aidev toolkit Installer
 #
 # Install with:
-#   gh repo clone jerichoBob/aidev-toolkit ~/.claude/aidev-toolkit
+#   gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 #   ~/.claude/aidev-toolkit/scripts/install.sh
 #
 
@@ -23,8 +23,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO_URL="git@github.com:jerichoBob/aidev-toolkit.git"
-REPO_URL_HTTPS="https://github.com/jerichoBob/aidev-toolkit.git"
+REPO_URL="git@github.com:jerichoBob/aidev-toolkit-dist.git"
+REPO_URL_HTTPS="https://github.com/jerichoBob/aidev-toolkit-dist.git"
 CLAUDE_DIR="$HOME/.claude"
 TOOLKIT_DIR="$CLAUDE_DIR/aidev-toolkit"
 COMMANDS_DIR="$CLAUDE_DIR/commands"
@@ -147,7 +147,7 @@ else
 
     # Try gh CLI first if available and authenticated
     if command -v gh &> /dev/null && gh auth status &> /dev/null 2>&1; then
-        GH_ERR=$(gh repo clone jerichoBob/aidev-toolkit "$TOOLKIT_DIR" -- --quiet 2>&1) && {
+        GH_ERR=$(gh repo clone jerichoBob/aidev-toolkit-dist "$TOOLKIT_DIR" -- --quiet 2>&1) && {
             echo -e "${GREEN}✓${NC} (gh)"
         } || {
             # gh failed, try SSH
@@ -334,9 +334,47 @@ chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/stats-parse.sh" 2>/dev/null || true
 if [ "$QUIET" = false ]; then
     echo ""
     echo -e "Configuring user email for spec ownership..."
-    if "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" ensure > /dev/null 2>&1; then
-        USER_EMAIL=$("$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" get)
-        echo -e "User email: ${YELLOW}$USER_EMAIL${NC} ${GREEN}✓${NC}"
+
+    EXISTING_EMAIL=$("$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" get 2>/dev/null || echo "")
+    if [[ -n "$EXISTING_EMAIL" ]]; then
+        echo -e "  User email: ${YELLOW}$EXISTING_EMAIL${NC} ${GREEN}✓${NC} (already configured)"
+    elif [ -t 0 ]; then
+        # Interactive TTY — prompt the user explicitly
+        DETECTED_EMAIL=$(git config user.email 2>/dev/null || echo "")
+        echo -e "  ${BLUE}Used for spec ownership tracking (/sdd-spec, /sdd-spec-owner)${NC}"
+        if [[ -n "$DETECTED_EMAIL" ]]; then
+            echo -e "  Detected: ${YELLOW}$DETECTED_EMAIL${NC}"
+            echo -n "  Accept this email? [Y/n/custom]: "
+            read -r REPLY
+            case "${REPLY:-Y}" in
+                [Yy]|"")
+                    "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" set "$DETECTED_EMAIL"
+                    echo -e "  ${GREEN}✓${NC} Spec ownership email set to: $DETECTED_EMAIL"
+                    ;;
+                [Nn])
+                    echo -e "  ${YELLOW}Skipped.${NC} Set later: ~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh set <email>"
+                    ;;
+                *)
+                    "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" set "$REPLY"
+                    echo -e "  ${GREEN}✓${NC} Spec ownership email set to: $REPLY"
+                    ;;
+            esac
+        else
+            echo -n "  Enter your email (or press Enter to skip): "
+            read -r USER_INPUT
+            if [[ -n "$USER_INPUT" ]]; then
+                "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" set "$USER_INPUT"
+                echo -e "  ${GREEN}✓${NC} Spec ownership email set to: $USER_INPUT"
+            else
+                echo -e "  ${YELLOW}Skipped.${NC} Set later: ~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh set <email>"
+            fi
+        fi
+    else
+        # Non-interactive (piped/CI) — detect and set silently
+        if "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" ensure > /dev/null 2>&1; then
+            USER_EMAIL=$("$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" get)
+            echo -e "  User email: ${YELLOW}$USER_EMAIL${NC} ${GREEN}✓${NC}"
+        fi
     fi
 fi
 
@@ -379,4 +417,8 @@ echo "Get started:"
 echo "  1. Open a project: cd your-project"
 echo "  2. Start Claude:   claude"
 echo "  3. Run:            /aid"
+echo ""
+echo "Optional — authenticate for verified identity:"
+echo "  $TOOLKIT_DIR/scripts/auth.sh login"
+echo "  (opens browser → GitHub OAuth → stores JWT)"
 echo ""

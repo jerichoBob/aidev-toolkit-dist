@@ -52,13 +52,13 @@ allowed-tools: Bash(date:*), Bash(mkdir:*), Bash(cp:*)
 
 Prefer native tools over Bash for file operations — they require no permission declarations:
 
-| Operation | Use | Not |
-|-----------|-----|-----|
-| Read a file | `Read` | `Bash(cat:*)` |
-| Search contents | `Grep` | `Bash(grep:*)` |
-| Find files | `Glob` | `Bash(find:*)` |
-| Edit/replace | `Edit` | `Bash(sed:*)` |
-| Write a file | `Write` | `Bash(echo:*)` |
+| Operation       | Use     | Not            |
+| --------------- | ------- | -------------- |
+| Read a file     | `Read`  | `Bash(cat:*)`  |
+| Search contents | `Grep`  | `Bash(grep:*)` |
+| Find files      | `Glob`  | `Bash(find:*)` |
+| Edit/replace    | `Edit`  | `Bash(sed:*)`  |
+| Write a file    | `Write` | `Bash(echo:*)` |
 
 See [native-tool-patterns.md](native-tool-patterns.md) for the full substitution table.
 

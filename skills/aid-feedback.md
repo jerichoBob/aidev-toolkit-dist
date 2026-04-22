@@ -2,7 +2,7 @@
 name: aid-feedback
 description: Submit feedback, suggestions, or feature requests for aidev toolkit.
 argument-hint: [type area description | --ingest]
-allowed-tools: Read, Bash(gh issue create:*), Bash(gh issue list:*), Bash(gh issue edit:*), Bash(gh auth status:*), Bash(gh whoami:*), AskUserQuestion
+allowed-tools: Read, Bash(gh issue create:*), Bash(gh issue list:*), Bash(gh issue edit:*), Bash(gh label create:*), Bash(gh auth status:*), Bash(gh api user:*), AskUserQuestion
 model: sonnet
 ---
 
@@ -45,6 +45,17 @@ Then retry /aid-feedback.
 
 Stop here.
 
+### Step 0b: Ensure Required Labels Exist
+
+Ensure the `feedback` and `processed` labels exist on the repo (safe to run even if they already exist):
+
+```bash
+gh label create feedback --repo jerichoBob/aidev-toolkit --description "User feedback submitted via /aid-feedback" --color "0075ca" --force 2>/dev/null || true
+gh label create processed --repo jerichoBob/aidev-toolkit --description "Feedback ingested and specced" --color "e4e669" --force 2>/dev/null || true
+```
+
+These labels are required for ingestion filtering and processing. The `--force` flag updates color/description if the label already exists.
+
 ---
 
 ### Ingestion Mode (runs when BOTH are true)
@@ -52,7 +63,7 @@ Stop here.
 Check these conditions:
 
 1. `$ARGUMENTS` is empty OR `$ARGUMENTS` is `--ingest`
-2. A `modules/sdd/` directory exists in the current working directory (confirms we're in aidev-toolkit)
+2. The authenticated GitHub user is the maintainer — run `gh api user --jq .login` and confirm it returns `jerichoBob`. (Optionally verify `modules/sdd/` exists in the cwd as a secondary sanity check.)
 
 **If both conditions are met, run ingestion mode:**
 
@@ -160,12 +171,12 @@ What feedback do you have? Please include:
 
 #### Step 2: Map Type to Label
 
-| Input | GitHub label |
-|-------|-------------|
-| bug | `bug` |
-| feature | `enhancement` |
-| enhancement | `enhancement` |
-| doc | `documentation` |
+| Input       | GitHub label    |
+| ----------- | --------------- |
+| bug         | `bug`           |
+| feature     | `enhancement`   |
+| enhancement | `enhancement`   |
+| doc         | `documentation` |
 
 TYPE badge for title/body: bug → BUG, feature → FEATURE, enhancement → ENHANCEMENT, doc → DOC
 

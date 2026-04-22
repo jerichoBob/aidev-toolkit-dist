@@ -58,7 +58,7 @@ This is the **single source of truth** for project progress. Individual spec fil
 ## Quick Status
 
 | Spec | Name | Progress | Status | Owner |
-|------|------|----------|--------|-------|
+| ---- | ---- | -------- | ------ | ----- |
 
 ---
 

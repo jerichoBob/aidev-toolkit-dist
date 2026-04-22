@@ -1,15 +1,15 @@
 # Risk Register
 
-| ID | Category | Risk | Likelihood | Impact | Score | Mitigation | Owner | Status |
-|----|----------|------|------------|--------|-------|------------|-------|--------|
-| R1.1 | Technical | {{DESCRIPTION}} | {{L:Low/Med/High}} | {{I:Low/Med/High}} | {{1-9}} | {{STRATEGY}} | {{OWNER}} | Open |
-| R1.2 | Technical | {{DESCRIPTION}} | {{L}} | {{I}} | {{S}} | {{STRATEGY}} | {{OWNER}} | Open |
-| R2.1 | Schedule | {{DESCRIPTION}} | {{L}} | {{I}} | {{S}} | {{STRATEGY}} | {{OWNER}} | Open |
-| R3.1 | Scope | {{DESCRIPTION}} | {{L}} | {{I}} | {{S}} | {{STRATEGY}} | {{OWNER}} | Open |
-| R4.1 | Resource | {{DESCRIPTION}} | {{L}} | {{I}} | {{S}} | {{STRATEGY}} | {{OWNER}} | Open |
-| R5.1 | Financial | {{DESCRIPTION}} | {{L}} | {{I}} | {{S}} | {{STRATEGY}} | {{OWNER}} | Open |
-| R6.1 | Compliance | {{DESCRIPTION}} | {{L}} | {{I}} | {{S}} | {{STRATEGY}} | {{OWNER}} | Open |
-| R7.1 | Integration | {{DESCRIPTION}} | {{L}} | {{I}} | {{S}} | {{STRATEGY}} | {{OWNER}} | Open |
+| ID   | Category    | Risk            | Likelihood         | Impact             | Score   | Mitigation   | Owner     | Status |
+| ---- | ----------- | --------------- | ------------------ | ------------------ | ------- | ------------ | --------- | ------ |
+| R1.1 | Technical   | {{DESCRIPTION}} | {{L:Low/Med/High}} | {{I:Low/Med/High}} | {{1-9}} | {{STRATEGY}} | {{OWNER}} | Open   |
+| R1.2 | Technical   | {{DESCRIPTION}} | {{L}}              | {{I}}              | {{S}}   | {{STRATEGY}} | {{OWNER}} | Open   |
+| R2.1 | Schedule    | {{DESCRIPTION}} | {{L}}              | {{I}}              | {{S}}   | {{STRATEGY}} | {{OWNER}} | Open   |
+| R3.1 | Scope       | {{DESCRIPTION}} | {{L}}              | {{I}}              | {{S}}   | {{STRATEGY}} | {{OWNER}} | Open   |
+| R4.1 | Resource    | {{DESCRIPTION}} | {{L}}              | {{I}}              | {{S}}   | {{STRATEGY}} | {{OWNER}} | Open   |
+| R5.1 | Financial   | {{DESCRIPTION}} | {{L}}              | {{I}}              | {{S}}   | {{STRATEGY}} | {{OWNER}} | Open   |
+| R6.1 | Compliance  | {{DESCRIPTION}} | {{L}}              | {{I}}              | {{S}}   | {{STRATEGY}} | {{OWNER}} | Open   |
+| R7.1 | Integration | {{DESCRIPTION}} | {{L}}              | {{I}}              | {{S}}   | {{STRATEGY}} | {{OWNER}} | Open   |
 
 <!--
 SCORING GUIDE:

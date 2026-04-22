@@ -170,7 +170,23 @@ Run this command first to see existing specs:
    - **Do NOT use checkboxes** (`- [ ]` / `- [x]`) anywhere in the spec file — use plain bullets instead
    - The spec file is a **design document**, not a progress tracker
 
-4.5. **Check tasks against coding rules** (only if rules were loaded in Step 0.6):
+4.5. **Populate the Security section** (always required):
+
+After drafting the spec content, fill in the `## Security` section based on the description context. Do not leave it as template boilerplate. Apply this logic:
+
+- **User-facing feature** (involves users, UI, API endpoints, data access): Set AuthN to "Required". Choose an appropriate default mechanism based on project context (JWT bearer token if API-based, session cookie if web app). Note roles/permissions based on what the feature does. Set audit logging for all state-mutating operations.
+- **Internal/background process** (cron job, data pipeline, worker): Note service identity requirements (e.g., "service account with read access to X"). Set AuthZ to the minimum privilege needed. Audit log job start, end, and any failures.
+- **Infrastructure/tooling** (CLI tool, script, dev tool with no user-facing surface): State "Not applicable — internal tool only" with rationale for each subsection. At minimum one subsection must be non-"Not applicable" unless all three genuinely don't apply (which is rare).
+
+After filling in the Security section, confirm it was populated in the report (Step 3 / Step 8).
+
+**Boilerplate detection**: If the Security section still contains placeholder text like `{e.g.,` or `(e.g.,` or subsection headers with no content below them, emit a warning:
+
+```text
+⚠️  Security section may still contain template placeholders. Review before committing.
+```
+
+4.6. **Check tasks against coding rules** (only if rules were loaded in Step 0.6):
 
 - For each task in the draft spec, check whether it would violate any loaded rule
 - Example: if a rule says "never use mocks, vi.mock, jest.mock, sinon stubs", any task like "write mock-based tests for X" or "stub out Y with vi.mock" violates it
@@ -193,6 +209,7 @@ Run this command first to see existing specs:
    - Spec was created with version v{N}
    - Filename: `spec-v{N}-{short-name}.md`
    - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
+   - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
    - Next steps: Edit the spec file to flesh out details, then run `/sdd-code-spec v{N}`
 
 ## Two-File Model
@@ -354,4 +371,5 @@ Tell user:
 - Inserted before v{target} (or "at the end" if appended)
 - Filename: `spec-v{N.M}-{short-name}.md`
 - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
+- **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
 - Next steps: Edit the spec file to flesh out What/How sections, then run `/sdd-code-spec v{N.M}`

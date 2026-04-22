@@ -42,12 +42,12 @@ For each modified/added file, determine:
 
 Create groups based on:
 
-| Grouping Principle | Example |
-|-------------------|---------|
-| Same feature | `user-auth.ts` + `user-auth.test.ts` + `docs/auth.md` |
-| Same domain | All spec files together, all UI components together |
-| Same purpose | All lint fixes, all dependency updates |
-| Minimal coupling | Changes that can be reverted independently |
+| Grouping Principle | Example                                               |
+| ------------------ | ----------------------------------------------------- |
+| Same feature       | `user-auth.ts` + `user-auth.test.ts` + `docs/auth.md` |
+| Same domain        | All spec files together, all UI components together   |
+| Same purpose       | All lint fixes, all dependency updates                |
+| Minimal coupling   | Changes that can be reverted independently            |
 
 **Rules:**
 
@@ -60,17 +60,17 @@ Create groups based on:
 
 For each group, classify as:
 
-| Type | Criteria | Version Impact |
-|------|----------|----------------|
-| **BREAKING** | Removes/changes public API, breaks backwards compatibility | Major |
-| **feat** | New functionality, new capability | Minor |
-| **fix** | Bug fix, error correction | Patch |
-| **refactor** | Code restructuring, no behavior change | Patch |
-| **docs** | Documentation only | Patch |
-| **test** | Test additions/changes only | Patch |
-| **chore** | Build, config, dependencies | Patch |
-| **style** | Formatting, whitespace | Patch |
-| **perf** | Performance improvement | Patch |
+| Type         | Criteria                                                   | Version Impact |
+| ------------ | ---------------------------------------------------------- | -------------- |
+| **BREAKING** | Removes/changes public API, breaks backwards compatibility | Major          |
+| **feat**     | New functionality, new capability                          | Minor          |
+| **fix**      | Bug fix, error correction                                  | Patch          |
+| **refactor** | Code restructuring, no behavior change                     | Patch          |
+| **docs**     | Documentation only                                         | Patch          |
+| **test**     | Test additions/changes only                                | Patch          |
+| **chore**    | Build, config, dependencies                                | Patch          |
+| **style**    | Formatting, whitespace                                     | Patch          |
+| **perf**     | Performance improvement                                    | Patch          |
 
 **Determining overall bump type:**
 

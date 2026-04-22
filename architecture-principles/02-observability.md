@@ -47,27 +47,27 @@ You cannot fix what you cannot see. Production issues are inevitable; the differ
 ```typescript
 // Structured logging with correlation
 logger.info({
-  correlationId: req.headers['x-correlation-id'],
-  action: 'user.created',
+  correlationId: req.headers["x-correlation-id"],
+  action: "user.created",
   userId: user.id,
-  duration: Date.now() - startTime
+  duration: Date.now() - startTime,
 });
 
 // Health endpoint with dependency check
-app.get('/health', async (req, res) => {
+app.get("/health", async (req, res) => {
   const dbHealthy = await db.ping().catch(() => false);
   const status = dbHealthy ? 200 : 503;
   res.status(status).json({
-    status: dbHealthy ? 'healthy' : 'unhealthy',
-    checks: { database: dbHealthy }
+    status: dbHealthy ? "healthy" : "unhealthy",
+    checks: { database: dbHealthy },
   });
 });
 
 // Redacting sensitive data
 logger.info({
-  action: 'payment.processed',
-  cardLast4: card.number.slice(-4),  // Only last 4 digits
-  amount: payment.amount
+  action: "payment.processed",
+  cardLast4: card.number.slice(-4), // Only last 4 digits
+  amount: payment.amount,
 });
 ```
 
@@ -75,20 +75,20 @@ logger.info({
 
 ```typescript
 // Unstructured logging
-console.log('User created: ' + user.id);
+console.log("User created: " + user.id);
 
 // No correlation ID - impossible to trace across services
-logger.info('Processing payment');
+logger.info("Processing payment");
 
 // Logging sensitive data
 logger.info({
-  action: 'login',
-  password: req.body.password,  // NEVER log passwords
-  creditCard: payment.cardNumber  // NEVER log full card numbers
+  action: "login",
+  password: req.body.password, // NEVER log passwords
+  creditCard: payment.cardNumber, // NEVER log full card numbers
 });
 
 // Health endpoint that doesn't check dependencies
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
+app.get("/health", (req, res) => res.json({ status: "ok" }));
 ```
 
 ## Validation Checklist

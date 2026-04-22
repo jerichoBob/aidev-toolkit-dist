@@ -4,17 +4,17 @@ Use Claude Code's built-in tools instead of shell commands whenever possible. Na
 
 ## Substitution Table
 
-| Instead of (Bash) | Use (Native Tool) | Notes |
-|-------------------|-------------------|-------|
-| `cat file` | `Read` | No permission prompt |
-| `head -n N file` | `Read` with `limit` | |
-| `tail -n N file` | `Read` with `offset` + `limit` | |
-| `grep pattern file` | `Grep` | Supports regex, context lines |
-| `find . -name "*.md"` | `Glob` | Pattern matching |
-| `ls dir/` | `Glob` with `*` | |
-| `sed -i 's/old/new/' file` | `Edit` | Exact string replacement |
-| `awk '{print $1}' file` | `Read` → parse in context | |
-| `echo "content" > file` | `Write` | Full file create/overwrite |
+| Instead of (Bash)          | Use (Native Tool)              | Notes                         |
+| -------------------------- | ------------------------------ | ----------------------------- |
+| `cat file`                 | `Read`                         | No permission prompt          |
+| `head -n N file`           | `Read` with `limit`            |                               |
+| `tail -n N file`           | `Read` with `offset` + `limit` |                               |
+| `grep pattern file`        | `Grep`                         | Supports regex, context lines |
+| `find . -name "*.md"`      | `Glob`                         | Pattern matching              |
+| `ls dir/`                  | `Glob` with `*`                |                               |
+| `sed -i 's/old/new/' file` | `Edit`                         | Exact string replacement      |
+| `awk '{print $1}' file`    | `Read` → parse in context      |                               |
+| `echo "content" > file`    | `Write`                        | Full file create/overwrite    |
 
 ## Rule
 

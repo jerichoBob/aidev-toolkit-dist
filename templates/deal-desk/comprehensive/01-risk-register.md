@@ -13,14 +13,14 @@
 
 ### R1.1: {{RISK_TITLE}}
 
-| Field | Value |
-|-------|-------|
-| **ID** | R1.1 |
-| **Category** | Technical |
+| Field          | Value                        |
+| -------------- | ---------------------------- |
+| **ID**         | R1.1                         |
+| **Category**   | Technical                    |
 | **Likelihood** | {{Low/Med/High}} ({{1-3}}/3) |
-| **Impact** | {{Low/Med/High}} ({{1-3}}/3) |
-| **Risk Score** | {{1-9}} ({{Low/Med/High}}) |
-| **Status** | Open |
+| **Impact**     | {{Low/Med/High}} ({{1-3}}/3) |
+| **Risk Score** | {{1-9}} ({{Low/Med/High}})   |
+| **Status**     | Open                         |
 
 **Description:**
 
@@ -48,14 +48,14 @@
 
 ### R2.1: {{RISK_TITLE}}
 
-| Field | Value |
-|-------|-------|
-| **ID** | R2.1 |
-| **Category** | Schedule |
+| Field          | Value                        |
+| -------------- | ---------------------------- |
+| **ID**         | R2.1                         |
+| **Category**   | Schedule                     |
 | **Likelihood** | {{Low/Med/High}} ({{1-3}}/3) |
-| **Impact** | {{Low/Med/High}} ({{1-3}}/3) |
-| **Risk Score** | {{1-9}} ({{Low/Med/High}}) |
-| **Status** | Open |
+| **Impact**     | {{Low/Med/High}} ({{1-3}}/3) |
+| **Risk Score** | {{1-9}} ({{Low/Med/High}})   |
+| **Status**     | Open                         |
 
 **Description:**
 
@@ -111,11 +111,11 @@
 
 ## Risk Summary by Score
 
-| Score Range | Classification | Count | Risk IDs |
-|-------------|---------------|-------|----------|
-| 6-9 | High | {{HIGH_COUNT}} | {{HIGH_IDS}} |
-| 3-4 | Medium | {{MED_COUNT}} | {{MED_IDS}} |
-| 1-2 | Low | {{LOW_COUNT}} | {{LOW_IDS}} |
+| Score Range | Classification | Count          | Risk IDs     |
+| ----------- | -------------- | -------------- | ------------ |
+| 6-9         | High           | {{HIGH_COUNT}} | {{HIGH_IDS}} |
+| 3-4         | Medium         | {{MED_COUNT}}  | {{MED_IDS}}  |
+| 1-2         | Low            | {{LOW_COUNT}}  | {{LOW_IDS}}  |
 
 <!--
 SCORING GUIDE:

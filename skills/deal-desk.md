@@ -58,13 +58,13 @@ Then continue with the analysis.
 
 Users can trigger options conversationally instead of using flags:
 
-| Say this... | Equivalent to... |
-|-------------|------------------|
-| "vendor side", "we're selling", "we're bidding" | `--side vendor` |
-| "buyer side", "we're purchasing", "we're the client" | `--side buyer` |
-| "quick analysis", "just a quick look" | `--quick` |
-| "deep analysis", "full analysis", "deep dive" | `--deep` |
-| "comprehensive format", "detailed format" | `--comprehensive` |
+| Say this...                                          | Equivalent to...  |
+| ---------------------------------------------------- | ----------------- |
+| "vendor side", "we're selling", "we're bidding"      | `--side vendor`   |
+| "buyer side", "we're purchasing", "we're the client" | `--side buyer`    |
+| "quick analysis", "just a quick look"                | `--quick`         |
+| "deep analysis", "full analysis", "deep dive"        | `--deep`          |
+| "comprehensive format", "detailed format"            | `--comprehensive` |
 
 **Examples:**
 
@@ -81,15 +81,15 @@ Users can trigger options conversationally instead of using flags:
 
 You are **selling** services/products. Evaluate whether this is a good deal **for you to deliver**.
 
-| Element | Vendor View |
-|---------|-------------|
-| IP stays with us | ✅ Strength - retain reusable assets |
-| No guaranteed outcomes | ✅ Strength - protects against unrealistic expectations |
-| T&M billing | ✅ Strength - paid for actual effort |
-| Strong assumption clauses | ✅ Strength - protects against scope creep |
-| Client responsibility clauses | ✅ Strength - shared accountability |
-| Change order requirements | ✅ Strength - scope discipline |
-| Unclear acceptance criteria | ⚠️ Neutral - flexibility but potential disputes |
+| Element                       | Vendor View                                             |
+| ----------------------------- | ------------------------------------------------------- |
+| IP stays with us              | ✅ Strength - retain reusable assets                    |
+| No guaranteed outcomes        | ✅ Strength - protects against unrealistic expectations |
+| T&M billing                   | ✅ Strength - paid for actual effort                    |
+| Strong assumption clauses     | ✅ Strength - protects against scope creep              |
+| Client responsibility clauses | ✅ Strength - shared accountability                     |
+| Change order requirements     | ✅ Strength - scope discipline                          |
+| Unclear acceptance criteria   | ⚠️ Neutral - flexibility but potential disputes         |
 
 **Key Questions**:
 
@@ -103,15 +103,15 @@ You are **selling** services/products. Evaluate whether this is a good deal **fo
 
 You are **purchasing** services/products. Evaluate whether this is a good deal **for you as the client**.
 
-| Element | Buyer View |
-|---------|-------------|
-| IP stays with vendor | 🚩 Red Flag - paying for work you don't own |
-| No guaranteed outcomes | 🚩 Red Flag - no accountability for results |
-| T&M billing | ⚠️ Risk - cost uncertainty |
-| Strong assumption clauses | 🚩 Red Flag - vendor can blame you for delays |
+| Element                       | Buyer View                                     |
+| ----------------------------- | ---------------------------------------------- |
+| IP stays with vendor          | 🚩 Red Flag - paying for work you don't own    |
+| No guaranteed outcomes        | 🚩 Red Flag - no accountability for results    |
+| T&M billing                   | ⚠️ Risk - cost uncertainty                     |
+| Strong assumption clauses     | 🚩 Red Flag - vendor can blame you for delays  |
 | Client responsibility clauses | ⚠️ Risk - significant internal effort required |
-| Change order requirements | ⚠️ Neutral - protects both parties |
-| Unclear acceptance criteria | 🚩 Red Flag - no way to prove completion |
+| Change order requirements     | ⚠️ Neutral - protects both parties             |
+| Unclear acceptance criteria   | 🚩 Red Flag - no way to prove completion       |
 
 **Key Questions**:
 
@@ -127,48 +127,48 @@ Two independent dimensions control output:
 
 ### Depth (what to analyze)
 
-| Flag | Categories | Output Files |
-|------|------------|--------------|
-| `--quick` | R1-R3 | Console only |
-| (default) | R1-R7 | 00-03 |
-| `--deep` | R1-R10 | 00-09 |
+| Flag      | Categories | Output Files |
+| --------- | ---------- | ------------ |
+| `--quick` | R1-R3      | Console only |
+| (default) | R1-R7      | 00-03        |
+| `--deep`  | R1-R10     | 00-09        |
 
 ### Format (how to present)
 
-| Flag | Style | Description |
-|------|-------|-------------|
-| (default) | Simple | Clean, scannable tables. Single-table risk register. |
-| `--comprehensive` | Rich | Visual score breakdown, financial analysis, governance, risk cards. |
+| Flag              | Style  | Description                                                         |
+| ----------------- | ------ | ------------------------------------------------------------------- |
+| (default)         | Simple | Clean, scannable tables. Single-table risk register.                |
+| `--comprehensive` | Rich   | Visual score breakdown, financial analysis, governance, risk cards. |
 
 **Templates**: Reference `~/.claude/aidev-toolkit/templates/deal-desk/simple/` or `comprehensive/` for exact formats.
 
 ## Risk Dimensions
 
-| ID | Category | Description | Depth |
-|----|----------|-------------|-------|
-| R1 | Technical | Complexity, dependencies, integration | All |
-| R2 | Schedule | Timeline, milestones, critical path | All |
-| R3 | Scope | Requirements gaps, ambiguity, creep | All |
-| R4 | Resource | Skills, availability, team capacity | Standard+ |
-| R5 | Financial | Cost drivers, budget, cash flow | Standard+ |
-| R6 | Compliance | Regulatory, security, data protection | Standard+ |
-| R7 | Integration | External systems, APIs, third-parties | Standard+ |
-| R8 | Operational | Day-2, support, incidents, SLAs | Deep |
-| R9 | Organizational | Change management, adoption, training | Deep |
-| R10 | Market/Business | Adoption, competition, value proposition | Deep |
+| ID  | Category        | Description                              | Depth     |
+| --- | --------------- | ---------------------------------------- | --------- |
+| R1  | Technical       | Complexity, dependencies, integration    | All       |
+| R2  | Schedule        | Timeline, milestones, critical path      | All       |
+| R3  | Scope           | Requirements gaps, ambiguity, creep      | All       |
+| R4  | Resource        | Skills, availability, team capacity      | Standard+ |
+| R5  | Financial       | Cost drivers, budget, cash flow          | Standard+ |
+| R6  | Compliance      | Regulatory, security, data protection    | Standard+ |
+| R7  | Integration     | External systems, APIs, third-parties    | Standard+ |
+| R8  | Operational     | Day-2, support, incidents, SLAs          | Deep      |
+| R9  | Organizational  | Change management, adoption, training    | Deep      |
+| R10 | Market/Business | Adoption, competition, value proposition | Deep      |
 
 ## CRITICAL: Format Standards
 
 **You MUST follow these standards exactly. Do NOT deviate or invent new formats.**
 
-| Element | Required Format | Do NOT Use |
-|---------|-----------------|------------|
-| Deal Score | `X/10` | ~~X/100~~, ~~68/100~~ |
-| Risk IDs | `R1.1`, `R1.2`, `R2.1` | ~~R1-001~~, ~~R1-002~~ |
-| Likelihood | Low (1), Medium (2), High (3) | ~~High (4/5)~~, ~~1-5 scale~~ |
-| Impact | Low (1), Medium (2), High (3) | ~~High (4/5)~~, ~~1-5 scale~~ |
-| Score | Likelihood × Impact = 1-9 | ~~1-25 scale~~, ~~1-16 scale~~ |
-| Severity bands | Low: 1-2, Medium: 3-4, High: 6-9 | ~~Critical/High/Med/Low~~ |
+| Element        | Required Format                  | Do NOT Use                     |
+| -------------- | -------------------------------- | ------------------------------ |
+| Deal Score     | `X/10`                           | ~~X/100~~, ~~68/100~~          |
+| Risk IDs       | `R1.1`, `R1.2`, `R2.1`           | ~~R1-001~~, ~~R1-002~~         |
+| Likelihood     | Low (1), Medium (2), High (3)    | ~~High (4/5)~~, ~~1-5 scale~~  |
+| Impact         | Low (1), Medium (2), High (3)    | ~~High (4/5)~~, ~~1-5 scale~~  |
+| Score          | Likelihood × Impact = 1-9        | ~~1-25 scale~~, ~~1-16 scale~~ |
+| Severity bands | Low: 1-2, Medium: 3-4, High: 6-9 | ~~Critical/High/Med/Low~~      |
 
 **Do NOT add sections not specified in the templates.** The templates define exactly what sections to include.
 
@@ -201,31 +201,31 @@ Before detailed analysis, look for immediate deal-breakers. **Red flags differ b
 
 #### Vendor Red Flags (`--side vendor`)
 
-| Red Flag | Signal |
-|----------|--------|
-| Unrealistic timeline | Aggressive dates without phasing |
-| Undefined scope | Heavy use of "TBD", "to be determined" |
-| Fixed price + variable scope | Recipe for cost overruns |
-| Penalty clauses | Liquidated damages without caps |
-| Unlimited liability | No liability cap in contract |
+| Red Flag                        | Signal                                                             |
+| ------------------------------- | ------------------------------------------------------------------ |
+| Unrealistic timeline            | Aggressive dates without phasing                                   |
+| Undefined scope                 | Heavy use of "TBD", "to be determined"                             |
+| Fixed price + variable scope    | Recipe for cost overruns                                           |
+| Penalty clauses                 | Liquidated damages without caps                                    |
+| Unlimited liability             | No liability cap in contract                                       |
 | Client incapable of obligations | Client lacks resources/authority to fulfill their responsibilities |
-| Compliance beyond capability | Regulatory requirements beyond team capability |
-| Payment terms unfavorable | Net 90+, milestone-heavy, retainage |
-| Single source dependency | We rely on client-provided resources that may not materialize |
+| Compliance beyond capability    | Regulatory requirements beyond team capability                     |
+| Payment terms unfavorable       | Net 90+, milestone-heavy, retainage                                |
+| Single source dependency        | We rely on client-provided resources that may not materialize      |
 
 #### Buyer Red Flags (`--side buyer`)
 
-| Red Flag | Signal |
-|----------|--------|
-| Unrealistic timeline | Aggressive dates without phasing |
-| Undefined scope | Heavy use of "TBD", "to be determined" |
-| IP ownership unfavorable | Paying for work product we don't own |
-| No guaranteed outcomes | Disclaimers on accuracy, performance, results |
-| Missing acceptance criteria | No objective way to accept/reject deliverables |
-| Vendor-favorable assumptions | Clauses that shift all risk to buyer |
-| Cost uncertainty | T&M with wide ranges, no caps |
-| No exit provisions | Locked in with no termination rights |
-| Single point of failure | One vendor, one person, one system |
+| Red Flag                     | Signal                                         |
+| ---------------------------- | ---------------------------------------------- |
+| Unrealistic timeline         | Aggressive dates without phasing               |
+| Undefined scope              | Heavy use of "TBD", "to be determined"         |
+| IP ownership unfavorable     | Paying for work product we don't own           |
+| No guaranteed outcomes       | Disclaimers on accuracy, performance, results  |
+| Missing acceptance criteria  | No objective way to accept/reject deliverables |
+| Vendor-favorable assumptions | Clauses that shift all risk to buyer           |
+| Cost uncertainty             | T&M with wide ranges, no caps                  |
+| No exit provisions           | Locked in with no termination rights           |
+| Single point of failure      | One vendor, one person, one system             |
 
 Count red flags found. Each red flag subtracts from deal score.
 
@@ -313,10 +313,10 @@ For each identified risk, assign:
 - **Score**: Likelihood × Impact (1-9)
 
 | Score | Severity |
-|-------|----------|
-| 1-2 | Low |
-| 3-4 | Medium |
-| 6-9 | High |
+| ----- | -------- |
+| 1-2   | Low      |
+| 3-4   | Medium   |
+| 6-9   | High     |
 
 ### Step 5: Calculate Deal Score
 
@@ -330,12 +330,12 @@ Deal Score (1-10) is calculated based on:
 
 **Recommendation based on Deal Score:**
 
-| Score | Recommendation | Meaning |
-|-------|----------------|---------|
-| 8-10 | **GO** | Low risk, well-defined, good fit |
-| 5-7 | **CONDITIONAL GO** | Manageable risks, needs clarification |
-| 3-4 | **CAUTION** | Significant risks, consider carefully |
-| 1-2 | **NO-GO** | High risk, unclear scope, poor fit |
+| Score | Recommendation     | Meaning                               |
+| ----- | ------------------ | ------------------------------------- |
+| 8-10  | **GO**             | Low risk, well-defined, good fit      |
+| 5-7   | **CONDITIONAL GO** | Manageable risks, needs clarification |
+| 3-4   | **CAUTION**        | Significant risks, consider carefully |
+| 1-2   | **NO-GO**          | High risk, unclear scope, poor fit    |
 
 ### Step 6: Generate Output
 
@@ -351,12 +351,12 @@ Output directly to console (no files):
 
 ## Risk Summary
 
-| Category | Risk Count | Highest Severity | Key Concern |
-|----------|------------|------------------|-------------|
-| Technical | X | High/Med/Low | <brief note> |
-| Schedule | X | High/Med/Low | <brief note> |
-| Scope | X | High/Med/Low | <brief note> |
-| ... | ... | ... | ... |
+| Category  | Risk Count | Highest Severity | Key Concern  |
+| --------- | ---------- | ---------------- | ------------ |
+| Technical | X          | High/Med/Low     | <brief note> |
+| Schedule  | X          | High/Med/Low     | <brief note> |
+| Scope     | X          | High/Med/Low     | <brief note> |
+| ...       | ...        | ...              | ...          |
 
 ## Red Flags (X found)
 
@@ -367,7 +367,7 @@ Output directly to console (no files):
 
 1. **R1.1**: <description> (Score: X)
 2. **R2.3**: <description> (Score: X)
-...
+   ...
 
 ## Bottom Line
 
@@ -495,10 +495,10 @@ If the `--pdf` flag is provided, convert all generated markdown files to PDF.
 
 **Template Selection**:
 
-| File | Template | Reason |
-|------|----------|--------|
+| File                  | Template              | Reason                     |
+| --------------------- | --------------------- | -------------------------- |
 | `01-risk-register.md` | `clean-landscape.typ` | 9-column table needs width |
-| All others | `clean.typ` | Standard portrait |
+| All others            | `clean.typ`           | Standard portrait          |
 
 **Conversion Commands**:
 

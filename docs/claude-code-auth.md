@@ -15,7 +15,7 @@ Authenticates via browser OAuth. No API key needed. Run `/status` inside Claude 
 
 Per the [official Anthropic docs](https://code.claude.com/docs/en/costs):
 
-> *"Claude Max and Pro subscribers have usage included in their subscription, so `/cost` data isn't relevant for billing purposes."*
+> _"Claude Max and Pro subscribers have usage included in their subscription, so `/cost` data isn't relevant for billing purposes."_
 
 This means **no per-token charges** on top of your subscription — all Claude Code usage is included. The `/cost` command (which tracks token spend) is explicitly not relevant for billing if you're a subscriber.
 
@@ -47,11 +47,11 @@ Or set it in `~/.claude/settings.json`:
 
 ## Summary: All Three Ways + Billing
 
-| Method | Auth | Billed | Billing Location |
-|---|---|---|---|
-| **Personal Pro/Max** | `/login` with personal claude.ai account | Fixed monthly fee | `claude.ai/settings/billing` |
-| **Team/Enterprise seat** | `/login` with team-issued account | Per seat/month to org admin | `claude.ai/admin-settings/billing` |
-| **API Key** | `ANTHROPIC_API_KEY` env var | Per token (auto-replenished credits) | `platform.claude.ai` |
+| Method                   | Auth                                     | Billed                               | Billing Location                   |
+| ------------------------ | ---------------------------------------- | ------------------------------------ | ---------------------------------- |
+| **Personal Pro/Max**     | `/login` with personal claude.ai account | Fixed monthly fee                    | `claude.ai/settings/billing`       |
+| **Team/Enterprise seat** | `/login` with team-issued account        | Per seat/month to org admin          | `claude.ai/admin-settings/billing` |
+| **API Key**              | `ANTHROPIC_API_KEY` env var              | Per token (auto-replenished credits) | `platform.claude.ai`               |
 
 These are **two completely independent billing systems** — subscription billing on `claude.ai` and API credit billing on `platform.claude.ai` do not talk to each other.
 
@@ -59,10 +59,10 @@ These are **two completely independent billing systems** — subscription billin
 
 ## Comparison
 
-| | Subscription (`/login`) | API Key |
-|---|---|---|
-| Billing | Fixed monthly fee | Pay-per-token |
-| Setup | Browser login | Set env var |
+|          | Subscription (`/login`)    | API Key                            |
+| -------- | -------------------------- | ---------------------------------- |
+| Billing  | Fixed monthly fee          | Pay-per-token                      |
+| Setup    | Browser login              | Set env var                        |
 | Best for | Individual devs, daily use | CI/CD, automation, no subscription |
 
 ## Check Your Current Auth
