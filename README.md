@@ -14,14 +14,14 @@ gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 ### Using SSH
 
 ```bash
-git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 ### Using HTTPS (requires credential helper)
 
 ```bash
-git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -64,7 +64,7 @@ After installation:
 
 ```bash
 # Install aidev toolkit (using GitHub CLI)
-gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # Go to your project
