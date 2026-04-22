@@ -31,7 +31,7 @@ fi
 # This is surgical - we check each symlink's target before removing
 [ "$QUIET" = false ] && echo "Removing aidev-toolkit symlinks..."
 if [ -d "$COMMANDS_DIR" ]; then
-    for file in "$COMMANDS_DIR"/*.md 2>/dev/null; do
+    for file in "$COMMANDS_DIR"/*.md; do
         [ -e "$file" ] || continue  # Handle empty glob
         if [ -L "$file" ]; then
             target=$(readlink "$file")
