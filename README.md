@@ -7,7 +7,7 @@ A collection of AI-enabled SDLC tools for AI developers.
 ### Using GitHub CLI (Recommended)
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
