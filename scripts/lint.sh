@@ -17,8 +17,15 @@ if [[ ! -f "$CONFIG_DST" ]] && [[ -f "$CONFIG_SRC" ]]; then
   echo "Created $CONFIG_DST from aidev toolkit template"
 fi
 
-# Target: argument or default
-TARGET="${1:-**/*.md}"
+# Target: argument or default; expand directories to recursive glob
+ARG="${1:-}"
+if [[ -z "$ARG" ]]; then
+  TARGET="**/*.md"
+elif [[ -d "$ARG" ]]; then
+  TARGET="${ARG%/}/**/*.md"
+else
+  TARGET="$ARG"
+fi
 
 # Run auto-fix
 echo "Fixing: $TARGET"
