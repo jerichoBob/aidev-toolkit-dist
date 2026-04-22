@@ -195,11 +195,16 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.53.1
+0.53.2
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.53.2 (2026-04-22)
+
+- fix(install): require gh CLI, skip auth if already logged in [`6651cce`]
+- fix(uninstall): remove invalid stderr redirect in for loop glob [`246d273`]
 
 #### v0.53.1 (2026-04-22)
 
