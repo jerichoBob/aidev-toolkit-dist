@@ -50,6 +50,7 @@ SKILLS=(
     "should-i-trust-it.md"
     "remember.md"
     "aws-costs.md"
+    "browser-harness.md"
 )
 
 # SDD module skills (sourced from modules/sdd/skills/)
