@@ -151,12 +151,12 @@ else
         GH_ERR=$(gh repo clone jerichoBob/aidev-toolkit-dist "$TOOLKIT_DIR" -- --quiet 2>&1) && {
             echo -e "${GREEN}✓${NC} (gh)"
         } || {
-            # gh failed, try SSH
-            SSH_ERR=$(git clone "$REPO_URL" "$TOOLKIT_DIR" 2>&1) && {
+            # gh failed, try SSH (BatchMode=yes prevents passphrase prompts)
+            SSH_ERR=$(GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND='ssh -o BatchMode=yes' git clone "$REPO_URL" "$TOOLKIT_DIR" 2>&1) && {
                 echo -e "${GREEN}✓${NC} (SSH)"
             } || {
-                # SSH failed, try HTTPS
-                HTTPS_ERR=$(git clone "$REPO_URL_HTTPS" "$TOOLKIT_DIR" 2>&1) && {
+                # SSH failed, try HTTPS (GIT_TERMINAL_PROMPT=0 prevents credential prompts)
+                HTTPS_ERR=$(GIT_TERMINAL_PROMPT=0 git clone "$REPO_URL_HTTPS" "$TOOLKIT_DIR" 2>&1) && {
                     echo -e "${GREEN}✓${NC} (HTTPS)"
                 } || {
                     echo -e "${RED}✗${NC}"
@@ -170,12 +170,12 @@ else
             }
         }
     else
-        # gh not available, try SSH first
-        SSH_ERR=$(git clone "$REPO_URL" "$TOOLKIT_DIR" 2>&1) && {
+        # gh not available, try SSH first (BatchMode=yes prevents passphrase prompts)
+        SSH_ERR=$(GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND='ssh -o BatchMode=yes' git clone "$REPO_URL" "$TOOLKIT_DIR" 2>&1) && {
             echo -e "${GREEN}✓${NC} (SSH)"
         } || {
-            # SSH failed, try HTTPS
-            HTTPS_ERR=$(git clone "$REPO_URL_HTTPS" "$TOOLKIT_DIR" 2>&1) && {
+            # SSH failed, try HTTPS (GIT_TERMINAL_PROMPT=0 prevents credential prompts)
+            HTTPS_ERR=$(GIT_TERMINAL_PROMPT=0 git clone "$REPO_URL_HTTPS" "$TOOLKIT_DIR" 2>&1) && {
                 echo -e "${GREEN}✓${NC} (HTTPS)"
             } || {
                 echo -e "${RED}✗${NC}"
