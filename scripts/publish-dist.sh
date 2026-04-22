@@ -34,11 +34,12 @@ fi
 echo "Copying allowlisted paths..."
 while IFS= read -r line; do
     [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
-    src="$REPO_ROOT/$line"
-    dst="$DIST_CLONE_DIR/$line"
+    # Strip trailing slash — cp -r src/ into an existing dst/ creates dst/src/
+    src="$REPO_ROOT/${line%/}"
+    dst_parent="$DIST_CLONE_DIR/$(dirname "$line")"
     if [[ -e "$src" ]]; then
-        mkdir -p "$(dirname "$dst")"
-        cp -r "$src" "$dst"
+        mkdir -p "$dst_parent"
+        cp -r "$src" "$dst_parent/"
         echo "  ✓ $line"
     else
         echo "  ⚠ missing: $line (skipped)"

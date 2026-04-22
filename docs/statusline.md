@@ -1,10 +1,39 @@
 # Claude Code Status Line
 
-Documents the `statusLine` configuration in `~/.claude/settings.json` that renders the context/git status bar at the bottom of the Claude Code prompt.
+The status line at the bottom of every Claude Code prompt shows your current git branch, working tree state, and — most importantly — **how full the context window is**. This document explains why that matters and how the implementation works.
+
+---
+
+## Why Context Window Visibility Matters
+
+> **The problem:** Claude's performance degrades as the context window fills up — and without visibility into how full it is, you have no warning before it starts affecting quality.
+
+Claude Code conversations have a finite context window. As it fills:
+
+| Context Level | What Happens |
+|---------------|-------------|
+| 0–50%   | ✅ Full capability — reasoning, recall, and code quality are at their best |
+| 50–75%  | ⚠️ Mild degradation — earlier conversation details start dropping off |
+| 75–90%  | 🔶 Noticeable impact — responses may miss earlier context, instructions can be forgotten |
+| 90–100% | 🔴 Severe degradation — compaction kicks in, significant context is lost, quality drops sharply |
+
+Without a visible indicator, you only discover you're near the limit when things start going wrong — wrong assumptions, forgotten instructions, repeated mistakes. The `ctx:%` indicator gives you a heads-up so you can act before that happens (start a new conversation, use `/compact`, or wrap up the current task).
+
+### What the Status Line Looks Like
+
+```text
+[aidev-toolkit] main ★ ctx:53%
+```
+
+![Status line showing ctx:53%](assets/statusline-ctx53.png)
+
+The `ctx:%` value updates on every prompt, giving you a live reading throughout your session.
 
 ---
 
 ## Configuration Structure
+
+Defined in `~/.claude/settings.json` under the top-level `statusLine` key:
 
 ```json
 "statusLine": {
@@ -13,10 +42,10 @@ Documents the `statusLine` configuration in `~/.claude/settings.json` that rende
 }
 ```
 
-| Field     | Value       | Description                                                    |
-|-----------|-------------|----------------------------------------------------------------|
-| `type`    | `"command"` | Tells Claude Code to run a shell command for the status line   |
-| `command` | `"..."`     | A single-line bash script; receives JSON on stdin, outputs text |
+| Field     | Value       | Description |
+|-----------|-------------|-------------|
+| `type`    | `"command"` | Tells Claude Code to run a shell command for the status line |
+| `command` | `"..."`     | Single-line bash; receives JSON on stdin, stdout becomes the status line |
 
 Claude Code invokes the command on every prompt render, piping a JSON context object to stdin and displaying whatever the command prints to stdout.
 
@@ -46,10 +75,10 @@ The command receives a JSON object via stdin with at minimum these fields:
 }
 ```
 
-| JSON path                          | Type    | Description                             |
-|------------------------------------|---------|-----------------------------------------|
-| `.workspace.current_dir`           | string  | Absolute path of the current workspace  |
-| `.context_window.used_percentage`  | number  | Context window used, 0–100              |
+| JSON path | Type | Description |
+|-----------|------|-------------|
+| `.workspace.current_dir` | string | Absolute path of the current workspace |
+| `.context_window.used_percentage` | number | Context window used, 0–100 |
 
 ---
 
@@ -89,14 +118,14 @@ git_status=$(git -c core.useBuiltinFSMonitor=false status --porcelain 2>/dev/nul
 
 `--porcelain` produces machine-readable one-line-per-file output. Each file's state is checked with `grep` and mapped to a symbol appended to `status_symbols`:
 
-| `git status --porcelain` pattern | Symbol | Meaning              |
-|----------------------------------|--------|----------------------|
-| `^A`                             | ✈      | Staged / added       |
-| `^ M` or `^M`                    | ✭      | Modified             |
-| `^ D` or `^D`                    | ✗      | Deleted              |
-| `^R`                             | ➦      | Renamed              |
-| `^U`                             | ✂      | Unmerged / conflict  |
-| `^??`                            | ✱      | Untracked            |
+| `git status --porcelain` pattern | Symbol | Meaning |
+|----------------------------------|--------|---------|
+| `^A` | ✈ | Staged / added |
+| `^ M` or `^M` | ✭ | Modified |
+| `^ D` or `^D` | ✗ | Deleted |
+| `^R` | ➦ | Renamed |
+| `^U` | ✂ | Unmerged / conflict |
+| `^??` | ✱ | Untracked |
 
 `-c core.useBuiltinFSMonitor=false` disables the FSMonitor daemon to avoid spawning background processes on every render.
 
@@ -137,3 +166,9 @@ printf "\033[35m[%s]\033[0m%s" "$basename_cwd" "$ctx_str"
 ## Location
 
 Defined in `~/.claude/settings.json` under the top-level `statusLine` key. This is a global setting — it applies to all Claude Code sessions regardless of project.
+
+To install or update it, run the aidev-toolkit installer:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jerichoBob/aidev-toolkit-dist/main/scripts/install.sh | bash
+```
