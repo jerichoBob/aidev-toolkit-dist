@@ -2,7 +2,7 @@
 version: X
 name: short-name
 display_name: "Human Readable Name"
-status: draft
+status: draft  # draft | in-progress | validation-needed | complete
 created: YYYY-MM-DD
 depends_on: []
 tags: []
