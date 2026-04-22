@@ -46,7 +46,7 @@ command -v browser-harness
 
 To make the runtime skill available in every future Claude Code session, add this import to `~/.claude/CLAUDE.md`:
 
-```
+```markdown
 @~/Developer/browser-harness/SKILL.md
 ```
 
