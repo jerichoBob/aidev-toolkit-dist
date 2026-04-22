@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.52.1
+0.52.2
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.52.2 (2026-04-22)
+
+- chore(specs): sync v52 OAuth auth spec — mark complete, README tasks in sync
 
 #### v0.52.1 (2026-04-21)
 
