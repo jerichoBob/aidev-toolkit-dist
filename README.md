@@ -195,19 +195,11 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.54.2
+0.54.0
 
 ## Changelog
 
 ### Release Notes
-
-#### v0.54.2 (2026-04-22)
-
-- fix: correct remaining -dist-dist typos in install URLs [`64476fb`]
-
-#### v0.54.1 (2026-04-22)
-
-- fix: correct duplicate -dist suffix in install clone URL [`bec39c6`]
 
 #### v0.54.0 (2026-04-22)
 
