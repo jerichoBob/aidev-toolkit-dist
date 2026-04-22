@@ -23,8 +23,6 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO_URL="git@github.com:jerichoBob/aidev-toolkit-dist.git"
-REPO_URL_HTTPS="https://github.com/jerichoBob/aidev-toolkit-dist.git"
 CLAUDE_DIR="$HOME/.claude"
 TOOLKIT_DIR="$CLAUDE_DIR/aidev-toolkit"
 COMMANDS_DIR="$CLAUDE_DIR/commands"
@@ -81,6 +79,21 @@ echo ""
 if ! command -v git &> /dev/null; then
     echo -e "${RED}Error: git is required but not installed.${NC}"
     exit 1
+fi
+
+# Check for gh CLI (required)
+if ! command -v gh &> /dev/null; then
+    echo -e "${RED}Error: GitHub CLI (gh) is required but not installed.${NC}"
+    echo ""
+    echo "Install it and authenticate:"
+    echo "  brew install gh && gh auth login"
+    exit 1
+fi
+
+# Authenticate if needed (skip if already logged in)
+if ! gh auth status &> /dev/null 2>&1; then
+    echo -e "GitHub CLI is not authenticated. Running gh auth login..."
+    gh auth login
 fi
 
 # Create commands and skills directories
@@ -146,50 +159,15 @@ else
     # Try gh CLI first, then SSH, then HTTPS
     echo -n "Cloning repository... "
 
-    # Try gh CLI first if available and authenticated
-    if command -v gh &> /dev/null && gh auth status &> /dev/null 2>&1; then
-        GH_ERR=$(gh repo clone jerichoBob/aidev-toolkit-dist "$TOOLKIT_DIR" -- --quiet 2>&1) && {
-            echo -e "${GREEN}✓${NC} (gh)"
-        } || {
-            # gh failed, try SSH (BatchMode=yes prevents passphrase prompts)
-            SSH_ERR=$(GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND='ssh -o BatchMode=yes' git clone "$REPO_URL" "$TOOLKIT_DIR" 2>&1) && {
-                echo -e "${GREEN}✓${NC} (SSH)"
-            } || {
-                # SSH failed, try HTTPS (GIT_TERMINAL_PROMPT=0 prevents credential prompts)
-                HTTPS_ERR=$(GIT_TERMINAL_PROMPT=0 git clone "$REPO_URL_HTTPS" "$TOOLKIT_DIR" 2>&1) && {
-                    echo -e "${GREEN}✓${NC} (HTTPS)"
-                } || {
-                    echo -e "${RED}✗${NC}"
-                    echo -e "${RED}Failed to clone repository.${NC}"
-                    echo ""
-                    echo "gh error: $GH_ERR"
-                    echo "SSH error: $SSH_ERR"
-                    echo "HTTPS error: $HTTPS_ERR"
-                    exit 1
-                }
-            }
-        }
-    else
-        # gh not available, try SSH first (BatchMode=yes prevents passphrase prompts)
-        SSH_ERR=$(GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND='ssh -o BatchMode=yes' git clone "$REPO_URL" "$TOOLKIT_DIR" 2>&1) && {
-            echo -e "${GREEN}✓${NC} (SSH)"
-        } || {
-            # SSH failed, try HTTPS (GIT_TERMINAL_PROMPT=0 prevents credential prompts)
-            HTTPS_ERR=$(GIT_TERMINAL_PROMPT=0 git clone "$REPO_URL_HTTPS" "$TOOLKIT_DIR" 2>&1) && {
-                echo -e "${GREEN}✓${NC} (HTTPS)"
-            } || {
-                echo -e "${RED}✗${NC}"
-                echo -e "${RED}Failed to clone repository.${NC}"
-                echo ""
-                echo "SSH error: $SSH_ERR"
-                echo "HTTPS error: $HTTPS_ERR"
-                echo ""
-                echo "For private repos, install GitHub CLI:"
-                echo "  brew install gh && gh auth login"
-                exit 1
-            }
-        }
-    fi
+    GH_ERR=$(gh repo clone jerichoBob/aidev-toolkit-dist "$TOOLKIT_DIR" -- --quiet 2>&1) && {
+        echo -e "${GREEN}✓${NC}"
+    } || {
+        echo -e "${RED}✗${NC}"
+        echo -e "${RED}Failed to clone repository.${NC}"
+        echo ""
+        echo "Error: $GH_ERR"
+        exit 1
+    }
 fi
 
 # Configure Claude Code permissions for /aid-update
