@@ -195,11 +195,16 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.57.0
+0.58.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.58.0 (2026-04-23)
+
+- feat(v60): complete test coverage phase 2 — all remaining scripts [`ec44623`]
+
 
 #### v0.57.0 (2026-04-23)
 

@@ -36,6 +36,7 @@
 - `/commit-push` — Same as /commit but auto-pushes
 - `/analyze-changes` — Analyze git changes and determine version bump type (support skill)
 - `/version-bump` — Bump version and update changelog (support skill)
+- `/browser-harness` — Direct Chrome CDP control — install, connect, and run browser tasks
 - `/code-stats [path]` — Count lines of code
 - `/lint [target]` — Lint and fix markdown files
 - `/screenshots [N]` — Load recent macOS screenshots into context
