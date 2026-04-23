@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.54.1
+0.54.2
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.54.2 (2026-04-23)
+
+- feat(v52): mark GitHub OAuth auth spec complete [`58dc8ef`]
 
 #### v0.54.1 (2026-04-23)
 
