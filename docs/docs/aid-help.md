@@ -11,14 +11,15 @@
 ### Toolkit & Documentation
 
 - `/aid [command]` — Show this help, or help for a specific command
+- `/aid-login` — Authenticate with GitHub (browser OAuth → JWT)
 - `/aid-update` — Pull latest updates from GitHub
 - `/aid-feedback` — Submit feedback or feature requests
 - `/docs-update` — Update README.md and CLAUDE.md
 
 ### Identity & Auth
 
-- `scripts/auth.sh login` — Authenticate via browser-based GitHub OAuth; stores a JWT at `~/.claude/aidev-toolkit/.auth`
-- `scripts/auth.sh status` — Show who is logged in and when the token expires
+- `/aid-login` — Authenticate via browser-based GitHub OAuth; stores a JWT at `~/.claude/aidev-toolkit/.auth`
+- `/aid-login status` — Show who is logged in and when the token expires
 - `scripts/auth.sh logout` — Remove stored auth token
 - `scripts/auth.sh refresh` — Silently renew token when within 7 days of expiry
 
