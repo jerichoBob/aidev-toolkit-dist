@@ -7,21 +7,21 @@ A collection of AI-enabled SDLC tools for AI developers.
 ### Using GitHub CLI (Recommended)
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 ### Using SSH
 
 ```bash
-git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 ### Using HTTPS (requires credential helper)
 
 ```bash
-git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -64,7 +64,7 @@ After installation:
 
 ```bash
 # Install aidev toolkit (using GitHub CLI)
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # Go to your project
@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.54.0
+0.54.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.54.1 (2026-04-23)
+
+- docs: fix markdown formatting in docs-update skill [`109df9d`]
 
 #### v0.54.0 (2026-04-22)
 

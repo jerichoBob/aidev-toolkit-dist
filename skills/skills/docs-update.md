@@ -100,9 +100,11 @@ Skip this step if `$ARGUMENTS` does not contain `--deep`.
 3. Extract key dependency versions from the manifest.
 4. Scan the project README for version claims (e.g., "React 18", "Go 1.21", "Node 20").
 5. For each claim where the manifest has a different version, report a flag:
+
    ```text
    [FLAG] README says React 18.2, package.json has 19.0
    ```
+
 6. Do NOT auto-fix version claims — flag only.
 7. Track: tech_flagged count.
 
@@ -115,9 +117,11 @@ Skip this step if `$ARGUMENTS` does not contain `--deep`.
    - Inline code paths that look like file references (contain `/` and a file extension)
 2. For each extracted path, check if it exists on disk using Read (or Glob with exact path).
 3. For each path that does not exist, report a flag:
+
    ```text
    [FLAG] README references scripts/foo.sh — file not found
    ```
+
 4. Do NOT auto-fix broken paths — flag only.
 5. Track: path_flagged count.
 
