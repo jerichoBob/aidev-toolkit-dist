@@ -195,11 +195,16 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.55.0
+0.56.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.56.0 (2026-04-23)
+
+- feat(v59): integrate test coverage requirement into development methodology [`fda95f8`]
+- feat(v59): add complete test suite with full coverage [`272bfee`]
 
 #### v0.55.0 (2026-04-23)
 

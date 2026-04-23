@@ -36,7 +36,7 @@ if [ -d "$COMMANDS_DIR" ]; then
         if [ -L "$file" ]; then
             target=$(readlink "$file")
             # Only remove if it points to aidev-toolkit
-            if [[ "$target" == *"aidev-toolkit/skills/"* ]] || [[ "$target" == "../aidev-toolkit/skills/"* ]]; then
+            if [[ "$target" == *"aidev-toolkit/skills/"* ]] || [[ "$target" == "../aidev-toolkit/skills/"* ]] || [[ "$target" == *"aidev-toolkit/modules/"* ]]; then
                 filename=$(basename "$file")
                 rm "$file"
                 [ "$QUIET" = false ] && echo -e "  - $filename ${GREEN}✓${NC}"

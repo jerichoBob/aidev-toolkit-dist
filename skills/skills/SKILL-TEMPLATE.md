@@ -232,6 +232,18 @@ skill-name/
     └── examples.md
 ```
 
+## Definition of Done
+
+A skill is not complete until:
+
+1. The skill file has valid frontmatter (`name`, `description`, `allowed-tools`)
+2. All new shell scripts introduced by the skill have a corresponding test in `tests/test-{name}.sh`
+3. `tests/run-all.sh` passes with no failures
+4. The skill is added to the `SKILLS` array in `scripts/install.sh`
+5. A help entry is added in `docs/aid-help.md`
+
+If a test dependency is unavailable (live API, browser, external service), mark the test as `blocked` with a reason — never skip silently.
+
 ## Sources
 
 - <https://docs.anthropic.com/en/docs/claude-code/skills>
