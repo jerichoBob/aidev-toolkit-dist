@@ -195,11 +195,18 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.56.0
+0.57.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.57.0 (2026-04-23)
+
+- feat(v32): add Xcode Info.plist validation tests; mark spec complete [`cb732b4`]
+- feat(specs): add v60 — test coverage phase 2, remaining script tests [`3e43b68`]
+- feat(test-status): add Coverage column sourced from test file comments [`963c4b1`]
+- feat: add /test-status project skill to run test suite and display results [`cbb9393`]
 
 #### v0.56.0 (2026-04-23)
 
