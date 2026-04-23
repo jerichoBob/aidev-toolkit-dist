@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.58.0
+0.59.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.59.0 (2026-04-23)
+
+- feat(v61): split /test-run and /test-status — persistent timestamped reports [`efaeccc`]
 
 #### v0.58.0 (2026-04-23)
 
