@@ -106,6 +106,7 @@ These are symlinked to `~/.claude/commands/` and `~/.claude/skills/` so you can 
 | Command             | Description                                                  |
 | ------------------- | ------------------------------------------------------------ |
 | `/browser-harness`  | Direct Chrome CDP control — install, connect, and run tasks  |
+| `/gmail-digest`     | Scrape Gmail and categorize unread emails by urgency         |
 
 **Development**
 
@@ -116,6 +117,8 @@ These are symlinked to `~/.claude/commands/` and `~/.claude/skills/` so you can 
 | `/commit-push`       | Same as /commit but auto-pushes                   |
 | `/lint`              | Lint and fix markdown files                       |
 | `/should-i-trust-it` | Verify skill safety before installation           |
+| `/test-run`          | Run full test suite, save timestamped report      |
+| `/test-status`       | Display results table from the last test run      |
 
 **Spec-Driven Development (SDD)**
 
@@ -195,11 +198,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.62.3
+0.63.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.63.0 (2026-04-24)
+
+- feat: promote gmail-digest, test-run, test-status to toolkit skills [`61177e3`]
 
 #### v0.62.3 (2026-04-24)
 

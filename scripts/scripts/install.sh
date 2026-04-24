@@ -50,6 +50,9 @@ SKILLS=(
     "aws-costs.md"
     "browser-harness.md"
     "aid-login.md"
+    "gmail-digest.md"
+    "test-run.md"
+    "test-status.md"
 )
 
 # SDD module skills (sourced from modules/sdd/skills/)
