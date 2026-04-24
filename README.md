@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.62.0
+0.62.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.62.1 (2026-04-24)
+
+- fix(v58): gmail-digest — post-scrape date filter and deduplication [`0c7121f`]
 
 #### v0.62.0 (2026-04-24)
 

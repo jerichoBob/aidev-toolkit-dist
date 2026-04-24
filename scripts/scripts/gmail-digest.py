@@ -238,6 +238,30 @@ def _cleanup_chrome(proc: subprocess.Popen, temp_dir: str) -> None:
     shutil.rmtree(temp_dir, ignore_errors=True)
 
 
+# ── date parsing ──────────────────────────────────────────────────────────
+
+def _parse_email_date(time_text: str, today: date) -> date | None:
+    """
+    Parse Gmail's compact time display into a date.
+    Today's emails: "1:09 AM" / "12:41 PM"  → today
+    This-year dates: "Apr 22"               → parsed with current year
+    Cross-year: if parsed date is in the future, use previous year.
+    """
+    text = time_text.strip()
+    if not text:
+        return None
+    if "AM" in text or "PM" in text:
+        return today
+    try:
+        from datetime import datetime as _dt
+        d = _dt.strptime(f"{text} {today.year}", "%b %d %Y").date()
+        if d > today:
+            d = _dt.strptime(f"{text} {today.year - 1}", "%b %d %Y").date()
+        return d
+    except ValueError:
+        return None
+
+
 # ── scraping ───────────────────────────────────────────────────────────────
 
 def check_chrome(cdp_ws: str | None = None) -> bool:
@@ -321,6 +345,30 @@ print(raw or "[]")
     except json.JSONDecodeError:
         print(f"Warning: could not parse email JSON: {output[:200]}", file=sys.stderr)
         return [], label
+
+    # Gmail's newer_than:Nd search is unreliable — filter by date in Python.
+    # target_date uses explicit after:/before: bounds so no extra filter needed.
+    if not target_date and days > 1:
+        today = date.today()
+        cutoff = today - timedelta(days=days - 1)
+        before = len(emails)
+        emails = [
+            e for e in emails
+            if (d := _parse_email_date(e.get("time", ""), today)) is not None and d >= cutoff
+        ]
+        dropped = before - len(emails)
+        if dropped:
+            print(f"  (filtered out {dropped} emails outside date range)", file=sys.stderr)
+
+    # Deduplicate: Gmail sometimes returns the same email twice at page boundaries.
+    seen: set[tuple[str, str, str]] = set()
+    deduped = []
+    for e in emails:
+        key = (e.get("sender", ""), e.get("subject", ""), e.get("time", ""))
+        if key not in seen:
+            seen.add(key)
+            deduped.append(e)
+    emails = deduped
 
     print(f"Found {len(emails)} {email_type} ({label})", file=sys.stderr)
     return emails, label
