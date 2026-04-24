@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.60.3
+0.61.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.61.0 (2026-04-24)
+
+- feat(v58): gmail-digest — --days/--weeks range, --all read+unread, --account N/list [`fc1ed68`]
 
 #### v0.60.3 (2026-04-24)
 

@@ -10,7 +10,14 @@
 #   - No args exits cleanly (no traceback)
 #   - --check reports Chrome reachability
 #   - --dry-run scrapes inbox, shows email list or inbox-clear
-#   - No API key needed — script is a pure scraper, no external AI calls
+#   - No API key needed — pure scraper, no external AI calls
+#   - --output file= writes to path
+#   - --date flag scrapes a specific date
+#   - --days N scrapes a multi-day range
+#   - --weeks N is shorthand for --days N*7
+#   - --all includes read emails
+#   - --account list shows logged-in accounts
+#   - --account N targets a specific account index
 
 set -e
 
@@ -109,7 +116,7 @@ else
     fi
 fi
 
-# ─── Test 4: no API key needed — script is a pure scraper ─────────────────
+# ─── Test 4: no API key needed ────────────────────────────────────────────
 
 echo ""
 echo "Test: script works with ANTHROPIC_API_KEY explicitly unset..."
@@ -156,7 +163,6 @@ else
             fail "output file content unexpected: $(head -3 "$OUT_FILE")"
         fi
     else
-        # Script may exit 0 with no file if inbox is clear (no emails = no file)
         if echo "$(uv run "$SCRIPT" --dry-run 2>&1)" | grep -q "Inbox clear"; then
             pass "inbox clear — no file written (expected)"
         else
@@ -165,7 +171,7 @@ else
     fi
 fi
 
-# ─── Test 6: --date flag with yesterday's date ────────────────────────────
+# ─── Test 6: --date flag ──────────────────────────────────────────────────
 
 echo ""
 echo "Test: --date flag with yesterday's date..."
@@ -182,8 +188,134 @@ else
 
     if [ "$date_exit" -eq 0 ]; then
         pass "--date $YESTERDAY exits 0"
+        if echo "$date_output" | grep -q "Inbox clear\|unread emails\|emails"; then
+            pass "--date output shows inbox status for $YESTERDAY"
+        else
+            fail "--date output unrecognized: $date_output"
+        fi
     else
         fail "--date $YESTERDAY exited non-zero: $(echo "$date_output" | tail -3)"
+    fi
+fi
+
+# ─── Test 7: --days N multi-day range ─────────────────────────────────────
+
+echo ""
+echo "Test: --days 3 scrapes last 3 days..."
+
+if ! $CHROME_LIVE; then
+    skip_blocked "--days flag" "Chrome CDP not reachable"
+else
+    set +e
+    days_output=$(uv run "$SCRIPT" --dry-run --days 3 2>&1)
+    days_exit=$?
+    set -e
+
+    if [ "$days_exit" -eq 0 ]; then
+        pass "--days 3 exits 0"
+        if echo "$days_output" | grep -q "last 3 days\|Inbox clear"; then
+            pass "--days 3 output shows correct range label"
+        else
+            fail "--days 3 output missing range label: $days_output"
+        fi
+    else
+        fail "--days 3 exited non-zero (exit=$days_exit): $days_output"
+    fi
+fi
+
+# ─── Test 8: --weeks N shorthand ──────────────────────────────────────────
+
+echo ""
+echo "Test: --weeks 1 equals --days 7..."
+
+if ! $CHROME_LIVE; then
+    skip_blocked "--weeks flag" "Chrome CDP not reachable"
+else
+    set +e
+    weeks_output=$(uv run "$SCRIPT" --dry-run --weeks 1 2>&1)
+    weeks_exit=$?
+    set -e
+
+    if [ "$weeks_exit" -eq 0 ]; then
+        pass "--weeks 1 exits 0"
+        if echo "$weeks_output" | grep -q "last 7 days\|Inbox clear"; then
+            pass "--weeks 1 shows 'last 7 days' label"
+        else
+            fail "--weeks 1 output missing '7 days' label: $weeks_output"
+        fi
+    else
+        fail "--weeks 1 exited non-zero (exit=$weeks_exit): $weeks_output"
+    fi
+fi
+
+# ─── Test 9: --all includes read emails ───────────────────────────────────
+
+echo ""
+echo "Test: --all includes read emails..."
+
+if ! $CHROME_LIVE; then
+    skip_blocked "--all flag" "Chrome CDP not reachable"
+else
+    set +e
+    all_output=$(uv run "$SCRIPT" --dry-run --all 2>&1)
+    all_exit=$?
+    set -e
+
+    if [ "$all_exit" -eq 0 ]; then
+        pass "--all exits 0"
+        # Should show "emails" not "unread emails" in label
+        if echo "$all_output" | grep -q "Inbox clear\|emails"; then
+            pass "--all output shows inbox status"
+        else
+            fail "--all output unrecognized: $all_output"
+        fi
+    else
+        fail "--all exited non-zero (exit=$all_exit): $all_output"
+    fi
+fi
+
+# ─── Test 10: --account list shows logged-in accounts ────────────────────
+
+echo ""
+echo "Test: --account list shows logged-in Gmail accounts..."
+
+if ! $CHROME_LIVE; then
+    skip_blocked "--account list" "Chrome CDP not reachable"
+else
+    set +e
+    acct_output=$(uv run "$SCRIPT" --account list 2>&1)
+    acct_exit=$?
+    set -e
+
+    if [ "$acct_exit" -eq 0 ]; then
+        pass "--account list exits 0"
+        if echo "$acct_output" | grep -q "0:"; then
+            pass "--account list shows at least account 0"
+        else
+            fail "--account list output missing account entries: $acct_output"
+        fi
+    else
+        fail "--account list exited non-zero (exit=$acct_exit): $acct_output"
+    fi
+fi
+
+# ─── Test 11: --account 0 explicit default account ───────────────────────
+
+echo ""
+echo "Test: --account 0 targets default account..."
+
+if ! $CHROME_LIVE; then
+    skip_blocked "--account 0" "Chrome CDP not reachable"
+else
+    set +e
+    acct0_output=$(uv run "$SCRIPT" --dry-run --account 0 2>&1)
+    acct0_exit=$?
+    set -e
+
+    if [ "$acct0_exit" -eq 0 ]; then
+        pass "--account 0 exits 0"
+    else
+        fail "--account 0 exited non-zero (exit=$acct0_exit): $acct0_output"
     fi
 fi
 
