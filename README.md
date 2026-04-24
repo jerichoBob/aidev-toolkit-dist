@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.62.2
+0.62.3
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.62.3 (2026-04-24)
+
+- test(v58): remove vestigial ANTHROPIC_API_KEY test — script has no API dependency [`5c4ea6e`]
 
 #### v0.62.2 (2026-04-24)
 

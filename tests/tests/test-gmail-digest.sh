@@ -10,7 +10,6 @@
 #   - No args exits cleanly (no traceback)
 #   - --check reports Chrome reachability
 #   - --dry-run scrapes inbox, shows email list or inbox-clear
-#   - No API key needed — pure scraper, no external AI calls
 #   - --output file= writes to path
 #   - --date flag scrapes a specific date
 #   - --days N scrapes a multi-day range
@@ -118,31 +117,7 @@ else
     fi
 fi
 
-# ─── Test 4: no API key needed ────────────────────────────────────────────
-
-echo ""
-echo "Test: script works with ANTHROPIC_API_KEY explicitly unset..."
-
-if ! $CHROME_LIVE; then
-    skip_blocked "no-API-key scrape" "Chrome CDP not reachable"
-else
-    set +e
-    no_key_output=$(ANTHROPIC_API_KEY="" uv run "$SCRIPT" --dry-run 2>&1)
-    no_key_exit=$?
-    set -e
-
-    if [ "$no_key_exit" -eq 0 ]; then
-        pass "exits 0 with ANTHROPIC_API_KEY unset"
-    else
-        if echo "$no_key_output" | grep -qi "ANTHROPIC_API_KEY"; then
-            fail "script requires ANTHROPIC_API_KEY — it should not"
-        else
-            fail "unexpected failure (exit=$no_key_exit): $no_key_output"
-        fi
-    fi
-fi
-
-# ─── Test 5: --output file= writes to path ────────────────────────────────
+# ─── Test 4: --output file= writes to path ────────────────────────────────
 
 echo ""
 echo "Test: --output file= writes email list to path..."
@@ -173,7 +148,7 @@ else
     fi
 fi
 
-# ─── Test 6: --date flag ──────────────────────────────────────────────────
+# ─── Test 5: --date flag ──────────────────────────────────────────────────
 
 echo ""
 echo "Test: --date flag with yesterday's date..."
@@ -200,7 +175,7 @@ else
     fi
 fi
 
-# ─── Test 7: --days N multi-day range ─────────────────────────────────────
+# ─── Test 6: --days N multi-day range ─────────────────────────────────────
 
 echo ""
 echo "Test: --days 3 scrapes last 3 days..."
@@ -225,7 +200,7 @@ else
     fi
 fi
 
-# ─── Test 8: --weeks N shorthand ──────────────────────────────────────────
+# ─── Test 7: --weeks N shorthand ──────────────────────────────────────────
 
 echo ""
 echo "Test: --weeks 1 equals --days 7..."
@@ -250,7 +225,7 @@ else
     fi
 fi
 
-# ─── Test 9: --all includes read emails ───────────────────────────────────
+# ─── Test 8: --all includes read emails ───────────────────────────────────
 
 echo ""
 echo "Test: --all includes read emails..."
@@ -276,7 +251,7 @@ else
     fi
 fi
 
-# ─── Test 10: --account list shows logged-in accounts ────────────────────
+# ─── Test 9: --account list shows logged-in accounts ────────────────────
 
 echo ""
 echo "Test: --account list shows logged-in Gmail accounts..."
@@ -300,7 +275,7 @@ if true; then
     fi
 fi
 
-# ─── Test 11: --account 0 explicit default account ───────────────────────
+# ─── Test 10: --account 0 explicit default account ───────────────────────
 
 echo ""
 echo "Test: --account 0 targets default account..."
@@ -320,7 +295,7 @@ else
     fi
 fi
 
-# ─── Test 12: --account email@domain unknown address gives clear error ────
+# ─── Test 11: --account email@domain unknown address gives clear error ────
 
 echo ""
 echo "Test: --account unknown@example.com gives clear error..."
@@ -342,7 +317,7 @@ else
     fail "--account unknown email should have exited non-zero (exit=$unknown_exit)"
 fi
 
-# ─── Test 13: --account email@domain launches dedicated Chrome (live) ─────
+# ─── Test 12: --account email@domain launches dedicated Chrome (live) ─────
 
 echo ""
 echo "Test: --account email@domain scrapes via dedicated Chrome instance..."
