@@ -419,7 +419,12 @@ def main():
             sys.exit(0)
         else:
             print("✗ Chrome CDP is not reachable.")
-            print("  Visit chrome://inspect/#remote-debugging and tick Allow, then retry.")
+            print("  Opening chrome://inspect/#remote-debugging — tick Allow, then retry.")
+            import subprocess
+            subprocess.Popen([
+                "osascript", "-e",
+                'tell application "Google Chrome" to open location "chrome://inspect/#remote-debugging"'
+            ])
             sys.exit(1)
 
     # ── account resolution ─────────────────────────────────────────────────
