@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.60.2
+0.60.3
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.60.3 (2026-04-24)
+
+- refactor(v58): gmail-digest pure scraper — remove anthropic dep, enrich skill output, clean tests [`1eb55dc`]
 
 #### v0.60.2 (2026-04-24)
 
