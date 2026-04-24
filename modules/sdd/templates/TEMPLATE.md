@@ -54,6 +54,11 @@ tags: []
 - Task 1
 - Task 2
 
+### Phase N: Tests
+
+- Add `tests/test-{name}.sh` covering all new scripts and entry points introduced by this spec
+- Verify tests pass via `tests/run-all.sh`
+
 ---
 
 ## Technical Notes

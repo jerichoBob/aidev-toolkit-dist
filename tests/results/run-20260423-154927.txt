@@ -1,0 +1,706 @@
+
+aidev toolkit Test Runner
+========================
+
+Running test-auth...
+----------------------------------------
+
+aidev toolkit auth.sh Tests
+===========================
+
+Test: status — no .auth file...
+  ✓ status with no .auth exits with error message
+
+Test: status — expired JWT...
+  ✓ status with expired JWT reports expiry
+
+Test: status — valid JWT...
+  ✓ status shows github_login from JWT
+  ✓ status shows name from JWT
+  ✓ status shows email from JWT
+  ✓ status shows logged-in confirmation
+
+Test: token...
+  ✓ token prints raw JWT verbatim
+
+Test: logout...
+  ✓ logout removes .auth file
+
+  ⊘ auth.sh login [BLOCKED: requires live Cloudflare Worker + browser]
+  ⊘ auth.sh refresh [BLOCKED: requires live Cloudflare Worker with valid JWT]
+
+===========================
+Results: 8 passed, 0 failed, 2 blocked (skipped)
+
+✓ test-auth PASSED
+========================================
+
+Running test-clean-install...
+----------------------------------------
+
+aidev toolkit clean-install.sh Partial Tests
+==============================================
+
+Test: removes only toolkit symlinks, leaves other files intact...
+  ✓ toolkit symlink commit.md removed
+  ✓ toolkit symlink lint.md removed
+  ✓ user file my-custom-skill.md preserved
+  ✓ non-toolkit symlink foreign.md preserved
+
+Test: missing symlinks are handled gracefully...
+  ✓ removal loop handles empty/missing symlinks gracefully (exit 0)
+
+Test: non-existent commands/ directory is handled gracefully...
+  ✓ removal loop handles non-existent commands/ dir gracefully
+
+  ⊘ Full clean-install.sh end-to-end [BLOCKED: requires live GitHub network access and gh CLI authentication]
+
+==============================================
+Results: 6 passed, 0 failed, 1 blocked (skipped)
+
+✓ test-clean-install PASSED
+
+✓ test-clean-install PASSED
+========================================
+
+Running test-docs-inventory...
+----------------------------------------
+
+aidev toolkit test-docs-inventory.sh Tests
+===========================================
+
+Test: real repo — all skills documented...
+  ✓ real repo passes documentation inventory check
+
+Test: missing docs file exits with error...
+  ✓ missing docs file exits non-zero
+  ✓ missing docs file produces error message
+
+Test: skill missing from docs — fails with skill name...
+  ✓ missing skill causes non-zero exit
+  ✓ missing skill name appears in output
+
+Test: all skills documented — passes...
+  ✓ all-documented fixture passes
+
+===========================================
+Results: 6 passed, 0 failed, 0 blocked (skipped)
+
+✓ test-docs-inventory PASSED
+
+✓ test-docs-inventory PASSED
+========================================
+
+Running test-frontmatter...
+----------------------------------------
+
+aidev toolkit Frontmatter Validation
+====================================
+
+Core Skills:
+
+Validating inspect.md...
+  ✓ Valid 'name' field: inspect
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating aid-feedback.md...
+  ✓ Valid 'name' field: aid-feedback
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating remember.md...
+  ✓ Valid 'name' field: remember
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating lint.md...
+  ✓ Valid 'name' field: lint
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating aid-update.md...
+  ✓ Valid 'name' field: aid-update
+  ✓ Valid 'description' field
+
+Validating aws-costs.md...
+  ✓ Valid 'name' field: aws-costs
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating docs-update.md...
+  ✓ Valid 'name' field: docs-update
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating should-i-trust-it.md...
+  ✓ Valid 'name' field: should-i-trust-it
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating aid.md...
+  ✓ Valid 'name' field: aid
+  ✓ Valid 'description' field
+
+Validating analyze-changes.md...
+  ✓ Valid 'name' field: analyze-changes
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdlc-plan.md...
+  ✓ Valid 'name' field: sdlc-plan
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating screenshots.md...
+  ✓ Valid 'name' field: screenshots
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating deal-desk.md...
+  ✓ Valid 'name' field: deal-desk
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating aid-login.md...
+  ✓ Valid 'name' field: aid-login
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating code-stats.md...
+  ✓ Valid 'name' field: code-stats
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating browser-harness.md...
+  ✓ Valid 'name' field: browser-harness
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating version-bump.md...
+  ✓ Valid 'name' field: version-bump
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating commit.md...
+  ✓ Valid 'name' field: commit
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating commit-push.md...
+  ✓ Valid 'name' field: commit-push
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating arch-review.md...
+  ✓ Valid 'name' field: arch-review
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Module Skills:
+
+Validating sdd-specs-update.md...
+  ✓ Valid 'name' field: sdd-specs-update
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-next.md...
+  ✓ Valid 'name' field: sdd-next
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-init.md...
+  ✓ Valid 'name' field: sdd-init
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-specs-archive.md...
+  ✓ Valid 'name' field: sdd-specs-archive
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-spec-owner.md...
+  ✓ Valid 'name' field: sdd-spec-owner
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-spec-status.md...
+  ✓ Valid 'name' field: sdd-spec-status
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-next-phase.md...
+  ✓ Valid 'name' field: sdd-next-phase
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-code-spec.md...
+  ✓ Valid 'name' field: sdd-code-spec
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-spec-tagging.md...
+  ✓ Valid 'name' field: sdd-spec-tagging
+  ✓ Valid 'description' field
+
+Validating sdd-code.md...
+  ✓ Valid 'name' field: sdd-code
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-spec.md...
+  ✓ Valid 'name' field: sdd-spec
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-specs.md...
+  ✓ Valid 'name' field: sdd-specs
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-specs-doctor.md...
+  ✓ Valid 'name' field: sdd-specs-doctor
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-code-phase.md...
+  ✓ Valid 'name' field: sdd-code-phase
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+Validating sdd-spec-prioritize.md...
+  ✓ Valid 'name' field: sdd-spec-prioritize
+  ✓ Valid 'description' field
+  ✓ Valid 'allowed-tools' field
+
+====================================
+Results: 102 passed, 0 failed
+
+✓ test-frontmatter PASSED
+========================================
+
+Running test-install...
+----------------------------------------
+
+aidev toolkit Installation Tests
+===============================
+Test HOME: /var/folders/qc/td_ggkws6t7gt97j6x1vvt9w0000gp/T/tmp.G5D9eoeCFk
+
+Test 1: Fresh install...
+  ✓ Toolkit directory created
+  ✓ aid.md symlink created
+  ✓ inspect.md symlink created
+  ✓ arch-review.md symlink created
+  ✓ should-i-trust-it.md symlink created
+  ✓ commit.md symlink created
+  ✓ commit-push.md symlink created
+  ✓ code-stats.md symlink created
+  ✓ aid-update.md symlink created
+  ✓ aid-feedback.md symlink created
+  ✓ aid-login.md symlink created
+  ✓ docs-update.md symlink created
+  ✓ sdlc-plan.md symlink created
+  ✓ deal-desk.md symlink created
+  ✓ lint.md symlink created
+  ✓ screenshots.md symlink created
+  ✓ sdd-code.md symlink created
+  ✓ sdd-code-phase.md symlink created
+  ✓ sdd-code-spec.md symlink created
+  ✓ sdd-next.md symlink created
+  ✓ sdd-next-phase.md symlink created
+  ✓ sdd-spec.md symlink created
+  ✓ sdd-specs.md symlink created
+  ✓ sdd-specs-update.md symlink created
+  ✓ sdd-spec-tagging.md symlink created
+  ✓ sdd-specs-doctor.md symlink created
+
+Test 2: Symlinks resolve to files...
+  ✓ aid.md resolves
+  ✓ inspect.md resolves
+  ✓ arch-review.md resolves
+  ✓ should-i-trust-it.md resolves
+  ✓ commit.md resolves
+  ✓ commit-push.md resolves
+  ✓ code-stats.md resolves
+  ✓ aid-update.md resolves
+  ✓ aid-feedback.md resolves
+  ✓ aid-login.md resolves
+  ✓ docs-update.md resolves
+  ✓ sdlc-plan.md resolves
+  ✓ deal-desk.md resolves
+  ✓ lint.md resolves
+  ✓ screenshots.md resolves
+  ✓ sdd-code.md resolves
+  ✓ sdd-code-phase.md resolves
+  ✓ sdd-code-spec.md resolves
+  ✓ sdd-next.md resolves
+  ✓ sdd-next-phase.md resolves
+  ✓ sdd-spec.md resolves
+  ✓ sdd-specs.md resolves
+  ✓ sdd-specs-update.md resolves
+  ✓ sdd-spec-tagging.md resolves
+  ✓ sdd-specs-doctor.md resolves
+
+Test 3: Idempotent install...
+  ✓ Symlinks still valid after re-install
+
+Test 4: Uninstall...
+  ✓ aid.md symlink removed
+  ✓ inspect.md symlink removed
+  ✓ arch-review.md symlink removed
+  ✓ should-i-trust-it.md symlink removed
+  ✓ commit.md symlink removed
+  ✓ commit-push.md symlink removed
+  ✓ code-stats.md symlink removed
+  ✓ aid-update.md symlink removed
+  ✓ aid-feedback.md symlink removed
+  ✓ aid-login.md symlink removed
+  ✓ docs-update.md symlink removed
+  ✓ sdlc-plan.md symlink removed
+  ✓ deal-desk.md symlink removed
+  ✓ lint.md symlink removed
+  ✓ screenshots.md symlink removed
+  ✓ sdd-code.md symlink removed
+  ✓ sdd-code-phase.md symlink removed
+  ✓ sdd-code-spec.md symlink removed
+  ✓ sdd-next.md symlink removed
+  ✓ sdd-next-phase.md symlink removed
+  ✓ sdd-spec.md symlink removed
+  ✓ sdd-specs.md symlink removed
+  ✓ sdd-specs-update.md symlink removed
+  ✓ sdd-spec-tagging.md symlink removed
+  ✓ sdd-specs-doctor.md symlink removed
+  ✓ Toolkit directory removed
+
+===============================
+Results: 78 passed, 0 failed
+
+✓ test-install PASSED
+========================================
+
+Running test-lint...
+----------------------------------------
+
+aidev toolkit lint.sh Tests
+===========================
+
+Test: copies template when .markdownlint.json absent...
+  ✓ lint.sh copies .markdownlint.json when absent
+
+Test: does not overwrite existing .markdownlint.json...
+  ✓ existing .markdownlint.json not overwritten
+
+Test: lint execution...
+  ✓ lint runs to completion on valid markdown
+
+===========================
+Results: 3 passed, 0 failed, 0 blocked (skipped)
+
+✓ test-lint PASSED
+
+✓ test-lint PASSED
+========================================
+
+Running test-markdown-stripping...
+----------------------------------------
+Input:    | v1 | [Company Onboarding](spec-v1-company-onboarding.md) | 34/34 | ✅ Complete |
+Expected: | v1 | Company Onboarding | 34/34 | ✅ Complete |
+Actual:   | v1 | Company Onboarding | 34/34 | ✅ Complete |
+
+✅ PASS: Markdown links stripped correctly
+
+✓ test-markdown-stripping PASSED
+========================================
+
+Running test-package-skill...
+----------------------------------------
+
+aidev toolkit package-skill.sh Tests
+======================================
+
+Test: no argument exits non-zero with usage...
+  ✓ no argument exits non-zero
+  ✓ no argument shows usage message
+
+Test: unknown skill name exits with error...
+  ✓ unknown skill exits non-zero
+  ✓ unknown skill shows error message
+
+Test: VERSION extracted from README...
+  ✓ VERSION extracted as 9.8.7 from fixture README
+
+Test: dist/ output file created with expected name...
+  ✓ dist/test-skill-9.8.7.skill created
+
+Test: .skill file is a valid zip with expected structure...
+  ✓ .skill zip contains SKILL.md
+  ✓ .skill zip has correct folder structure (test-skill/)
+
+Test: SKILL.md contains name and description but not disallowed keys...
+  ✓ SKILL.md frontmatter contains 'name'
+  ✓ SKILL.md frontmatter contains injected 'metadata' (version/build)
+
+======================================
+Results: 10 passed, 0 failed
+
+✓ test-package-skill PASSED
+
+✓ test-package-skill PASSED
+========================================
+
+Running test-plain-text-regression...
+----------------------------------------
+Input:    | v1 | Core Foundation | 7/7 | ✅ Complete |
+Expected: | v1 | Core Foundation | 7/7 | ✅ Complete |
+Actual:   | v1 | Core Foundation | 7/7 | ✅ Complete |
+
+✅ PASS: Plain text unchanged (no regression)
+
+✓ test-plain-text-regression PASSED
+========================================
+
+Running test-screenshots...
+----------------------------------------
+
+aidev toolkit screenshots.sh Tests
+===================================
+
+Test: argument validation...
+  ✓ non-integer argument produces error
+  ✓ non-integer exits non-zero
+  ✓ zero argument produces error
+  ✓ zero exits non-zero
+  ✓ negative argument produces error
+  ✓ negative exits non-zero
+
+Test: missing Desktop directory...
+  ✓ missing Desktop produces error message
+  ✓ missing Desktop exits non-zero
+
+Test: Desktop with no screenshots...
+  ✓ empty Desktop produces error message
+  ✓ empty Desktop exits non-zero
+
+Test: Desktop with screenshots returns paths...
+  ✓ output contains screenshot paths (3 found)
+  ✓ non-screenshot files excluded from output
+  ✓ output paths are absolute
+
+Test: default N=1...
+  ✓ default (no arg) produces output
+
+===================================
+Results: 14 passed, 0 failed, 0 blocked (skipped)
+
+✓ test-screenshots PASSED
+
+✓ test-screenshots PASSED
+========================================
+
+Running test-specs-parse...
+----------------------------------------
+
+aidev toolkit specs-parse.sh Test Suite
+=======================================
+
+Test: status with valid specs
+  ✓ v1 shows In Progress (2/3)
+  ✓ v2 shows Draft (0/2)
+  ✓ v3 shows Complete (3/3)
+
+Test: status with empty spec
+  ✓ Empty spec shows Empty status
+
+Test: status with malformed checkboxes
+  ✓ Malformed checkboxes ignored correctly (2/3)
+
+Test: status with decimal versions
+  ✓ Decimal version v2.1 parsed
+  ✓ Decimal version v8.9 parsed
+  ✓ Decimal versions sorted correctly
+
+Test: next-task finds first unchecked
+  ✓ next-task found correct spec (v1)
+  ✓ next-task found correct task
+
+Test: next-task with all tasks complete
+  ✓ next-task returns NO_TASKS_REMAINING when complete
+
+Test: next-phase with multiple phases
+  ✓ next-phase found correct spec
+  ✓ next-phase found correct phase
+  ✓ next-phase lists all phase tasks
+
+Test: staleness detection
+  ✓ staleness detects newer spec file
+
+Test: structure detects missing README
+  ✓ structure detects missing README
+
+Test: spec-list TSV format
+  ✓ spec-list outputs TSV format
+  ✓ spec-list has correct number of fields (2)
+
+Test: whitespace handling
+  ✓ Whitespace in spec name handled
+  ✓ Whitespace in checkboxes handled
+
+=======================================
+Results: 20 passed, 0 failed
+
+✓ test-specs-parse PASSED
+========================================
+
+Running test-stats-parse...
+----------------------------------------
+
+aidev toolkit stats-parse.sh Test Suite
+========================================
+
+Test: extract-spec with fixture README...
+  ✓ extract-spec v1 returns 2 rows
+  ✓ extract-spec row 1: correct token fields
+  ✓ extract-spec v2 returns 1 row
+
+Test: aggregate-spec computes correct totals...
+  ✓ aggregate-spec v1: in_tokens = 3000
+  ✓ aggregate-spec v1: out_tokens = 600
+  ✓ aggregate-spec v1: task_count = 2
+
+Test: aggregate-all combines all specs...
+  ✓ aggregate-all returns rows for both specs
+  ✓ aggregate-all includes v1
+  ✓ aggregate-all includes v2
+
+Test: format-tokens renders correctly...
+  ✓ format-tokens 1500 → '1500'
+  ✓ format-tokens 0 → 0
+
+Test: format-duration renders correctly...
+  ✓ format-duration 90s → 1:30
+  ✓ format-duration 3661s → 1:01:01
+  ✓ format-duration 0 → 0:00
+
+Test: calculate-cost computes cost...
+  ✓ calculate-cost 1M input = $3.00
+  ✓ calculate-cost 100K output = $1.50
+  ✓ calculate-cost all zeros = $0.00
+
+Test: missing README exits with error...
+  ✓ missing README exits non-zero
+  ✓ missing README produces error message
+
+Test: no-metadata README returns empty output (no crash)...
+  ✓ no-metadata README exits cleanly (exit 0)
+  ✓ no-metadata README returns empty output
+
+========================================
+Results: 21 passed, 0 failed
+
+✓ test-stats-parse PASSED
+
+✓ test-stats-parse PASSED
+========================================
+
+Running test-token-tracker...
+----------------------------------------
+
+aidev toolkit token-tracker.sh Tests
+======================================
+
+Test: snapshot with no stats-cache.json...
+  ✓ snapshot creates output file when stats-cache.json absent
+  ✓ snapshot with no stats-cache.json writes {}
+
+Test: snapshot with fixture stats-cache.json...
+  ✓ snapshot creates output file when stats-cache.json present
+  ✓ snapshot with stats-cache.json produces valid JSON (non-empty)
+
+Test: delta between known snapshots...
+  ✓ delta: input tokens = 500
+  ✓ delta: output tokens = 100
+  ✓ delta: cache tokens = 2000
+
+Test: delta with identical snapshots → zeros...
+  ✓ delta identical snapshots → 0 0 0
+  ✓ delta empty {} snapshots → 0 0 0 (no crash)
+
+======================================
+Results: 9 passed, 0 failed
+
+✓ test-token-tracker PASSED
+
+✓ test-token-tracker PASSED
+========================================
+
+Running test-user-email...
+----------------------------------------
+
+aidev toolkit user-email.sh Tests
+==================================
+
+Test: get — no files...
+  ✓ get returns empty when no .user-email and no .auth
+
+Test: set + get round-trip...
+  ✓ get returns value written by set
+  ✓ .user-email has chmod 600
+
+Test: ensure — .user-email set, no prompt needed...
+  ✓ ensure returns stored email silently
+
+Test: get — valid JWT overrides .user-email...
+  ✓ get returns JWT email when valid .auth present
+
+Test: get — expired JWT falls back to .user-email...
+  ✓ get falls back to .user-email when JWT expired
+
+==================================
+Results: 6 passed, 0 failed
+
+✓ test-user-email PASSED
+========================================
+
+Running test-version-bump-xcode...
+----------------------------------------
+
+aidev toolkit version-bump Xcode Info.plist Tests
+==================================================
+
+Test: Xcode detection gate...
+  ✓ non-Xcode project: no .xcodeproj detected → Info.plist check skipped
+  ✓ Xcode project: .xcodeproj detected correctly
+
+Test: hardcoded values replaced with variable references...
+  ✓ hardcoded CFBundleShortVersionString detected and fixed
+  ✓ hardcoded CFBundleVersion detected and fixed
+  ✓ CFBundleShortVersionString → $(MARKETING_VERSION) written correctly
+  ✓ CFBundleVersion → $(CURRENT_PROJECT_VERSION) written correctly
+
+Test: already-variable plist is a no-op...
+  ✓ variable plist produces no-op
+  ✓ variable references preserved unchanged after no-op run
+
+Test: multiple Info.plist files — each fixed independently...
+  ✓ TargetA hardcoded plist fixed in multi-target pass
+  ✓ TargetB variable plist unchanged in multi-target pass
+
+  ⊘ Build Xcode project after fix — confirm version resolves [BLOCKED: requires Xcode.app, xcodebuild, and a real Swift project]
+
+==================================================
+Results: 10 passed, 0 failed, 1 blocked (skipped)
+
+✓ test-version-bump-xcode PASSED
+
+✓ test-version-bump-xcode PASSED
+========================================
+
+
+========================
+Test Suite Summary
+========================
+Tests run: 15
+Tests passed: 15
+Tests failed: 0
+
+✓ All tests passed!

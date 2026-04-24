@@ -11,14 +11,15 @@
 ### Toolkit & Documentation
 
 - `/aid [command]` — Show this help, or help for a specific command
+- `/aid-login` — Authenticate with GitHub (browser OAuth → JWT)
 - `/aid-update` — Pull latest updates from GitHub
 - `/aid-feedback` — Submit feedback or feature requests
 - `/docs-update` — Update README.md and CLAUDE.md
 
 ### Identity & Auth
 
-- `scripts/auth.sh login` — Authenticate via browser-based GitHub OAuth; stores a JWT at `~/.claude/aidev-toolkit/.auth`
-- `scripts/auth.sh status` — Show who is logged in and when the token expires
+- `/aid-login` — Authenticate via browser-based GitHub OAuth; stores a JWT at `~/.claude/aidev-toolkit/.auth`
+- `/aid-login status` — Show who is logged in and when the token expires
 - `scripts/auth.sh logout` — Remove stored auth token
 - `scripts/auth.sh refresh` — Silently renew token when within 7 days of expiry
 
@@ -35,12 +36,16 @@
 - `/commit-push` — Same as /commit but auto-pushes
 - `/analyze-changes` — Analyze git changes and determine version bump type (support skill)
 - `/version-bump` — Bump version and update changelog (support skill)
+- `/browser-harness` — Direct Chrome CDP control — install, connect, and run browser tasks
+- `/gmail-digest [--days N | --weeks N | --account email | --all]` — Scrape Gmail and categorize unread emails by urgency
 - `/code-stats [path]` — Count lines of code
 - `/lint [target]` — Lint and fix markdown files
 - `/screenshots [N]` — Load recent macOS screenshots into context
 - `/should-i-trust-it` — Verify skill safety before installation
 - `/remember [--user | --project] <content>` — Save knowledge to persistent memory
 - `/aws-costs [--profile <name>] [--all-profiles]` — Show AWS spend by service, daily trend, and active resources
+- `/test-run` — Run the full test suite and save a timestamped report to `tests/results/`
+- `/test-status` — Display results table from the last test run (no re-run)
 
 ### Spec-Driven Development (SDD)
 
