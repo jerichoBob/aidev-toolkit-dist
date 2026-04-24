@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.62.1
+0.62.2
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.62.2 (2026-04-24)
+
+- fix(v58): gmail-digest — normalize dedup keys to catch whitespace-variant duplicates [`701512f`]
 
 #### v0.62.1 (2026-04-24)
 

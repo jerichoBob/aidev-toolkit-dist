@@ -361,10 +361,14 @@ print(raw or "[]")
             print(f"  (filtered out {dropped} emails outside date range)", file=sys.stderr)
 
     # Deduplicate: Gmail sometimes returns the same email twice at page boundaries.
+    # Normalize keys: collapse whitespace so invisible differences don't prevent matching.
+    def _norm(s: str) -> str:
+        return " ".join(s.split())
+
     seen: set[tuple[str, str, str]] = set()
     deduped = []
     for e in emails:
-        key = (e.get("sender", ""), e.get("subject", ""), e.get("time", ""))
+        key = (_norm(e.get("sender", "")), _norm(e.get("subject", "")), _norm(e.get("time", "")))
         if key not in seen:
             seen.add(key)
             deduped.append(e)
