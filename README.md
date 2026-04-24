@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.60.0
+0.60.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.60.1 (2026-04-23)
+
+- test(v58): add gmail-digest integration test suite and update spec progress [`72ff9dc`]
 
 #### v0.60.0 (2026-04-23)
 

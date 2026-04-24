@@ -53,29 +53,16 @@ Scheduling (macOS launchd):
 import argparse
 import json
 import os
+import subprocess
 import sys
 import time
 from datetime import date
 from pathlib import Path
 
-# ── browser-harness setup ──────────────────────────────────────────────────
-BH_PATH = Path.home() / "Play" / "github_repos" / "browser-harness"
-if not BH_PATH.exists():
-    sys.exit(
-        f"Error: browser-harness not found at {BH_PATH}\n"
-        "Clone it: git clone <repo> ~/Play/github_repos/browser-harness"
-    )
-sys.path.insert(0, str(BH_PATH))
-
-try:
-    from admin import ensure_daemon, daemon_alive
-    from helpers import goto, js, wait, wait_for_load
-except ImportError as e:
-    sys.exit(f"Error importing browser-harness helpers: {e}")
-
 # ── constants ──────────────────────────────────────────────────────────────
 GMAIL_INBOX_URL = "https://mail.google.com/mail/u/0/#inbox"
 ANTHROPIC_MODEL = "claude-sonnet-4-6"
+BROWSER_HARNESS_CMD = "browser-harness"
 
 SYSTEM_PROMPT = """\
 You are an email triage assistant. Given a list of today's unread emails (sender, \
@@ -93,14 +80,51 @@ Rules:
 Output only the formatted digest, no preamble.
 """
 
+# ── browser-harness bridge ─────────────────────────────────────────────────
+
+def _run_browser(code: str, timeout: int = 60) -> str:
+    """
+    Run Python code via the browser-harness CLI.
+    Helpers (goto, js, wait, wait_for_load, etc.) are pre-imported by the CLI.
+    Daemon is auto-started. Returns stdout as a string.
+    """
+    if not _browser_harness_available():
+        sys.exit(
+            "Error: browser-harness CLI not found.\n"
+            "Install it: git clone https://github.com/browser-use/browser-harness ~/Developer/browser-harness\n"
+            "            cd ~/Developer/browser-harness && uv tool install -e ."
+        )
+    result = subprocess.run(
+        [BROWSER_HARNESS_CMD],
+        input=code,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or "browser-harness exited non-zero")
+    return result.stdout
+
+
+def _browser_harness_available() -> bool:
+    return subprocess.run(
+        ["command", "-v", BROWSER_HARNESS_CMD],
+        shell=False,
+        capture_output=True,
+    ).returncode == 0 or Path(
+        subprocess.run(
+            ["which", BROWSER_HARNESS_CMD], capture_output=True, text=True
+        ).stdout.strip()
+    ).exists()
+
+
 # ── scraping ───────────────────────────────────────────────────────────────
 
 def check_chrome() -> bool:
     """Return True if the browser-harness daemon is reachable."""
     try:
-        ensure_daemon()
-        result = js("document.readyState")
-        return result is not None
+        _run_browser("import json; print(json.dumps(page_info()))", timeout=10)
+        return True
     except Exception as e:
         print(f"Chrome CDP not reachable: {e}", file=sys.stderr)
         return False
@@ -108,76 +132,57 @@ def check_chrome() -> bool:
 
 def scrape_todays_unread(target_date: str | None = None) -> list[dict]:
     """
-    Attach to Chrome, navigate to Gmail inbox, and extract unread emails
-    from the target date (default: today).
-
+    Use browser-harness to navigate to Gmail and extract today's unread emails.
     Returns list of {sender, subject, snippet, time}.
     """
-    ensure_daemon()
-
     if target_date is None:
         target_date = date.today().isoformat()
 
-    print(f"Navigating to Gmail inbox...", file=sys.stderr)
-    goto(GMAIL_INBOX_URL)
-    wait(2.0)
-    wait_for_load(timeout=20)
+    print("Navigating to Gmail inbox...", file=sys.stderr)
 
-    # Give Gmail's JS time to render the email list
-    wait(2.0)
+    # Code passed to `browser-harness <<'PY'` — helpers are pre-imported.
+    # Gmail unread rows have classes zA + zE.
+    # Time cells show "H:MM AM/PM" for today, "Mon DD" for older emails.
+    scraping_code = """\
+import json
 
-    # Extract unread email rows.
-    # Gmail marks unread rows with classes zA + zE.
-    # Time cells show "H:MM AM/PM" for today, "Mon DD" for older.
-    # We filter by checking if the time text contains ":" (today's format).
-    extract_js = """
-(function() {
-    var rows = document.querySelectorAll('tr.zA.zE');
+goto("https://mail.google.com/mail/u/0/#inbox")
+wait(2.0)
+wait_for_load(timeout=20)
+wait(2.0)  # let Gmail's JS render the row list
+
+raw = js('''(function() {
+    var rows = document.querySelectorAll("tr.zA.zE");
     var emails = [];
     rows.forEach(function(row) {
-        // Time cell — today shows "2:30 PM", older shows "Apr 18"
-        var timeEl = row.querySelector('.xW span, .xW');
-        var timeText = timeEl ? (timeEl.getAttribute('title') || timeEl.textContent || '').trim() : '';
-
-        // Sender name
-        var senderEl = row.querySelector('.yX, .zF');
-        var sender = senderEl ? senderEl.textContent.trim() : '';
-
-        // Subject + snippet are in the same cell, separated by " - "
-        var subjectEl = row.querySelector('.y6 span:first-child, .bog');
-        var subject = subjectEl ? subjectEl.textContent.trim() : '';
-
-        var snippetEl = row.querySelector('.y2');
-        var snippet = snippetEl ? snippetEl.textContent.trim() : '';
-
-        if (sender || subject) {
-            emails.push({
-                sender: sender,
-                subject: subject,
-                snippet: snippet,
-                time: timeText
-            });
-        }
+        var timeEl  = row.querySelector(".xW span, .xW");
+        var timeText = timeEl ? (timeEl.getAttribute("title") || timeEl.textContent || "").trim() : "";
+        var sender  = (row.querySelector(".yX, .zF")                    || {textContent:""}).textContent.trim();
+        var subject = (row.querySelector(".y6 span:first-child, .bog")  || {textContent:""}).textContent.trim();
+        var snippet = (row.querySelector(".y2")                         || {textContent:""}).textContent.trim();
+        if (sender || subject) emails.push({sender:sender, subject:subject, snippet:snippet, time:timeText});
     });
     return JSON.stringify(emails);
-})()
+})()''')
+
+print(raw or "[]")
 """
 
-    raw = js(extract_js)
-    if not raw:
+    try:
+        output = _run_browser(scraping_code, timeout=60)
+    except RuntimeError as e:
+        print(f"Scraping failed: {e}", file=sys.stderr)
         return []
 
     try:
-        emails = json.loads(raw)
+        emails = json.loads(output.strip())
     except json.JSONDecodeError:
-        print(f"Warning: could not parse email JSON: {raw[:200]}", file=sys.stderr)
+        print(f"Warning: could not parse email JSON: {output[:200]}", file=sys.stderr)
         return []
 
-    # Filter to today's date if target_date is today
+    # Today's emails show time as "H:MM AM/PM" (contains ":"); older ones show "Mon DD"
     today = date.today().isoformat()
     if target_date == today:
-        # Today's emails have time in H:MM format (contains ":")
-        # The title attribute on the time element shows the full datetime
         emails = [e for e in emails if ":" in e.get("time", "")]
 
     print(f"Found {len(emails)} unread email(s) from {target_date}", file=sys.stderr)
