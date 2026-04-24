@@ -18,6 +18,8 @@
 #   - --all includes read emails
 #   - --account list shows logged-in accounts
 #   - --account N targets a specific account index
+#   - --account email@domain unknown address gives clear error
+#   - --account email@domain launches dedicated Chrome for non-default profile
 
 set -e
 
@@ -315,6 +317,64 @@ else
         pass "--account 0 exits 0"
     else
         fail "--account 0 exited non-zero (exit=$acct0_exit): $acct0_output"
+    fi
+fi
+
+# ─── Test 12: --account email@domain unknown address gives clear error ────
+
+echo ""
+echo "Test: --account unknown@example.com gives clear error..."
+
+# No Chrome required — fails before any browser interaction
+set +e
+unknown_output=$(uv run "$SCRIPT" --dry-run --account "unknown-test-address-xyz@example.com" 2>&1)
+unknown_exit=$?
+set -e
+
+if [ "$unknown_exit" -ne 0 ]; then
+    pass "--account unknown email exits non-zero"
+    if echo "$unknown_output" | grep -qi "No Chrome profile found\|not found\|--account list"; then
+        pass "--account unknown email shows helpful error message"
+    else
+        fail "--account unknown email error message unclear: $unknown_output"
+    fi
+else
+    fail "--account unknown email should have exited non-zero (exit=$unknown_exit)"
+fi
+
+# ─── Test 13: --account email@domain launches dedicated Chrome (live) ─────
+
+echo ""
+echo "Test: --account email@domain scrapes via dedicated Chrome instance..."
+
+# Determine a real second account to test with (first non-default profile account)
+TARGET_EMAIL=""
+if command -v uv &>/dev/null; then
+    acct_json=$(uv run "$SCRIPT" --account list 2>&1)
+    # Extract an email from a non-Default profile entry (Profile 1, Profile 4, etc.)
+    # Format: "  [Profile N]  email@domain  Full Name" — email is the last word on the [...] token line
+    TARGET_EMAIL=$(echo "$acct_json" | grep "\[Profile" | head -1 | grep -oE '[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}')
+fi
+
+if [ -z "$TARGET_EMAIL" ]; then
+    skip_blocked "--account email scrape" "No non-default profile account found"
+elif ! $CHROME_LIVE; then
+    skip_blocked "--account $TARGET_EMAIL" "Chrome CDP not reachable"
+else
+    set +e
+    email_output=$(uv run "$SCRIPT" --dry-run --account "$TARGET_EMAIL" 2>&1)
+    email_exit=$?
+    set -e
+
+    if [ "$email_exit" -eq 0 ]; then
+        pass "--account $TARGET_EMAIL exits 0"
+        if echo "$email_output" | grep -qi "Inbox clear\|unread emails\|emails"; then
+            pass "--account $TARGET_EMAIL output shows inbox status"
+        else
+            fail "--account $TARGET_EMAIL output unrecognized: $(echo "$email_output" | tail -5)"
+        fi
+    else
+        fail "--account $TARGET_EMAIL exited non-zero (exit=$email_exit): $(echo "$email_output" | tail -5)"
     fi
 fi
 

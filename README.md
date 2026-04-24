@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.61.2
+0.62.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.62.0 (2026-04-24)
+
+- feat(v58): gmail-digest --account email@domain — launch dedicated Chrome per profile [`7059dd2`]
 
 #### v0.61.2 (2026-04-24)
 

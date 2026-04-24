@@ -10,15 +10,16 @@ Usage:
   uv run scripts/gmail-digest.py [options]
 
 Options:
-  --days N            Scrape the last N days (default: 1 = today)
-  --weeks N           Scrape the last N weeks (shorthand for --days N*7)
-  --date YYYY-MM-DD   Scrape a specific date instead of today
-  --all               Include read emails (default: unread only)
-  --account N         Gmail account index, 0-based (default: 0)
-  --account list      List all logged-in Gmail accounts and exit
-  --output file=PATH  Write email list to a file instead of stdout
-  --dry-run           Alias for normal behavior (kept for compatibility)
-  --check             Validate Chrome CDP is reachable, then exit
+  --days N                    Scrape the last N days (default: 1 = today)
+  --weeks N                   Scrape the last N weeks (shorthand for --days N*7)
+  --date YYYY-MM-DD           Scrape a specific date instead of today
+  --all                       Include read emails (default: unread only)
+  --account N                 Gmail /u/N/ index within active Chrome profile (default: 0)
+  --account email@domain.com  Target a specific account across any Chrome profile
+  --account list              List all logged-in Gmail accounts and exit
+  --output file=PATH          Write email list to a file instead of stdout
+  --dry-run                   Alias for normal behavior (kept for compatibility)
+  --check                     Validate Chrome CDP is reachable, then exit
 
 Scheduling (macOS launchd):
   1. Visit chrome://inspect/#remote-debugging and tick Allow (once per profile).
@@ -29,28 +30,52 @@ Scheduling (macOS launchd):
 
 import argparse
 import json
+import os
+import re
+import shutil
+import socket
 import subprocess
 import sys
+import threading
+import time
 from datetime import date, timedelta
 from pathlib import Path
 
 BROWSER_HARNESS_CMD = "browser-harness"
+CHROME_BIN = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+# Large cache directories to skip when copying a Chrome profile
+_SKIP_CACHE_DIRS = {
+    "Cache", "Code Cache", "GPUCache", "DawnCache", "ShaderCache",
+    "VideoDecodeStats", "blob_storage", "databases", "IndexedDB",
+    "Service Worker", "Session Storage", "Extension State",
+}
 
 
 # ── browser-harness bridge ─────────────────────────────────────────────────
 
-def _run_browser(code: str, timeout: int = 60) -> str:
+def _run_browser(code: str, timeout: int = 60, cdp_ws: str | None = None) -> str:
+    """
+    Run Python code via browser-harness CLI.
+    cdp_ws: override CDP WebSocket URL via BU_CDP_WS env var (for non-default profiles).
+    """
     if not _browser_harness_available():
         sys.exit(
             "Error: browser-harness CLI not found.\n"
             "Install: uv tool install -e ~/Developer/browser-harness"
         )
+    env = None
+    if cdp_ws:
+        env = os.environ.copy()
+        env["BU_CDP_WS"] = cdp_ws
+
     result = subprocess.run(
         [BROWSER_HARNESS_CMD],
         input=code,
         capture_output=True,
         text=True,
         timeout=timeout,
+        env=env,
     )
     if result.returncode != 0:
         raise RuntimeError(result.stderr.strip() or "browser-harness exited non-zero")
@@ -75,7 +100,6 @@ def list_accounts() -> list[dict]:
     """
     Read logged-in Gmail accounts from Chrome's local Preferences files.
     Returns list of {profile, email, name} for every account found across all profiles.
-    No browser navigation needed — instant and accurate.
     """
     chrome_dir = Path.home() / "Library/Application Support/Google/Chrome"
     if not chrome_dir.exists():
@@ -99,11 +123,126 @@ def list_accounts() -> list[dict]:
     return accounts
 
 
+def _find_profile_for_email(email: str) -> str | None:
+    """Return the Chrome profile directory name that contains this email, or None."""
+    for a in list_accounts():
+        if a["email"].lower() == email.lower():
+            return a["profile"]
+    return None
+
+
+# ── profile-targeted Chrome launch ────────────────────────────────────────
+
+def _find_free_port(start: int = 9223) -> int:
+    for port in range(start, start + 100):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind(("", port))
+                return port
+        except OSError:
+            continue
+    raise RuntimeError("No free port found in range 9223-9323")
+
+
+def _copy_profile_minimal(src: Path, dst: Path) -> None:
+    """Copy Chrome profile directory, skipping large cache dirs."""
+    dst.mkdir(parents=True, exist_ok=True)
+    for item in src.iterdir():
+        if item.name in _SKIP_CACHE_DIRS:
+            continue
+        dest = dst / item.name
+        try:
+            if item.is_file():
+                shutil.copy2(item, dest)
+            elif item.is_dir():
+                shutil.copytree(
+                    str(item), str(dest),
+                    ignore=shutil.ignore_patterns(*_SKIP_CACHE_DIRS),
+                )
+        except Exception:
+            pass  # skip locked or unreadable files
+
+
+def _launch_chrome_profile(profile_dir: str, port: int) -> tuple[subprocess.Popen, str, str]:
+    """
+    Launch a new Chrome instance for the given profile on the given port.
+    Copies the profile (sans caches) to a temp dir so it doesn't conflict
+    with the running Chrome instance.
+    Returns (process, temp_dir, cdp_ws_url). Caller must call _cleanup_chrome().
+    """
+    chrome_src = Path.home() / "Library/Application Support/Google/Chrome"
+    temp_dir = Path(
+        subprocess.run(["mktemp", "-d"], capture_output=True, text=True).stdout.strip()
+    )
+
+    print(f"  Copying {profile_dir} (no caches)...", file=sys.stderr)
+    _copy_profile_minimal(chrome_src / profile_dir, temp_dir / profile_dir)
+
+    local_state = chrome_src / "Local State"
+    if local_state.exists():
+        shutil.copy2(str(local_state), str(temp_dir))
+
+    print(f"  Starting Chrome on port {port}...", file=sys.stderr)
+    proc = subprocess.Popen(
+        [
+            CHROME_BIN,
+            f"--user-data-dir={temp_dir}",
+            f"--profile-directory={profile_dir}",
+            f"--remote-debugging-port={port}",
+            "--no-first-run",
+            "--no-default-browser-check",
+            "--disable-sync",
+            "--window-size=1280,800",
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    # Chrome prints "DevTools listening on ws://..." to stderr when CDP is ready.
+    # DevToolsActivePort is not reliably written on macOS; parse stderr instead.
+    cdp_ws_found: list[str] = []
+
+    def _read_stderr():
+        assert proc.stderr is not None
+        for line in proc.stderr:
+            m = re.search(r"DevTools listening on (ws://\S+)", line)
+            if m:
+                cdp_ws_found.append(m.group(1))
+                break
+        # drain remaining stderr so the pipe doesn't block Chrome
+        for _ in proc.stderr:
+            pass
+
+    t = threading.Thread(target=_read_stderr, daemon=True)
+    t.start()
+
+    deadline = time.time() + 30
+    while time.time() < deadline:
+        if cdp_ws_found:
+            t.join(timeout=1)
+            return proc, str(temp_dir), cdp_ws_found[0]
+        time.sleep(0.25)
+
+    proc.terminate()
+    shutil.rmtree(str(temp_dir), ignore_errors=True)
+    raise RuntimeError(f"Chrome on port {port} did not become ready within 30s")
+
+
+def _cleanup_chrome(proc: subprocess.Popen, temp_dir: str) -> None:
+    proc.terminate()
+    try:
+        proc.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+    shutil.rmtree(temp_dir, ignore_errors=True)
+
+
 # ── scraping ───────────────────────────────────────────────────────────────
 
-def check_chrome() -> bool:
+def check_chrome(cdp_ws: str | None = None) -> bool:
     try:
-        _run_browser("import json; print(json.dumps(page_info()))", timeout=10)
+        _run_browser("import json; print(json.dumps(page_info()))", timeout=10, cdp_ws=cdp_ws)
         return True
     except Exception as e:
         print(f"Chrome CDP not reachable: {e}", file=sys.stderr)
@@ -115,16 +254,15 @@ def scrape_emails(
     target_date: str | None = None,
     include_read: bool = False,
     account: int = 0,
+    cdp_ws: str | None = None,
 ) -> tuple[list[dict], str]:
     """
     Scrape Gmail via browser-harness.
-    Returns (emails, label) where label describes the time range scraped.
-    emails is a list of {sender, subject, snippet, time}.
+    Returns (emails, label).
     """
     base = f"https://mail.google.com/mail/u/{account}"
     row_selector = "tr.zA" if include_read else "tr.zA.zE"
 
-    # Build URL and label based on mode
     if target_date:
         d = date.fromisoformat(target_date)
         next_d = d + timedelta(days=1)
@@ -144,10 +282,7 @@ def scrape_emails(
     email_type = "emails" if include_read else "unread emails"
     print(f"Scraping {email_type} ({label})...", file=sys.stderr)
 
-    # filter_today_js: JS expression — true means keep the row, false means skip
-    filter_expr = (
-        '":" in (timeText || "")' if filter_today else "true"
-    )
+    filter_expr = '":" in (timeText || "")' if filter_today else "true"
 
     scraping_code = f"""
 import json
@@ -176,7 +311,7 @@ print(raw or "[]")
 """
 
     try:
-        output = _run_browser(scraping_code, timeout=60)
+        output = _run_browser(scraping_code, timeout=60, cdp_ws=cdp_ws)
     except RuntimeError as e:
         print(f"Scraping failed: {e}", file=sys.stderr)
         return [], label
@@ -220,7 +355,7 @@ def main():
     parser.add_argument("--weeks", type=int, default=None, help="Scrape the last N weeks")
     parser.add_argument("--date", default=None, help="Specific date to scrape (YYYY-MM-DD)")
     parser.add_argument("--all", action="store_true", help="Include read emails (default: unread only)")
-    parser.add_argument("--account", default="0", help="Account index (0=default) or 'list'")
+    parser.add_argument("--account", default="0", help="Account: index, email@domain, or 'list'")
     parser.add_argument("--output", default="terminal", help="Output: terminal (default) or file=/path")
     parser.add_argument("--dry-run", action="store_true", help="Alias for normal behavior (kept for compatibility)")
     parser.add_argument("--check", action="store_true", help="Validate Chrome CDP is reachable, then exit")
@@ -235,7 +370,8 @@ def main():
             print("  Visit chrome://inspect/#remote-debugging and tick Allow, then retry.")
             sys.exit(1)
 
-    # Resolve account
+    # ── account resolution ─────────────────────────────────────────────────
+
     if args.account == "list":
         accounts = list_accounts()
         if not accounts:
@@ -247,25 +383,47 @@ def main():
             print(f"  [{a['profile']}]  {a['email']}{name}")
         sys.exit(0)
 
-    try:
-        account_index = int(args.account)
-    except ValueError:
-        sys.exit(f"--account must be an integer or 'list', got: {args.account}")
+    launched: tuple[subprocess.Popen, str] | None = None
+    cdp_ws: str | None = None
+    account_index = 0
 
-    # Resolve day count
-    if args.weeks is not None:
-        days = args.weeks * 7
-    elif args.days is not None:
-        days = args.days
+    if "@" in args.account:
+        # Email-based: find the Chrome profile, launch a dedicated Chrome instance
+        email = args.account
+        profile_dir = _find_profile_for_email(email)
+        if not profile_dir:
+            sys.exit(f"No Chrome profile found for {email}\nRun --account list to see available accounts.")
+        print(f"Targeting {email} ({profile_dir})", file=sys.stderr)
+        port = _find_free_port()
+        proc, temp_dir, cdp_ws = _launch_chrome_profile(profile_dir, port)
+        launched = (proc, temp_dir)
+        time.sleep(2)  # let the browser fully settle before navigating
     else:
-        days = 1
+        try:
+            account_index = int(args.account)
+        except ValueError:
+            sys.exit(f"--account must be an integer, email, or 'list', got: {args.account}")
 
-    emails, label = scrape_emails(
-        days=days,
-        target_date=args.date,
-        include_read=getattr(args, "all"),
-        account=account_index,
-    )
+    # ── scrape ─────────────────────────────────────────────────────────────
+
+    try:
+        if args.weeks is not None:
+            days = args.weeks * 7
+        elif args.days is not None:
+            days = args.days
+        else:
+            days = 1
+
+        emails, label = scrape_emails(
+            days=days,
+            target_date=args.date,
+            include_read=getattr(args, "all"),
+            account=account_index,
+            cdp_ws=cdp_ws,
+        )
+    finally:
+        if launched:
+            _cleanup_chrome(*launched)
 
     if not emails:
         kind = "emails" if getattr(args, "all") else "unread emails"
