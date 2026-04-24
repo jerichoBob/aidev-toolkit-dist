@@ -86,12 +86,16 @@ for i in range({max_accounts}):
         wait(1.5)
         wait_for_load(timeout=10)
         url = js("window.location.href")
+        # Gmail redirects non-existent accounts back to /u/0/ — detect and stop
+        if f"/u/{{i}}/" not in url:
+            break
         if "mail.google.com" not in url:
             break
         title = js("document.title")
         match = re.search(r'[\\w.%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{{2,}}', title)
-        email = match.group(0) if match else "(email not shown)"
-        accounts.append({{"index": i, "email": email}})
+        if not match:
+            break  # no email in title — not a real inbox (chooser or sign-in page)
+        accounts.append({{"index": i, "email": match.group(0)}})
     except Exception:
         break
 

@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.61.0
+0.61.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.61.1 (2026-04-24)
+
+- fix(v58): account list stops on first non-inbox page — no email in title = break [`52b6a5c`]
 
 #### v0.61.0 (2026-04-24)
 
