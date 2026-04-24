@@ -53,6 +53,7 @@ SKILLS=(
     "gmail-digest.md"
     "test-run.md"
     "test-status.md"
+    "status-footer.md"
 )
 
 # SDD module skills (sourced from modules/sdd/skills/)

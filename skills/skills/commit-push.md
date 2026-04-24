@@ -97,14 +97,45 @@ Done! Version 1.2.4 pushed.
    - If remote URL contains `github.com`: push normally with `git push`
    - If remote URL does not contain `github.com` (non-GitHub remote): push with `git push` (skip `gh`)
 
-4. **Report completion** (see Output Style above)
+4. **Run tests** (if `tests/run-all.sh` exists):
+
+   ```bash
+   ls tests/run-all.sh 2>/dev/null
+   ```
+
+   If found, run the full test suite and save the report:
+
+   ```bash
+   REPORT_FILE="tests/results/run-$(date +%Y%m%d-%H%M%S).txt"
+   mkdir -p tests/results
+   bash tests/run-all.sh 2>&1 | tee "$REPORT_FILE"
+   ```
+
+   Parse and display the inline summary (suites / passed / failed / blocked), same format as `/test-run`.
+   Continue even if tests fail — report the failure but do not abort.
+
+5. **Publish to dist** (if `scripts/publish-dist.sh` exists):
+
+   ```bash
+   ls scripts/publish-dist.sh 2>/dev/null
+   ```
+
+   If found, run:
+
+   ```bash
+   ./scripts/publish-dist.sh
+   ```
+
+   Report the result (version published or error).
+
+6. **Report completion** (see Output Style above)
 
 ## Difference from /commit
 
-| Command        | Version Bump | Changelog                  | Push       |
-| -------------- | ------------ | -------------------------- | ---------- |
-| `/commit`      | Always       | Always (README.md default) | Asks first |
-| `/commit-push` | Always       | Always (README.md default) | Automatic  |
+| Command        | Version Bump | Changelog                  | Push      | Tests                    | Dist Publish             |
+| -------------- | ------------ | -------------------------- | --------- | ------------------------ | ------------------------ |
+| `/commit`      | Always       | Always (README.md default) | Asks first | No                      | No                       |
+| `/commit-push` | Always       | Always (README.md default) | Automatic | If `tests/run-all.sh` exists | If `scripts/publish-dist.sh` exists |
 
 See `/commit` for full documentation on grouping, versioning, and release notes.
 
@@ -123,6 +154,9 @@ Summary: Update API documentation
 Committing... OK
 Bumping 1.2.3 → 1.2.4... OK
 Pushing... OK
+
+Testing... 16 suites, 309 passed, 1 failed, 12 blocked
+Publishing... v1.2.4 → aidev-toolkit-dist OK
 
 Done! Version 1.2.4 pushed.
 ```
@@ -150,6 +184,16 @@ Updating changelog in README.md... OK
 Pushing... OK
 To github.com:user/repo.git
    old1234..def5678  main -> main
+
+Testing... OK
+────────────────────────────────────────
+Suites:  16
+Passed:  309
+Failed:  1
+Blocked: 12 (skipped)
+────────────────────────────────────────
+
+Publishing... ✓ Published v1.2.4 to aidev-toolkit-dist
 
 Done! Version 1.2.4 pushed.
 ```
