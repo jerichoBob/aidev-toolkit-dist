@@ -1,7 +1,7 @@
 ---
 name: status-footer
 description: Enable/disable the Claude Code status footer and toggle individual components (dir, branch, ctx%, model, effort, vim mode).
-argument-hint: [on|off] [--show <component>] [--hide <component>]
+argument-hint: [<number>|on|off|--show <component>|--hide <component>|--reset]
 allowed-tools: Read, Edit, Write, Bash(cat:*), Bash(jq:*), Bash(mkdir:*), Bash(chmod:*)
 model: inherit
 ---
@@ -9,26 +9,6 @@ model: inherit
 # Status Footer Configuration
 
 Configure the Claude Code status line footer — toggle it on/off and control which components appear.
-
-## Available Components
-
-| Component | Default | Description |
-|-----------|---------|-------------|
-| `dir`     | on      | Current directory name in magenta brackets, e.g. `[aidev-toolkit]` |
-| `branch`  | on      | Git branch + dirty status symbols (✈ staged, ✭ modified, ✗ deleted, ✱ untracked) |
-| `ctx`     | on      | Context window usage % — green (<60%), yellow (60–80%), red (>80%) |
-| `model`   | off     | Shortened model name, e.g. `haiku-4.5` |
-| `effort`  | off     | Reasoning effort level, e.g. `effort:high` |
-| `vim`     | off     | Vim mode indicator — `INSERT`, `NORMAL`, `VISUAL` (color-coded) |
-
-## Arguments
-
-- **(empty)** — Show current footer config
-- **on** — Enable the footer
-- **off** — Disable the footer
-- **--show `<component>`** — Enable a specific component (e.g. `--show model`)
-- **--hide `<component>`** — Disable a specific component (e.g. `--hide ctx`)
-- **--reset** — Reset to defaults (dir, branch, ctx on; model, effort, vim off)
 
 ## Config File
 
@@ -43,32 +23,73 @@ CONFIG="$HOME/.claude/statusline-config.json"
 cat "$CONFIG" 2>/dev/null || echo '{"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false}}'
 ```
 
-### 2. If no arguments — display status table
+### 2. Determine the argument
 
-Show a formatted table of the current state:
+The argument is one of:
+- **(empty)** — show the interactive menu (see step 3)
+- **a number 1–7** — toggle that menu item (see step 4), then show the updated menu
+- **`on`** — set `enabled: true`, confirm, done
+- **`off`** — set `enabled: false`, confirm, done
+- **`--show <component>`** — set that component to true, confirm, done
+- **`--hide <component>`** — set that component to false, confirm, done
+- **`--reset`** — write defaults, confirm, done
 
-```text
-Status Footer: ON
+### 3. Display the interactive menu
 
-Component  Status
-─────────  ──────
-dir        ✓ on
-branch     ✓ on
-ctx        ✓ on
-model      ✗ off
-effort     ✗ off
-vim        ✗ off
+Show the menu using this exact format, substituting `●` for enabled/on and `○` for disabled/off:
+
+```
+Status Footer Configuration
+────────────────────────────
+  1  Footer   ● enabled     — master on/off switch
+  2  dir      ● on          — current directory in brackets
+  3  branch   ● on          — git branch + dirty symbols
+  4  ctx      ● on          — context window usage %
+  5  model    ○ off         — shortened model name
+  6  effort   ○ off         — reasoning effort level
+  7  vim      ○ off         — vim mode indicator
+────────────────────────────
+/status-footer <number> to toggle
 ```
 
-Then exit.
+Then stop — do not ask a follow-up question.
 
-### 3. Apply the requested change
+### 4. Toggle by number (argument is 1–7)
 
-**`on`** — set `enabled: true` in config.
+Map number to field:
 
-**`off`** — set `enabled: false` in config.
+| # | Field    | Config key              |
+|---|----------|-------------------------|
+| 1 | Footer   | `enabled` (top-level)   |
+| 2 | dir      | `components.dir`        |
+| 3 | branch   | `components.branch`     |
+| 4 | ctx      | `components.ctx`        |
+| 5 | model    | `components.model`      |
+| 6 | effort   | `components.effort`     |
+| 7 | vim      | `components.vim`        |
 
-**`--show <component>`** — set `components.<component>: true`. Valid components: `dir`, `branch`, `ctx`, `model`, `effort`, `vim`. Error on unknown component.
+Read the current value for that field, flip it (true→false, false→true), write it back with `jq`, then show the updated menu (step 3).
+
+```bash
+# Example: toggle ctx (number 4)
+CONFIG="$HOME/.claude/statusline-config.json"
+tmp=$(mktemp)
+jq '.components.ctx = (.components.ctx | not)' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
+```
+
+For number 1 (Footer master switch):
+```bash
+tmp=$(mktemp)
+jq '.enabled = (.enabled | not)' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
+```
+
+### 5. Apply named changes (on/off/--show/--hide/--reset)
+
+**`on`** — set `enabled: true`.
+
+**`off`** — set `enabled: false`.
+
+**`--show <component>`** — set `components.<component>: true`. Valid: `dir`, `branch`, `ctx`, `model`, `effort`, `vim`. Error on unknown component.
 
 **`--hide <component>`** — set `components.<component>: false`. Same validation.
 
@@ -77,29 +98,22 @@ Then exit.
 {"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false}}
 ```
 
-Use `jq` to update the JSON in place:
-
 ```bash
 # Example: enable model component
+CONFIG="$HOME/.claude/statusline-config.json"
 tmp=$(mktemp)
 jq '.components.model = true' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
 ```
 
-### 4. Update settings.json statusLine command
+### 6. Sync settings.json statusLine
 
-After updating the config, ensure `~/.claude/settings.json` is pointing to the statusline script:
+After any config change, sync `~/.claude/settings.json`:
 
-- **If footer is enabled**: set `statusLine` to:
+- **If `enabled` is now true**: set `statusLine` to:
   ```json
-  {
-    "type": "command",
-    "command": "bash ~/.claude/aidev-toolkit/scripts/statusline.sh"
-  }
+  {"type":"command","command":"bash ~/.claude/aidev-toolkit/scripts/statusline.sh"}
   ```
-
-- **If footer is disabled**: remove the `statusLine` key from settings.json entirely.
-
-Use `jq` to update settings.json:
+- **If `enabled` is now false**: remove the `statusLine` key entirely.
 
 ```bash
 SETTINGS="$HOME/.claude/settings.json"
@@ -113,22 +127,18 @@ tmp=$(mktemp)
 jq 'del(.statusLine)' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
 ```
 
-### 5. Confirm the change
+For component-only changes (steps 2–7 toggles), only sync settings.json when the `enabled` field changes. Component changes don't require settings.json updates.
 
-Display one line summarizing what changed:
+### 7. Confirm named changes
 
-```text
+For `on`/`off`/`--show`/`--hide`/`--reset`, print one confirmation line then show the updated menu:
+
+```
 Footer enabled.
 ```
-```text
-Footer disabled.
 ```
-```text
 model: on
 ```
-```text
-ctx: off
 ```
-```text
 Footer reset to defaults.
 ```
