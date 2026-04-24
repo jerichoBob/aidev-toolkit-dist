@@ -2,10 +2,14 @@
 #
 # aidev toolkit gmail-digest.py Integration Test Suite
 #
-# Live integration tests — requires Chrome with CDP enabled and ANTHROPIC_API_KEY.
+# Live integration tests — requires Chrome with CDP enabled.
 # Tests that need live dependencies are marked blocked when unavailable.
 # No mocks. All tests invoke the real script against real services.
 #
+# Coverage:
+#   - Argument validation (no args, --check, --dry-run)
+#   - Skill path: --dry-run works WITHOUT ANTHROPIC_API_KEY (the /gmail-digest skill never needs it)
+#   - Standalone script path: full digest, cache hit, --output file=, --date (requires API key)
 
 set -e
 
@@ -44,12 +48,11 @@ if [ -n "$ANTHROPIC_API_KEY" ]; then
     API_KEY_SET=true
 fi
 
-# ─── Test 1: missing browser-harness CLI exits with install hint ───────────
+# ─── Test 1: no args exits cleanly, no Python traceback ───────────────────
 
 echo ""
 echo "Test: argument validation — no args runs without crashing..."
 
-# The script should exit 0 (inbox clear) or non-zero (Chrome down) — never a Python traceback
 set +e
 output=$(uv run "$SCRIPT" 2>&1)
 exit_code=$?
@@ -61,7 +64,7 @@ else
     pass "script exits cleanly (no Python traceback)"
 fi
 
-# ─── Test 2: --check with Chrome alive or clear error when not ────────────
+# ─── Test 2: --check reports Chrome status ────────────────────────────────
 
 echo ""
 echo "Test: --check reports Chrome status..."
@@ -105,7 +108,6 @@ else
         else
             fail "--dry-run output unrecognized: $dry_output"
         fi
-        # Must NOT call the API — no API usage in dry-run output
         if echo "$dry_output" | grep -qi "\[API\]\|categoriz"; then
             fail "--dry-run unexpectedly called the Claude API"
         else
@@ -116,15 +118,48 @@ else
     fi
 fi
 
-# ─── Test 4: full digest against real inbox ────────────────────────────────
+# ─── Test 4: skill path — --dry-run works WITHOUT ANTHROPIC_API_KEY ───────
+#
+# The /gmail-digest skill scrapes via --dry-run then has Claude Code
+# categorize inline. It must NEVER require ANTHROPIC_API_KEY.
+# This test explicitly unsets the key to prove it.
 
 echo ""
-echo "Test: full digest with live Chrome and Anthropic API..."
+echo "Test: skill path — --dry-run works without ANTHROPIC_API_KEY..."
+
+if ! $CHROME_LIVE; then
+    skip_blocked "skill-path dry-run without API key" "Chrome CDP not reachable"
+else
+    set +e
+    dry_no_key=$(ANTHROPIC_API_KEY="" uv run "$SCRIPT" --dry-run 2>&1)
+    dry_no_key_exit=$?
+    set -e
+
+    if [ "$dry_no_key_exit" -eq 0 ]; then
+        pass "--dry-run exits 0 without ANTHROPIC_API_KEY"
+    else
+        if echo "$dry_no_key" | grep -qi "ANTHROPIC_API_KEY"; then
+            fail "--dry-run requires ANTHROPIC_API_KEY — skill path must not need it"
+        else
+            fail "--dry-run failed for other reason (exit=$dry_no_key_exit): $dry_no_key"
+        fi
+    fi
+fi
+
+# ─── Tests 5-8: standalone script path — requires ANTHROPIC_API_KEY ───────
+#
+# The script's built-in Claude API path is used for cron/launchd scheduling
+# where Claude Code is not present. These legitimately require the API key.
+
+# ─── Test 5: full digest against real inbox ────────────────────────────────
+
+echo ""
+echo "Test: full digest with live Chrome and Anthropic API (standalone path)..."
 
 if ! $CHROME_LIVE; then
     skip_blocked "full digest" "Chrome CDP not reachable"
 elif ! $API_KEY_SET; then
-    skip_blocked "full digest" "ANTHROPIC_API_KEY not set"
+    skip_blocked "full digest" "ANTHROPIC_API_KEY not set (standalone path only)"
 else
     set +e
     digest_output=$(uv run "$SCRIPT" --verbose 2>&1)
@@ -143,17 +178,16 @@ else
     fi
 fi
 
-# ─── Test 5: prompt cache hit on second run ────────────────────────────────
+# ─── Test 6: prompt cache hit on second run ────────────────────────────────
 
 echo ""
-echo "Test: prompt cache hit on second run..."
+echo "Test: prompt cache hit on second run (standalone path)..."
 
 if ! $CHROME_LIVE; then
     skip_blocked "cache hit verification" "Chrome CDP not reachable"
 elif ! $API_KEY_SET; then
-    skip_blocked "cache hit verification" "ANTHROPIC_API_KEY not set"
+    skip_blocked "cache hit verification" "ANTHROPIC_API_KEY not set (standalone path only)"
 else
-    # Run twice — second run should show cache_read_input_tokens > 0
     set +e
     run2=$(uv run "$SCRIPT" --verbose 2>&1)
     run2_exit=$?
@@ -165,7 +199,6 @@ else
         elif echo "$run2" | grep -q "Inbox clear"; then
             pass "inbox clear — cache hit N/A (no emails to categorize)"
         else
-            # cache_hit=0 on second run is a real failure if we had emails
             if echo "$run2" | grep -q "cache_hit=0"; then
                 fail "second run shows cache_hit=0 — prompt caching not working"
             else
@@ -177,15 +210,15 @@ else
     fi
 fi
 
-# ─── Test 6: --output file= writes digest to path ─────────────────────────
+# ─── Test 7: --output file= writes digest to path ─────────────────────────
 
 echo ""
-echo "Test: --output file= writes to specified path..."
+echo "Test: --output file= writes to specified path (standalone path)..."
 
 if ! $CHROME_LIVE; then
     skip_blocked "--output file= test" "Chrome CDP not reachable"
 elif ! $API_KEY_SET; then
-    skip_blocked "--output file= test" "ANTHROPIC_API_KEY not set"
+    skip_blocked "--output file= test" "ANTHROPIC_API_KEY not set (standalone path only)"
 else
     OUT_FILE="$TEST_HOME/digest-out.md"
 
@@ -208,15 +241,15 @@ else
     fi
 fi
 
-# ─── Test 7: --date flag with a past date ─────────────────────────────────
+# ─── Test 8: --date flag with a past date ─────────────────────────────────
 
 echo ""
-echo "Test: --date flag with yesterday's date..."
+echo "Test: --date flag with yesterday's date (standalone path)..."
 
 if ! $CHROME_LIVE; then
     skip_blocked "--date flag" "Chrome CDP not reachable"
 elif ! $API_KEY_SET; then
-    skip_blocked "--date flag" "ANTHROPIC_API_KEY not set"
+    skip_blocked "--date flag" "ANTHROPIC_API_KEY not set (standalone path only)"
 else
     YESTERDAY=$(date -v-1d +%Y-%m-%d 2>/dev/null || date -d yesterday +%Y-%m-%d)
 

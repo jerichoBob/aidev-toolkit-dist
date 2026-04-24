@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.60.1
+0.60.2
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.60.2 (2026-04-24)
+
+- fix(v58): /gmail-digest skill needs no API key — scrape via dry-run, categorize inline [`e365525`]
 
 #### v0.60.1 (2026-04-23)
 
