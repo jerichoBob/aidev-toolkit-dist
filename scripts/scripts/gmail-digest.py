@@ -71,42 +71,32 @@ def _browser_harness_available() -> bool:
 
 # ── account listing ────────────────────────────────────────────────────────
 
-def list_accounts(max_accounts: int = 5) -> list[dict]:
+def list_accounts() -> list[dict]:
     """
-    Navigate to each /u/N/ Gmail URL and read the account email from the page title.
-    Returns list of {index, email} for each logged-in account found.
+    Read logged-in Gmail accounts from Chrome's local Preferences files.
+    Returns list of {profile, email, name} for every account found across all profiles.
+    No browser navigation needed — instant and accurate.
     """
-    code = f"""
-import json, re
-
-accounts = []
-for i in range({max_accounts}):
-    try:
-        goto(f"https://mail.google.com/mail/u/{{i}}/")
-        wait(1.5)
-        wait_for_load(timeout=10)
-        url = js("window.location.href")
-        # Gmail redirects non-existent accounts back to /u/0/ — detect and stop
-        if f"/u/{{i}}/" not in url:
-            break
-        if "mail.google.com" not in url:
-            break
-        title = js("document.title")
-        match = re.search(r'[\\w.%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{{2,}}', title)
-        if not match:
-            break  # no email in title — not a real inbox (chooser or sign-in page)
-        accounts.append({{"index": i, "email": match.group(0)}})
-    except Exception:
-        break
-
-print(json.dumps(accounts))
-"""
-    try:
-        output = _run_browser(code, timeout=60)
-        return json.loads(output.strip())
-    except Exception as e:
-        print(f"Could not list accounts: {e}", file=sys.stderr)
+    chrome_dir = Path.home() / "Library/Application Support/Google/Chrome"
+    if not chrome_dir.exists():
         return []
+
+    accounts = []
+    for prefs_path in sorted(chrome_dir.glob("*/Preferences")):
+        try:
+            prefs = json.loads(prefs_path.read_text(encoding="utf-8", errors="ignore"))
+            for info in prefs.get("account_info", []):
+                email = info.get("email", "")
+                if "@" in email:
+                    accounts.append({
+                        "profile": prefs_path.parent.name,
+                        "email": email,
+                        "name": info.get("full_name", ""),
+                    })
+        except Exception:
+            continue
+
+    return accounts
 
 
 # ── scraping ───────────────────────────────────────────────────────────────
@@ -249,12 +239,12 @@ def main():
     if args.account == "list":
         accounts = list_accounts()
         if not accounts:
-            print("No Gmail accounts found (or Chrome CDP not reachable).")
+            print("No Gmail accounts found in Chrome profiles.")
             sys.exit(1)
-        print(f"\nLogged-in Gmail accounts:")
+        print(f"\nLogged-in Gmail accounts ({len(accounts)} total):\n")
         for a in accounts:
-            marker = " (default)" if a["index"] == 0 else ""
-            print(f"  {a['index']}: {a['email']}{marker}")
+            name = f"  {a['name']}" if a.get("name") else ""
+            print(f"  [{a['profile']}]  {a['email']}{name}")
         sys.exit(0)
 
     try:

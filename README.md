@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.61.1
+0.61.2
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.61.2 (2026-04-24)
+
+- fix(v58): account list reads Chrome Preferences files — shows all profiles instantly [`63acd78`]
 
 #### v0.61.1 (2026-04-24)
 

@@ -279,20 +279,19 @@ fi
 echo ""
 echo "Test: --account list shows logged-in Gmail accounts..."
 
-if ! $CHROME_LIVE; then
-    skip_blocked "--account list" "Chrome CDP not reachable"
-else
-    set +e
-    acct_output=$(uv run "$SCRIPT" --account list 2>&1)
-    acct_exit=$?
-    set -e
+# No Chrome required — reads Chrome Preferences files directly
+set +e
+acct_output=$(uv run "$SCRIPT" --account list 2>&1)
+acct_exit=$?
+set -e
+if true; then
 
     if [ "$acct_exit" -eq 0 ]; then
         pass "--account list exits 0"
-        if echo "$acct_output" | grep -q "0:"; then
-            pass "--account list shows at least account 0"
+        if echo "$acct_output" | grep -q "\[Default\]\|\[Profile"; then
+            pass "--account list shows Chrome profile entries"
         else
-            fail "--account list output missing account entries: $acct_output"
+            fail "--account list output missing profile entries: $acct_output"
         fi
     else
         fail "--account list exited non-zero (exit=$acct_exit): $acct_output"
