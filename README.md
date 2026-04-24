@@ -195,11 +195,15 @@ This safely removes only aidev-toolkit components (the `~/.claude/aidev-toolkit/
 
 ## Version
 
-0.59.0
+0.60.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.60.0 (2026-04-23)
+
+- feat(v58): add gmail-digest.py — daily inbox triage via Claude [`a9c3c68`]
 
 #### v0.59.0 (2026-04-23)
 
