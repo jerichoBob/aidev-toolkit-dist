@@ -250,6 +250,49 @@ else
     echo "  You may be prompted to approve /aid-update on first use."
 fi
 
+# Configure PostToolUse hook to auto-lint markdown files on write/edit
+configure_hooks() {
+    if command -v python3 &> /dev/null; then
+        python3 << 'PYTHON_SCRIPT'
+import json, os
+
+settings_file = os.path.expanduser("~/.claude/settings.json")
+hook_cmd = "f=$(jq -r '.tool_input.file_path'); [[\"$f\" == *.md]] && markdownlint --fix --config ~/.claude/aidev-toolkit/templates/markdownlint.json \"$f\" 2>&1 || true"
+matcher = "Write|Edit|MultiEdit"
+
+settings = {}
+if os.path.exists(settings_file):
+    with open(settings_file) as f:
+        settings = json.load(f)
+
+hooks = settings.setdefault("hooks", {})
+ptus = hooks.setdefault("PostToolUse", [])
+
+# Find existing Write|Edit|MultiEdit entry
+entry = next((e for e in ptus if e.get("matcher") == matcher), None)
+if entry is None:
+    entry = {"matcher": matcher, "hooks": []}
+    ptus.append(entry)
+
+# Add markdownlint hook only if not already present
+already_present = any("markdownlint" in h.get("command", "") for h in entry.get("hooks", []))
+if not already_present:
+    entry.setdefault("hooks", []).append({"type": "command", "command": hook_cmd})
+    with open(settings_file, "w") as f:
+        json.dump(settings, f, indent=2)
+PYTHON_SCRIPT
+        return 0
+    fi
+    return 1
+}
+
+echo -n "Configuring markdown auto-lint hook... "
+if configure_hooks; then
+    echo -e "${GREEN}✓${NC}"
+else
+    echo -e "${YELLOW}skipped${NC} (python3 required)"
+fi
+
 # Create/update symlinks for skills (in both commands/ and skills/ directories)
 echo -e "Linking skills to ${YELLOW}$COMMANDS_DIR${NC} and ${YELLOW}$SKILLS_DIR${NC}..."
 for skill in "${SKILLS[@]}"; do
