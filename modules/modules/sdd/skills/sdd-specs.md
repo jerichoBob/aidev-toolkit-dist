@@ -41,12 +41,19 @@ Apply filter based on the active flag:
 
 **CRITICAL: Compute totals from the post-filter row set only. Do NOT carry forward any previously computed totals, and do NOT sum rows before filtering is complete.**
 
-1. Take the row set produced by Step F2 (the filtered rows that will actually appear in the table)
-2. For each row in that set, parse the Progress column (format: `done/total`)
-3. Skip rows where Progress is non-numeric (e.g. `∞`, `→ v34`)
-4. Sum all `done` values → total_done; sum all `total` values → total_tasks
-5. Compute percentage: `(total_done / total_tasks) * 100`, rounded to nearest integer
-6. For `--all`, include rows from active, deferred, and completed tables in the overall sum; also compute per-section counts separately for the summary line
+**Default (active-only) view:**
+
+1. Take the row set produced by Step F2
+2. Count rows by status: `in_progress` (🔧) and `draft` (✏️)
+3. For each row, parse Progress (`done/total`); skip non-numeric (`∞`, `→ vN`)
+4. Sum all `total` values → total_tasks; sum all `done` values → total_done
+5. remaining = total_tasks − total_done
+6. Summary = `{total_specs} active specs ({in_progress} in progress · {draft} draft) | {remaining} tasks remaining`
+
+**`--all` view:**
+
+1. Include rows from active, deferred, and completed tables
+2. Compute per-section counts separately for the summary line
 
 ### Step F4: Display
 
@@ -65,7 +72,7 @@ Output the cleaned table and summary. Include ALL columns present in the README 
 | v19  | Skill Tuning            | 5/17     | 🔧 In Progress | —     |
 
 ---
-Summary: N/M tasks complete (X%)
+Summary: N active specs (X in progress · Y draft) | Z tasks remaining
 (Showing active specs only. Use --all to include deferred and archived, --archived to browse archive.)
 ```
 
