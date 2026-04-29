@@ -5,7 +5,7 @@
 Built for developers who use [Claude Code](https://claude.ai/code) and want a consistent, automated SDLC workflow across all their projects.
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 Then open any project in Claude Code and run `/aid` to see what's available.
@@ -71,7 +71,7 @@ Scrape your inbox and categorize unread emails by urgency — without leaving Cl
 
 ```bash
 # Recommended
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -80,11 +80,11 @@ gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 
 ```bash
 # SSH
-git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # HTTPS
-git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -102,59 +102,95 @@ The installer symlinks skills to `~/.claude/commands/` and `~/.claude/skills/` s
 
 ## Skills
 
+Skills are organized into two tiers: **core** (daily drivers, shown by default in `/aid`) and **extended** (powerful when needed, available via `/aid --all`).
+
 ### Dev Workflow
 
-| Command              | What it does                                                              |
-| -------------------- | ------------------------------------------------------------------------- |
-| `/commit`            | Group changes, write conventional commit messages, bump version           |
-| `/commit-push`       | Same as `/commit` plus auto-push, tests, and dist publish                 |
-| `/lint`              | Lint and auto-fix markdown files                                          |
-| `/test-run`          | Run the full test suite, save a timestamped report                        |
-| `/test-status`       | Show results table from the last test run                                 |
-| `/code-stats`        | Count lines of code by language                                           |
-| `/should-i-trust-it` | Verify a skill file for malicious patterns before installing              |
+| Command         | What it does                                                    |
+| --------------- | --------------------------------------------------------------- |
+| `/commit`       | Group changes, write conventional commit messages, bump version |
+| `/commit-push`  | Same as `/commit` plus auto-push, tests, and dist publish       |
+| `/lint`         | Lint and auto-fix markdown files                                |
+| `/gmail-digest` | Scrape Gmail inbox and categorize unread emails by urgency      |
+| `/remember`     | Save a note to persistent memory (project or user scope)        |
 
-### Analysis & Planning
+### Analysis & Review
 
 | Command        | What it does                                                              |
 | -------------- | ------------------------------------------------------------------------- |
 | `/inspect`     | Analyze any codebase — identity, architecture, tech stack, patterns       |
 | `/arch-review` | Validate codebase against security, observability, and testing principles |
-| `/deal-desk`   | Deal qualification and risk assessment from project documents             |
-| `/sdlc-plan`   | Parse RFQ/RFP/PRD/SOW documents into a phased implementation plan        |
 
 ### Spec-Driven Development (SDD)
 
 A full workflow for writing specs before code, tracking implementation phase by phase.
 
-| Command             | What it does                                             |
-| ------------------- | -------------------------------------------------------- |
-| `/sdd-spec`         | Create a new specification document from a description   |
-| `/sdd-specs`        | Show all specs — status, staleness, progress summary     |
-| `/sdd-next`         | Show the next unimplemented task across all specs        |
-| `/sdd-code`         | Implement the next single task                           |
-| `/sdd-code-phase`   | Implement all tasks in the current phase                 |
-| `/sdd-code-spec`    | Implement all remaining tasks in a spec end-to-end       |
-| `/sdd-init`         | Scaffold a `specs/` directory for a new project          |
-
-### Utilities
-
-| Command          | What it does                                                    |
-| ---------------- | --------------------------------------------------------------- |
-| `/remember`      | Save a note to persistent memory (project or user scope)        |
-| `/screenshots`   | Load recent macOS screenshots into Claude's context             |
-| `/aws-costs`     | Show AWS spend by service, daily trend, and active resources    |
-| `/gmail-digest`  | Scrape Gmail inbox and categorize unread emails by urgency      |
-| `/status-footer` | Configure the Claude Code status line (dir, branch, ctx%, etc.) |
+| Command          | What it does                                            |
+| ---------------- | ------------------------------------------------------- |
+| `/sdd-spec`      | Create a new specification document from a description  |
+| `/sdd-specs`     | Show all specs — status, staleness, progress summary    |
+| `/sdd-code`      | Implement the next single task                          |
+| `/sdd-code-spec` | Implement all remaining tasks in a spec end-to-end      |
+| `/sdd-init`      | Scaffold a `specs/` directory for a new project         |
 
 ### Toolkit Management
 
-| Command          | What it does                              |
-| ---------------- | ----------------------------------------- |
-| `/aid`           | Show all available commands               |
-| `/aid-update`    | Pull latest updates from GitHub           |
-| `/aid-feedback`  | Submit feedback or feature requests       |
-| `/docs-update`   | Update README.md and CLAUDE.md            |
+| Command         | What it does                        |
+| --------------- | ----------------------------------- |
+| `/aid`          | Show core commands (daily drivers)  |
+| `/aid-update`   | Pull latest updates from GitHub     |
+| `/aid-feedback` | Submit feedback or feature requests |
+
+<details>
+<summary>Extended skills — available but not shown by default</summary>
+
+Run `/aid --all` to see these in the terminal.
+
+#### Dev Workflow
+
+| Command              | What it does                                                              |
+| -------------------- | ------------------------------------------------------------------------- |
+| `/test-run`          | Run the full test suite, save a timestamped report                        |
+| `/test-status`       | Show results table from the last test run                                 |
+| `/code-stats`        | Count lines of code by language                                           |
+| `/should-i-trust-it` | Verify a skill file for malicious patterns before installing              |
+| `/browser-harness`   | Direct Chrome CDP control — install, connect, and run browser tasks       |
+| `/screenshots`       | Load recent macOS screenshots into Claude's context                       |
+| `/aws-costs`         | Show AWS spend by service, daily trend, and active resources              |
+| `/status-footer`     | Configure the Claude Code status line (dir, branch, ctx%, etc.)           |
+| `/analyze-changes`   | Analyze git changes and determine version bump type (support skill)       |
+| `/version-bump`      | Bump version and update changelog (support skill)                         |
+
+#### Analysis & Planning
+
+| Command      | What it does                                                       |
+| ------------ | ------------------------------------------------------------------ |
+| `/deal-desk` | Deal qualification and risk assessment from project documents      |
+| `/sdlc-plan` | Parse RFQ/RFP/PRD/SOW documents into a phased implementation plan |
+
+#### Spec-Driven Development (SDD)
+
+| Command               | What it does                                                    |
+| --------------------- | --------------------------------------------------------------- |
+| `/sdd-next`           | Show the next unimplemented task across all specs               |
+| `/sdd-next-phase`     | Show all tasks in the current phase                             |
+| `/sdd-code-phase`     | Implement all tasks in the current phase                        |
+| `/sdd-spec-prioritize`| Recommend top N specs to focus on next                          |
+| `/sdd-spec-status`    | Show phase-by-phase progress for a specific spec                |
+| `/sdd-spec-owner`     | Set or unset spec owner                                         |
+| `/sdd-spec-tagging`   | Commit tagging convention reference                             |
+| `/sdd-specs-archive`  | Move completed specs to specs/completed/ to declutter           |
+| `/sdd-specs-doctor`   | Migrate spec files to YAML frontmatter format                   |
+| `/sdd-specs-update`   | Sync project with SDD infrastructure                            |
+
+#### Toolkit Management
+
+| Command         | What it does                             |
+| --------------- | ---------------------------------------- |
+| `/aid-login`    | Authenticate via browser-based GitHub OAuth |
+| `/docs-update`  | Update README.md and CLAUDE.md           |
+
+</details>
 
 ---
 
@@ -206,11 +242,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.67.2
+0.68.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.68.0 (2026-04-29)
+
+- feat(skill-tiers): implement v65 — tier field, /aid core/extended view, README restructure [`e290773`]
 
 #### v0.67.2 (2026-04-29)
 

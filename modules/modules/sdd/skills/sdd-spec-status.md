@@ -1,5 +1,6 @@
 ---
 name: sdd-spec-status
+tier: extended
 description: "Show phase-by-phase progress for a specific spec"
 argument-hint: "<vN>"
 allowed-tools: Read, Grep, Glob

@@ -1,5 +1,6 @@
 ---
 name: status-footer
+tier: extended
 description: Enable/disable the Claude Code status footer and toggle individual components (dir, branch, ctx%, model, effort, vim mode).
 argument-hint: [<number>|on|off|--show <component>|--hide <component>|--reset]
 allowed-tools: Read, Edit, Write, Bash(cat:*), Bash(jq:*), Bash(mkdir:*), Bash(chmod:*)

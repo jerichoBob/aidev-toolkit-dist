@@ -1,5 +1,6 @@
 ---
 name: browser-harness
+tier: extended
 description: Install and use browser-harness for direct Chrome CDP control via LLM.
 argument-hint: [task description]
 allowed-tools: Read, Bash(git:*), Bash(uv:*), Bash(command:*), Bash(osascript:*), Bash(open:*), Bash(pkill:*), Bash(rm:*), Bash(mkdir:*), Bash(ln:*), Bash(rg:*)

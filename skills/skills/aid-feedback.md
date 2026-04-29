@@ -1,5 +1,6 @@
 ---
 name: aid-feedback
+tier: core
 description: Submit feedback, suggestions, or feature requests for aidev toolkit.
 argument-hint: [type area description | --ingest]
 allowed-tools: Read, Bash(gh issue create:*), Bash(gh issue list:*), Bash(gh issue edit:*), Bash(gh label create:*), Bash(gh auth status:*), Bash(gh api user:*), AskUserQuestion

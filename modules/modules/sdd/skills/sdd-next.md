@@ -1,6 +1,7 @@
 ---
 name: sdd-next
 description: "Show the next task that would be implemented if /sdd-code is run"
+tier: extended
 disable-model-invocation: false
 allowed-tools: Read, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*)
 ---

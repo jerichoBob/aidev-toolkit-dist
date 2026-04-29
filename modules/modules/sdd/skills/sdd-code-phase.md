@@ -1,6 +1,7 @@
 ---
 name: sdd-code-phase
 description: "Implement all remaining tasks in the current phase without stopping"
+tier: extended
 disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git:*), Bash(date:*)
 ---

@@ -8,6 +8,7 @@ Reference template for creating new aidev toolkit skills.
 | -------------------------- | ------- | ------------------------------------------------------- |
 | `name`                     | string  | Skill identifier (lowercase, hyphens, max 64 chars)     |
 | `description`              | string  | **Short** - Single line for menu display (~60-80 chars) |
+| `tier`                     | string  | `core` (daily driver) or `extended` (situational). Defaults to `extended` if omitted. Controls `/aid` default view. |
 | `argument-hint`            | string  | Hint for expected arguments shown in UI                 |
 | `allowed-tools`            | string  | Comma-separated tools without permission prompts        |
 | `model`                    | string  | `sonnet`, `opus`, `haiku`, or `inherit`                 |

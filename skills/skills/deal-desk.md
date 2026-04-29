@@ -1,5 +1,6 @@
 ---
 name: deal-desk
+tier: extended
 description: Deal qualification and risk assessment for project documents.
 argument-hint: "[path|@doc] [--side vendor|buyer] [--quick|--deep] [--comprehensive] [--codebase] [--pdf] [--category <cat>]"
 allowed-tools: "Read, Glob, Grep, Bash(ls:*), Bash(find:*), Bash(file:*), Bash(wc:*), Bash(pandoc:*)"

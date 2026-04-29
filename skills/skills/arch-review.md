@@ -1,5 +1,6 @@
 ---
 name: arch-review
+tier: core
 description: Validate codebase against aidev toolkit architecture principles.
 argument-hint: "[--dry-run] [--principle <id>] [--fix] [--status] [--diff] [--scope <path>] [--ignore <pattern>] [--format json]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(git:*)

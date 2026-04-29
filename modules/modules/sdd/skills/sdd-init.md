@@ -1,5 +1,6 @@
 ---
 name: sdd-init
+tier: core
 description: "Scaffold specs/ directory for a new SDD project"
 argument-hint: "[--force]"
 allowed-tools: Read, Write, Bash(mkdir:*), Bash(ls:*), Bash(cp:*)

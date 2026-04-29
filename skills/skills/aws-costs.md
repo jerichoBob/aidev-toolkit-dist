@@ -1,5 +1,6 @@
 ---
 name: aws-costs
+tier: extended
 description: Show AWS spend by service, daily trend, and active resources across one or all profiles.
 argument-hint: "[--profile <name>] [--all-profiles]"
 allowed-tools: Bash(aws:*), Read

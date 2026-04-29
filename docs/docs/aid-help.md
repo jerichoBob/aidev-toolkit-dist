@@ -8,96 +8,119 @@
 
 ## aidev toolkit v{VERSION}
 
+Skills marked as core — your daily drivers. Run `/aid --all` to see everything.
+
 ### Toolkit & Documentation
 
 - `/aid [command]` — Show this help, or help for a specific command
-- `/aid-login` — Authenticate with GitHub (browser OAuth → JWT)
 - `/aid-update` — Pull latest updates from GitHub
 - `/aid-feedback` — Submit feedback or feature requests
-- `/docs-update` — Update README.md and CLAUDE.md
-
-### Identity & Auth
-
-- `/aid-login` — Authenticate via browser-based GitHub OAuth; stores a JWT at `~/.claude/aidev-toolkit/.auth`
-- `/aid-login status` — Show who is logged in and when the token expires
-- `scripts/auth.sh logout` — Remove stored auth token
-- `scripts/auth.sh refresh` — Silently renew token when within 7 days of expiry
 
 ### Analysis & Review
 
 - `/inspect [options]` — Analyze and describe the current codebase
 - `/arch-review` — Validate codebase against architecture principles
-- `/deal-desk` — Deal qualification and risk assessment
-- `/sdlc-plan` — Analyze business documents for implementation planning
 
 ### Development Tools
 
 - `/commit` — Smart commit with grouping, versioning, changelog
 - `/commit-push` — Same as /commit but auto-pushes
-- `/analyze-changes` — Analyze git changes and determine version bump type (support skill)
-- `/version-bump` — Bump version and update changelog (support skill)
-- `/browser-harness` — Direct Chrome CDP control — install, connect, and run browser tasks
-- `/gmail-digest [--days N | --weeks N | --account email | --all]` — Scrape Gmail and categorize unread emails by urgency
-- `/code-stats [path]` — Count lines of code
 - `/lint [target]` — Lint and fix markdown files
-- `/screenshots [N]` — Load recent macOS screenshots into context
-- `/should-i-trust-it` — Verify skill safety before installation
+- `/gmail-digest [--days N | --weeks N | --account email | --all]` — Scrape Gmail and categorize unread emails by urgency
 - `/remember [--user | --project] <content>` — Save knowledge to persistent memory
-- `/aws-costs [--profile <name>] [--all-profiles]` — Show AWS spend by service, daily trend, and active resources
-- `/test-run` — Run the full test suite and save a timestamped report to `tests/results/`
-- `/test-status` — Display results table from the last test run (no re-run)
-- `/status-footer [on|off] [--show <component>] [--hide <component>]` — Configure the Claude Code status footer (dir, branch, ctx, model, effort, vim)
 
 ### Spec-Driven Development (SDD)
 
 - `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
-- `/sdd-spec-status <vN>` — Show phase-by-phase progress for a specific spec
-- `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
-- `/sdd-specs-update [--force]` — Sync project with SDD infrastructure
 - `/sdd-spec <description>` — Create a new specification document
-- `/sdd-spec-owner <version> [set <email> | unset]` — Set or unset spec owner (support skill)
-- `/sdd-next` — Show the next task to implement
-- `/sdd-next-phase` — Show all tasks in the current phase
-- `/sdd-spec-prioritize [N]` — Recommend top N specs to focus on next (default: 5), then hand off to `/sdd-code-spec`
+- `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
 - `/sdd-code` — Implement the next single task
-- `/sdd-code-phase` — Implement all tasks in current phase
 - `/sdd-code-spec [version]` — Implement all remaining tasks in a spec
-- `/sdd-spec-tagging` — Commit tagging convention reference
-- `/sdd-specs-doctor [--dry-run]` — Migrate spec files to YAML frontmatter format
-- `/sdd-specs-archive [--dry-run]` — Move completed specs to specs/completed/ to declutter active view
 
 Run `/aid <command>` for detailed help on any command.
 
-**Examples:**
+··· and 21 extended skills available. Run `/aid --all` to see everything.
 
-```text
-/aid                     Show all commands
-/aid-update              Pull latest toolkit updates
-/aid-feedback            Submit feedback or feature request
-/docs-update             Update README.md and CLAUDE.md
-/aid inspect             Show help for /inspect
-/inspect                 Standard overview of current project
-/inspect --brief         Quick reference (name, stack, commands)
-/inspect --deep          Full analysis with patterns and domain model
-/arch-review             Check architecture compliance
-/deal-desk ./docs/       Analyze deal documents for risks
-/deal-desk --quick       Fast deal assessment
-/sdlc-plan @rfp.pdf      Analyze document for planning
-/commit                  Analyze, group, commit, version bump
-/commit-push             Commit and push in one step
-/code-stats              Count lines of code in codebase
-/lint                    Lint all markdown files
-/lint docs/              Lint specific directory
-/screenshots             Load most recent screenshot
-/screenshots 3           Load last 3 screenshots
-/sdd-init                Scaffold specs/ for a new project
-/sdd-specs               Show specs status (default, fast)
-/sdd-specs --stats       Show with token usage and costs
-/sdd-specs --deep        Full scan with staleness report
-/sdd-spec add CSV export Create a new spec
-/sdd-code                Implement the next task
-/sdd-code-phase          Implement entire current phase
-```
+<!-- /OUTPUT -->
+
+---
+
+### If `$ARGUMENTS` is "--all"
+
+<!-- OUTPUT -->
+
+## aidev toolkit v{VERSION}
+
+### Core — Daily Drivers
+
+#### Toolkit & Documentation
+
+- `/aid [command]` — Show this help, or help for a specific command
+- `/aid-update` — Pull latest updates from GitHub
+- `/aid-feedback` — Submit feedback or feature requests
+
+#### Analysis & Review
+
+- `/inspect [options]` — Analyze and describe the current codebase
+- `/arch-review` — Validate codebase against architecture principles
+
+#### Development Tools
+
+- `/commit` — Smart commit with grouping, versioning, changelog
+- `/commit-push` — Same as /commit but auto-pushes
+- `/lint [target]` — Lint and fix markdown files
+- `/gmail-digest [--days N | --weeks N | --account email | --all]` — Scrape Gmail and categorize unread emails by urgency
+- `/remember [--user | --project] <content>` — Save knowledge to persistent memory
+
+#### Spec-Driven Development (SDD)
+
+- `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
+- `/sdd-spec <description>` — Create a new specification document
+- `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
+- `/sdd-code` — Implement the next single task
+- `/sdd-code-spec [version]` — Implement all remaining tasks in a spec
+
+---
+
+### Extended — Powerful When Needed
+
+#### Toolkit & Auth
+
+- `/aid-login` — Authenticate via browser-based GitHub OAuth
+- `/docs-update` — Update README.md and CLAUDE.md
+
+#### Analysis & Review
+
+- `/deal-desk` — Deal qualification and risk assessment
+- `/sdlc-plan` — Analyze business documents for implementation planning
+
+#### Development Tools
+
+- `/analyze-changes` — Analyze git changes and determine version bump type (support skill)
+- `/version-bump` — Bump version and update changelog (support skill)
+- `/browser-harness` — Direct Chrome CDP control — install, connect, and run browser tasks
+- `/code-stats [path]` — Count lines of code
+- `/screenshots [N]` — Load recent macOS screenshots into context
+- `/should-i-trust-it` — Verify skill safety before installation
+- `/aws-costs [--profile <name>] [--all-profiles]` — Show AWS spend by service, daily trend, and active resources
+- `/test-run` — Run the full test suite and save a timestamped report to `tests/results/`
+- `/test-status` — Display results table from the last test run (no re-run)
+- `/status-footer [on|off] [--show <component>] [--hide <component>]` — Configure the Claude Code status footer
+
+#### Spec-Driven Development (SDD) — Extended
+
+- `/sdd-next` — Show the next task to implement
+- `/sdd-next-phase` — Show all tasks in the current phase
+- `/sdd-code-phase` — Implement all tasks in current phase
+- `/sdd-spec-prioritize [N]` — Recommend top N specs to focus on next
+- `/sdd-spec-status <vN>` — Show phase-by-phase progress for a specific spec
+- `/sdd-spec-owner <version> [set <email> | unset]` — Set or unset spec owner
+- `/sdd-spec-tagging` — Commit tagging convention reference
+- `/sdd-specs-doctor [--dry-run]` — Migrate spec files to YAML frontmatter format
+- `/sdd-specs-archive [--dry-run]` — Move completed specs to specs/completed/
+- `/sdd-specs-update [--force]` — Sync project with SDD infrastructure
+
+Run `/aid <command>` for detailed help on any command.
 
 <!-- /OUTPUT -->
 

@@ -1,5 +1,6 @@
 ---
 name: remember
+tier: core
 description: Save a piece of knowledge to persistent memory (global or project scope).
 argument-hint: "[--user | --project] <content>"
 allowed-tools: Read, Edit, Write, AskUserQuestion

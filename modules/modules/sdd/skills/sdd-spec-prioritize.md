@@ -1,5 +1,6 @@
 ---
 name: sdd-spec-prioritize
+tier: extended
 description: "Recommend the top N specs to focus on next, with reasoning"
 argument-hint: "[N]"
 disable-model-invocation: false

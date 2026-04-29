@@ -1,5 +1,6 @@
 ---
 name: analyze-changes
+tier: extended
 description: Supporting skill for /commit. Analyzes git tree for groupings.
 allowed-tools: Read, Glob, Grep, Bash(git:*)
 user-invocable: true

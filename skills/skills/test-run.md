@@ -1,5 +1,6 @@
 ---
 name: test-run
+tier: extended
 description: Run the full test suite and save a timestamped report to tests/results/.
 allowed-tools: Bash(bash:*), Bash(ls:*), Bash(grep:*), Bash(date:*)
 model: haiku

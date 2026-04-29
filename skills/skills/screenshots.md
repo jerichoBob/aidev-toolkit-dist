@@ -1,5 +1,6 @@
 ---
 name: screenshots
+tier: extended
 description: Load recent macOS screenshots into context.
 argument-hint: [N]
 allowed-tools: Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *), Read(~/Desktop/**)

@@ -1,5 +1,6 @@
 ---
 name: sdd-specs
+tier: core
 description: "Quick specs status from README, or deep scan with --deep/--verify/--stats flags"
 disable-model-invocation: false
 argument-hint: "[--deep] [--verify] [--stats] [--all] [--archived]"
