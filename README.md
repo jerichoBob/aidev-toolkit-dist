@@ -1,11 +1,11 @@
 # aidev-toolkit
 
-**AI-powered slash commands for Claude Code that handle the tedious parts of software development — commits, specs, code review, and more.**
+**AI-powered slash commands & skills for Claude Code that handle the tedious parts of software development — commits, specs, code review, and more.**
 
 Built for developers who use [Claude Code](https://claude.ai/code) and want a consistent, automated SDLC workflow across all their projects.
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 Then open any project in Claude Code and run `/aid` to see what's available.
@@ -18,7 +18,7 @@ Then open any project in Claude Code and run `/aid` to see what's available.
 
 Instead of manually staging, writing commit messages, bumping versions, and pushing:
 
-```
+```text
 /commit-push
 ```
 
@@ -28,7 +28,7 @@ It analyzes your changes, groups them into logical commits, writes conventional 
 
 Describe a feature, get a full implementation plan with phases and tasks:
 
-```
+```text
 /sdd-spec "add OAuth login with GitHub"
 /sdd-code-spec v5
 ```
@@ -39,7 +39,7 @@ Claude creates the spec, then implements it phase by phase with a living checkli
 
 Drop into an unfamiliar repo and get oriented in 30 seconds:
 
-```
+```text
 /inspect
 ```
 
@@ -49,7 +49,7 @@ Returns architecture, tech stack, entry points, patterns, and anything you'd wan
 
 Check your codebase against security, observability, error handling, and testing principles:
 
-```
+```text
 /arch-review
 ```
 
@@ -59,7 +59,7 @@ Flags issues against documented principles with severity levels and remediation 
 
 Scrape your inbox and categorize unread emails by urgency — without leaving Claude Code:
 
-```
+```text
 /gmail-digest
 ```
 
@@ -71,7 +71,7 @@ Scrape your inbox and categorize unread emails by urgency — without leaving Cl
 
 ```bash
 # Recommended
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -80,11 +80,11 @@ gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 
 ```bash
 # SSH
-git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # HTTPS
-git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -94,7 +94,7 @@ The installer symlinks skills to `~/.claude/commands/` and `~/.claude/skills/` s
 
 **To update:**
 
-```
+```text
 /aid-update
 ```
 
@@ -162,7 +162,7 @@ A full workflow for writing specs before code, tracking implementation phase by 
 
 Skills are markdown files. Each file contains frontmatter (name, description, allowed tools) and a set of instructions Claude follows when you invoke the command.
 
-```
+```text
 ~/.claude/
 ├── commands/
 │   ├── commit.md -> ../aidev-toolkit/skills/commit.md
@@ -206,11 +206,24 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.66.0
+0.67.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.67.1 (2026-04-29)
+
+- docs(specs): add v66 /miro — CRUD Miro diagrams from Claude Code [`b683a81`]
+- feat(gmail-digest): use dedicated Chrome on port 19512 for CDP [`9b2d6fd`]
+
+#### v0.67.0 (2026-04-26)
+
+- feat(specs): add v64 Developer Amplifier and v65 Skill Tiers specs [`55f91f2`]
+- docs(specs): add v64 and v65 entries and task checklists to specs/README.md [`877a3de`]
+- chore: add VS Code multi-root workspace file [`af7c815`]
+- docs(readme): update tagline to mention skills alongside slash commands [`338d81e`]
+- fix(readme): add language specifiers to fenced code blocks (MD040) [`96cec79`]
 
 #### v0.66.0 (2026-04-26)
 
