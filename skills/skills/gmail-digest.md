@@ -60,6 +60,15 @@ WS=$(curl -s http://localhost:19512/json/version | python3 -c "import sys,json; 
 
 If the curl fails, launch the debug Chrome first (see Requirements above), then retry.
 
+If the scrape fails with "no close frame received or sent", the browser-harness daemon is stale. Restart it:
+
+```bash
+pkill -f "daemon.py" 2>/dev/null; rm -f /tmp/bu-default.sock
+GMAIL_WS=$(curl -s http://localhost:19512/json/list | python3 -c "import sys,json; tabs=json.load(sys.stdin); gmail=[t for t in tabs if 'mail.google.com' in t.get('url','')]; print(gmail[0].get('webSocketDebuggerUrl','') if gmail else '')")
+cd ~/Play/github_repos/browser-harness && BU_CDP_WS="$GMAIL_WS" .venv/bin/python3 daemon.py &>/tmp/bu-default.log &
+sleep 3
+```
+
 ### If `--check` is in the arguments
 
 ```bash
