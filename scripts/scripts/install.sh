@@ -22,6 +22,15 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# OS detection — Darwin (macOS), Linux (including WSL2), MINGW*/MSYS* (Git Bash)
+OS_TYPE="$(uname -s 2>/dev/null || echo "Unknown")"
+case "$OS_TYPE" in
+    Darwin*)  OS_PLATFORM="macos" ;;
+    Linux*)   OS_PLATFORM="linux" ;;
+    MINGW*|MSYS*|CYGWIN*) OS_PLATFORM="gitbash" ;;
+    *)        OS_PLATFORM="unknown" ;;
+esac
+
 # Configuration
 CLAUDE_DIR="$HOME/.claude"
 TOOLKIT_DIR="$CLAUDE_DIR/aidev-toolkit"
@@ -83,6 +92,11 @@ echo ""
 # Check for git
 if ! command -v git &> /dev/null; then
     echo -e "${RED}Error: git is required but not installed.${NC}"
+    case "$OS_PLATFORM" in
+        macos)   echo "  Install: brew install git" ;;
+        linux)   echo "  Install: sudo apt-get install -y git  (or your distro's package manager)" ;;
+        gitbash) echo "  Install: Download Git for Windows from https://git-scm.com/download/win" ;;
+    esac
     exit 1
 fi
 
@@ -91,14 +105,39 @@ if ! command -v gh &> /dev/null; then
     echo -e "${RED}Error: GitHub CLI (gh) is required but not installed.${NC}"
     echo ""
     echo "Install it and authenticate:"
-    echo "  brew install gh && gh auth login"
+    case "$OS_PLATFORM" in
+        macos)   echo "  brew install gh && gh auth login" ;;
+        linux)   echo "  sudo apt-get install -y gh && gh auth login  # or: curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && echo 'deb [signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main' | sudo tee /etc/apt/sources.list.d/github-cli.list && sudo apt-get update && sudo apt-get install -y gh" ;;
+        gitbash) echo "  winget install --id GitHub.cli  (then restart Git Bash) && gh auth login" ;;
+        *)       echo "  See: https://cli.github.com/manual/installation" ;;
+    esac
     exit 1
+fi
+
+# Check for jq (optional but recommended — used for permissions config)
+if ! command -v jq &> /dev/null; then
+    echo -e "${YELLOW}Warning: jq is not installed. Permissions will be configured via Python fallback.${NC}"
+    echo "  To install jq:"
+    case "$OS_PLATFORM" in
+        macos)   echo "    brew install jq" ;;
+        linux)   echo "    sudo apt-get install -y jq" ;;
+        gitbash) echo "    winget install jqlang.jq  (or scoop install jq)" ;;
+    esac
+    echo ""
 fi
 
 # Authenticate if needed (skip if already logged in)
 if ! gh auth status &> /dev/null 2>&1; then
     echo -e "GitHub CLI is not authenticated. Running gh auth login..."
     gh auth login
+fi
+
+# Warn Git Bash users about symlink requirements
+if [[ "$OS_PLATFORM" == "gitbash" ]]; then
+    echo -e "${YELLOW}Git Bash detected.${NC}"
+    echo "  Symlink creation requires Developer Mode or elevated privileges on Windows."
+    echo "  If symlinks fail, enable Developer Mode in Windows Settings or use WSL2 instead."
+    echo ""
 fi
 
 # Create commands and skills directories

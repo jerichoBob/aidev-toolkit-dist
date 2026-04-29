@@ -5,7 +5,7 @@
 Built for developers who use [Claude Code](https://claude.ai/code) and want a consistent, automated SDLC workflow across all their projects.
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 Then open any project in Claude Code and run `/aid` to see what's available.
@@ -67,28 +67,75 @@ Scrape your inbox and categorize unread emails by urgency — without leaving Cl
 
 ## Install
 
+### macOS
+
 **Requirements:** [Claude Code](https://claude.ai/code), [GitHub CLI](https://cli.github.com/), `git`, `jq`
 
 ```bash
-# Recommended
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 <details>
-<summary>Other install methods</summary>
+<summary>Other install methods (SSH / HTTPS)</summary>
 
 ```bash
 # SSH
-git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # HTTPS
-git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 </details>
+
+### Windows (WSL2 — recommended)
+
+WSL2 runs a full Linux kernel and is the recommended path for Windows users.
+
+**Prerequisites:**
+
+1. Install [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install): `wsl --install` in PowerShell (Admin)
+2. Inside WSL2, install dependencies:
+
+   ```bash
+   sudo apt-get update && sudo apt-get install -y git jq
+   # Install GitHub CLI
+   type -p curl >/dev/null || sudo apt-get install -y curl
+   curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+     | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+   echo "deb [signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+     | sudo tee /etc/apt/sources.list.d/github-cli.list
+   sudo apt-get update && sudo apt-get install -y gh
+   gh auth login
+   ```
+
+3. Then install aidev-toolkit (same one-liner as macOS):
+
+   ```bash
+   gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
+   ~/.claude/aidev-toolkit/scripts/install.sh
+   ```
+
+### Windows (Git Bash — secondary)
+
+Git Bash has partial support. Symlink creation requires [Developer Mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development) enabled in Windows Settings.
+
+**Prerequisites:** [Git for Windows](https://git-scm.com/download/win), then in Git Bash:
+
+```bash
+winget install jqlang.jq       # jq
+winget install --id GitHub.cli # gh CLI (restart Git Bash after)
+gh auth login
+```
+
+Then run the same installer. The install script will warn you about symlink requirements automatically.
+
+> **macOS-only skills:** `/screenshots`, `/browser-harness`, and `/gmail-digest` require macOS
+> (macOS screenshot paths, Google Chrome via `osascript`). These skills will display a clear
+> error message on Linux/Windows rather than silently failing.
 
 The installer symlinks skills to `~/.claude/commands/` and `~/.claude/skills/` so they're available as slash commands in every Claude Code session.
 
@@ -242,11 +289,16 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.68.0
+0.69.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.69.0 (2026-04-29)
+
+- feat(windows-support): implement v63 — cross-platform install, macOS guards, Windows docs [`488b0ad`]
+- docs(claude): promote user-level rules into project CLAUDE.md [`c9e1f09`]
 
 #### v0.68.0 (2026-04-29)
 
