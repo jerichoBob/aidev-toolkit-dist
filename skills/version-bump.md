@@ -1,5 +1,6 @@
 ---
 name: version-bump
+tier: extended
 description: Supporting skill for /commit. Bumps version and changelog.
 allowed-tools: Read, Edit, Write, Bash(git:*)
 user-invocable: true

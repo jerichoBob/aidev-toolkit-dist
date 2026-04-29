@@ -11,10 +11,12 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 PASS=0
 FAIL=0
+WARN=0
 
 # Helper functions
 pass() { echo "  ✓ $1"; ((PASS++)) || true; }
 fail() { echo "  ✗ $1"; ((FAIL++)) || true; }
+warn() { echo "  ⚠ $1"; ((WARN++)) || true; }
 
 # Extract frontmatter field value
 get_frontmatter_field() {
@@ -61,6 +63,16 @@ validate_skill() {
         fail "Missing 'description' field"
     else
         pass "Valid 'description' field"
+    fi
+
+    # Validate tier field (optional, warn if missing — graceful rollout)
+    local tier=$(get_frontmatter_field "$file" "tier")
+    if [ -z "$tier" ]; then
+        warn "Missing 'tier' field (defaults to extended) — add 'tier: core' or 'tier: extended'"
+    elif [[ "$tier" == "core" || "$tier" == "extended" ]]; then
+        pass "Valid 'tier' field: $tier"
+    else
+        fail "Invalid 'tier' value '$tier' — must be 'core' or 'extended'"
     fi
 
     # Validate allowed-tools field (optional but must be valid if present)
@@ -117,5 +129,5 @@ fi
 # Summary
 echo ""
 echo "===================================="
-echo "Results: $PASS passed, $FAIL failed"
+echo "Results: $PASS passed, $FAIL failed, $WARN warnings"
 [ $FAIL -eq 0 ] && exit 0 || exit 1

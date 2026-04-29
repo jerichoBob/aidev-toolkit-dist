@@ -1,5 +1,6 @@
 ---
 name: sdd-spec
+tier: core
 description: "Create a new specification document from a user prompt"
 argument-hint: "[-p|--prioritize] <description>"
 allowed-tools: Read, Write, Edit, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), AskUserQuestion

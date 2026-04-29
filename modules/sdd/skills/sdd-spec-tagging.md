@@ -1,5 +1,6 @@
 ---
 name: sdd-spec-tagging
+tier: extended
 description: "Reference document for the spec-tagging commit convention — traceable spec-to-code mapping via [vN:pN:sN] tags"
 disable-model-invocation: false
 ---

@@ -1,5 +1,6 @@
 ---
 name: gmail-digest
+tier: core
 description: Run the Gmail Morning Digest — scrape unread emails and categorize them by urgency via Claude.
 argument-hint: [--days N | --weeks N | --date YYYY-MM-DD | --all | --account N/email/list | --check | --output file=/path | --dry-run]
 allowed-tools: Bash(uv:*), Write(*)

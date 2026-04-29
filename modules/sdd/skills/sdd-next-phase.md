@@ -1,6 +1,7 @@
 ---
 name: sdd-next-phase
 description: "Show all tasks in the next phase of work to be done"
+tier: extended
 disable-model-invocation: false
 allowed-tools: Read, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*)
 ---

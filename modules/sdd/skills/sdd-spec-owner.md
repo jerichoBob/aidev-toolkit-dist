@@ -1,5 +1,6 @@
 ---
 name: sdd-spec-owner
+tier: extended
 description: "Set or unset the owner of a spec"
 argument-hint: "<version> [set <email> | unset]"
 allowed-tools: Read, Edit, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*)

@@ -1,5 +1,6 @@
 ---
 name: aid-update
+tier: core
 description: Pull latest aidev toolkit updates from GitHub
 allowed-tools:
   - "Read(~/.claude/aidev-toolkit/**)"

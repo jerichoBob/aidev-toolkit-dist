@@ -1,5 +1,6 @@
 ---
 name: sdd-code
+tier: core
 description: "Implement the single next task from the specs checklist"
 disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git:*), Bash(date:*), AskUserQuestion

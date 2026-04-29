@@ -1,5 +1,6 @@
 ---
 name: should-i-trust-it
+tier: extended
 description: Verify skill files for malicious patterns before install.
 argument-hint: <path|url> [--detailed] [--json] [--force]
 allowed-tools: Read, Glob, Grep, WebFetch, Bash(wc:*), Bash(file:*)

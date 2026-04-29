@@ -1,5 +1,6 @@
 ---
 name: commit
+tier: core
 description: Analyze changes, group commits, bump version, update changelog.
 argument-hint: [version]
 allowed-tools: Read, Glob, Grep, Edit, Write, Bash(git:*), Bash(gh:*), AskUserQuestion

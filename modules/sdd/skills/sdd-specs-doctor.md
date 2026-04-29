@@ -1,5 +1,6 @@
 ---
 name: sdd-specs-doctor
+tier: extended
 description: "Migrate spec files from old format (inline metadata, checkboxes) to current YAML frontmatter format"
 disable-model-invocation: true
 argument-hint: "[--dry-run]"
@@ -89,6 +90,7 @@ If the file has inline metadata instead of YAML frontmatter:
 ---
 version: 3
 name: deal-desk-planning
+tier: extended
 display_name: "Deal Desk & Planning"
 status: complete
 created: 2026-02-11

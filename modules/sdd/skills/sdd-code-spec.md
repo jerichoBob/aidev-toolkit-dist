@@ -1,5 +1,6 @@
 ---
 name: sdd-code-spec
+tier: core
 description: "Implement ALL remaining phases and tasks in a spec without stopping"
 argument-hint: "[spec-version] [--no-stats]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git:*), Bash(date:*), AskUserQuestion

@@ -1,5 +1,6 @@
 ---
 name: test-status
+tier: extended
 description: Display results from the last test run as a summary table (reads tests/results/ — does not re-run tests).
 allowed-tools: Bash(bash:*), Bash(ls:*), Bash(grep:*), Read
 model: haiku

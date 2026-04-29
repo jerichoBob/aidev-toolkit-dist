@@ -1,5 +1,6 @@
 ---
 name: sdlc-plan
+tier: extended
 description: Analyze business documents (RFQ, RFP, PRD, SOW) for planning.
 argument-hint: @document.pdf [--output <dir>]
 allowed-tools: Read, Glob, Grep, Bash(ls:*), Bash(cp:*), Bash(mkdir:*)

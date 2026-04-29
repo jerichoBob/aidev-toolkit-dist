@@ -1,5 +1,6 @@
 ---
 name: lint
+tier: core
 description: Lint and fix markdown files using markdownlint.
 model: haiku
 allowed-tools: Bash(~/.claude/aidev-toolkit/scripts/lint.sh:*)

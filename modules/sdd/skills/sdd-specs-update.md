@@ -1,5 +1,6 @@
 ---
 name: sdd-specs-update
+tier: extended
 description: "Sync local project with latest SDD methodology infrastructure — specs dir, template, README scaffold, CLAUDE.md methodology"
 disable-model-invocation: true
 argument-hint: "[--force]"

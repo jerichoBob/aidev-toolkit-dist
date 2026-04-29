@@ -5,7 +5,7 @@
 Built for developers who use [Claude Code](https://claude.ai/code) and want a consistent, automated SDLC workflow across all their projects.
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
+gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 Then open any project in Claude Code and run `/aid` to see what's available.
@@ -71,7 +71,7 @@ Scrape your inbox and categorize unread emails by urgency — without leaving Cl
 
 ```bash
 # Recommended
-gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -80,11 +80,11 @@ gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 
 ```bash
 # SSH
-git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # HTTPS
-git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
