@@ -76,6 +76,16 @@ Version is tracked in two places - keep them in sync:
 
 Update both when bumping versions.
 
+## Critical Rules
+
+### NO MOCKS — EVER
+
+**NEVER use mocks in tests.** No `vi.mock`, no `jest.mock`, no sinon stubs, no mock implementations. They hide bugs, are fragile, and waste time debugging the mock instead of the code. Use real implementations, test fixtures, in-memory databases, actual CLI calls, or integration tests instead. If a dependency isn't available (e.g., no API key, no d2 CLI), skip the test or mark it as **blocked** — don't fake it with mocks.
+
+### Script Persistence
+
+Ephemeral scripts are wasted tokens. If you create a script to complete a task, write that script to the appropriate location in the current project's `.claude/` dir so that it can be studied and used again.
+
 ## Rules
 
 - **Always use `/commit-push`** for syncing local changes with remote (smart commit + push workflow).
@@ -121,3 +131,4 @@ When creating specs or plans, include:
 - **In Progress** - Being worked on
 - **Blocked** - Cannot complete (missing dependency, config, etc.)
 - **Complete** - Implemented AND validated through testing
+- Code done but validation blocked = 🔧 In Progress, not ✅ Complete
