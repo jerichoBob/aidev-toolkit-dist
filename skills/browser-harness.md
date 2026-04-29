@@ -9,6 +9,8 @@ model: inherit
 
 # browser-harness
 
+> **macOS only.** This skill uses `osascript`, `open -a`, and macOS Chrome paths. On Linux or Windows, stop immediately and tell the user: "/browser-harness is macOS only and is not supported on this platform."
+
 Gives Claude direct, self-healing control of your real Chrome browser via CDP (Chrome DevTools Protocol). No framework, no recipes — one WebSocket to Chrome, nothing between.
 
 The agent writes missing helpers mid-task. If `upload_file()` doesn't exist, it adds it to `helpers.py` and keeps going.

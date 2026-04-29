@@ -8,6 +8,8 @@ allowed-tools: Bash(uv:*), Write(*)
 
 # Gmail Morning Digest
 
+> **macOS only.** This skill uses `/Applications/Google Chrome.app` and `browser-harness` (macOS Chrome + CDP). On Linux or Windows, stop immediately and tell the user: "/gmail-digest is macOS only and is not supported on this platform."
+
 Scrape Gmail via browser-harness, then categorize and summarize inline.
 No API key required — Claude Code handles the analysis.
 

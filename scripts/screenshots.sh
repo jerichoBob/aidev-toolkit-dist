@@ -14,6 +14,14 @@ set -e
 RED='\033[0;31m'
 NC='\033[0m'
 
+# macOS-only guard
+if [[ "$(uname -s)" != "Darwin" ]]; then
+    echo -e "${RED}Error: /screenshots is macOS only.${NC}" >&2
+    echo "  This skill uses the macOS Screenshot naming convention (Screenshot*.png on ~/Desktop)." >&2
+    echo "  It is not supported on Linux or Windows." >&2
+    exit 0
+fi
+
 N="${1:-1}"
 
 # Validate N is a positive integer
