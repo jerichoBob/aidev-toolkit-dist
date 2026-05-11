@@ -219,7 +219,7 @@ configure_permissions() {
     local SETTINGS_FILE="$CLAUDE_DIR/settings.json"
 
     # Permissions needed for /aid-update to run without prompts
-    local PERMS_JSON='["Bash(git -C ~/.claude/aidev-toolkit *)","Bash(~/.claude/aidev-toolkit/scripts/install.sh *)","Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)"]'
+    local PERMS_JSON='["Bash(git -C ~/.claude/aidev-toolkit *)","Bash(~/.claude/aidev-toolkit/scripts/install.sh *)","Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)","Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)"]'
 
     # Try jq first (cleanest JSON manipulation)
     if command -v jq &> /dev/null; then
@@ -248,6 +248,7 @@ permissions_to_add = [
     "Bash(git -C ~/.claude/aidev-toolkit *)",
     "Bash(~/.claude/aidev-toolkit/scripts/install.sh *)",
     "Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)",
+    "Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)",
     "Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)"
 ]
 
