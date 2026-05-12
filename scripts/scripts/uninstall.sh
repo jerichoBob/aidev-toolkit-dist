@@ -19,6 +19,7 @@ NC='\033[0m'
 CLAUDE_DIR="$HOME/.claude"
 TOOLKIT_DIR="$CLAUDE_DIR/aidev-toolkit"
 COMMANDS_DIR="$CLAUDE_DIR/commands"
+SKILLS_DIR="$CLAUDE_DIR/skills"
 
 if [ "$QUIET" = false ]; then
     echo ""
@@ -27,15 +28,17 @@ if [ "$QUIET" = false ]; then
     echo ""
 fi
 
-# Remove ONLY symlinks in commands/ that point to aidev-toolkit
+# Remove ONLY symlinks in commands/ and skills/ that point to aidev-toolkit
 # This is surgical - we check each symlink's target before removing
 [ "$QUIET" = false ] && echo "Removing aidev-toolkit symlinks..."
-if [ -d "$COMMANDS_DIR" ]; then
-    for file in "$COMMANDS_DIR"/*.md; do
+
+_remove_toolkit_symlinks() {
+    local dir="$1"
+    [ -d "$dir" ] || return 0
+    for file in "$dir"/*.md; do
         [ -e "$file" ] || continue  # Handle empty glob
         if [ -L "$file" ]; then
             target=$(readlink "$file")
-            # Only remove if it points to aidev-toolkit
             if [[ "$target" == *"aidev-toolkit/skills/"* ]] || [[ "$target" == "../aidev-toolkit/skills/"* ]] || [[ "$target" == *"aidev-toolkit/modules/"* ]]; then
                 filename=$(basename "$file")
                 rm "$file"
@@ -43,7 +46,11 @@ if [ -d "$COMMANDS_DIR" ]; then
             fi
         fi
     done
-fi
+    return 0
+}
+
+_remove_toolkit_symlinks "$COMMANDS_DIR"
+_remove_toolkit_symlinks "$SKILLS_DIR"
 
 # Remove toolkit directory
 if [ -d "$TOOLKIT_DIR" ]; then

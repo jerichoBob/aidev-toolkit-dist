@@ -5,7 +5,7 @@
 Built for developers who use [Claude Code](https://claude.ai/code) and want a consistent, automated SDLC workflow across all their projects.
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 Then open any project in Claude Code and run `/aid` to see what's available.
@@ -72,7 +72,7 @@ Scrape your inbox and categorize unread emails by urgency — without leaving Cl
 **Requirements:** [Claude Code](https://claude.ai/code), [GitHub CLI](https://cli.github.com/), `git`, `jq`
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -81,11 +81,11 @@ gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 
 ```bash
 # SSH
-git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # HTTPS
-git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -115,7 +115,7 @@ WSL2 runs a full Linux kernel and is the recommended path for Windows users.
 3. Then install aidev-toolkit (same one-liner as macOS):
 
    ```bash
-   gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+   gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
    ~/.claude/aidev-toolkit/scripts/install.sh
    ```
 
@@ -289,11 +289,17 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.70.0
+0.71.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.71.0 (2026-05-12)
+
+- feat(v68): arch-review cleanup — security sections for all active specs, integration tests for statusline.sh and uninstall.sh [`9d64461`]
+- fix(uninstall): add skills/ symlink cleanup and `return 0` to prevent set-e trap on quiet mode [`9d64461`]
+- fix(statusline): correct jq false-handling bug in enabled check [`9d64461`]
 
 #### v0.70.0 (2026-05-12)
 
