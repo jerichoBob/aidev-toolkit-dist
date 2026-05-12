@@ -23,7 +23,7 @@ if [[ ! -f "$CONFIG" ]]; then
 EOF
 fi
 
-enabled=$(jq -r '.enabled // true' "$CONFIG" 2>/dev/null)
+enabled=$(jq -r 'if .enabled == null then "true" else (.enabled | tostring) end' "$CONFIG" 2>/dev/null)
 [[ "$enabled" != "true" ]] && exit 0
 
 input=$(cat)

@@ -333,6 +333,41 @@ else
     echo -e "${YELLOW}skipped${NC} (python3 required)"
 fi
 
+# Configure statusLine to point at statusline.sh
+configure_statusline() {
+    if command -v python3 &> /dev/null; then
+        python3 << 'PYTHON_SCRIPT'
+import json, os
+
+settings_file = os.path.expanduser("~/.claude/settings.json")
+statusline_cmd = "bash ~/.claude/aidev-toolkit/scripts/statusline.sh"
+
+settings = {}
+if os.path.exists(settings_file):
+    with open(settings_file) as f:
+        settings = json.load(f)
+
+current = settings.get("statusLine", {})
+if isinstance(current, dict) and current.get("command") == statusline_cmd:
+    # Already correct, nothing to do
+    import sys; sys.exit(0)
+
+settings["statusLine"] = {"type": "command", "command": statusline_cmd}
+with open(settings_file, "w") as f:
+    json.dump(settings, f, indent=2)
+PYTHON_SCRIPT
+        return 0
+    fi
+    return 1
+}
+
+echo -n "Configuring status footer... "
+if configure_statusline; then
+    echo -e "${GREEN}✓${NC}"
+else
+    echo -e "${YELLOW}skipped${NC} (python3 required)"
+fi
+
 # Create/update symlinks for skills (in both commands/ and skills/ directories)
 echo -e "Linking skills to ${YELLOW}$COMMANDS_DIR${NC} and ${YELLOW}$SKILLS_DIR${NC}..."
 for skill in "${SKILLS[@]}"; do
