@@ -289,11 +289,16 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.71.1
+0.71.2
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.71.2 (2026-05-12)
+
+- fix(ci): rewrite publish-dist workflow to use PAT + existing publish-dist.sh [`bf59e5f`]
+- docs(specs): close v52 and v53 — add external test plan to v52, checkboxes to v53 [`358adb8`]
 
 #### v0.71.1 (2026-05-12)
 
