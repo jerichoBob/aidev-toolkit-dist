@@ -445,6 +445,19 @@ if [ "$QUIET" = false ]; then
     fi
 fi
 
+# Set up global CLAUDE.md from template if it doesn't exist (non-quiet only)
+if [ "$QUIET" = false ] && [ ! -f "$CLAUDE_DIR/CLAUDE.md" ]; then
+    echo ""
+    echo -e "Setting up global ${YELLOW}CLAUDE.md${NC} template..."
+    if [ -f "$TOOLKIT_DIR/templates/global-claude.md" ]; then
+        cp "$TOOLKIT_DIR/templates/global-claude.md" "$CLAUDE_DIR/CLAUDE.md"
+        echo -e "  ${GREEN}✓${NC} Created: $CLAUDE_DIR/CLAUDE.md"
+        echo "  Edit this file to customize Claude's behavior across all projects"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  Template not found at $TOOLKIT_DIR/templates/global-claude.md"
+    fi
+fi
+
 echo ""
 echo -e "${GREEN}Installation complete!${NC}"
 echo ""

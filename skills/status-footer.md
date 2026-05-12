@@ -17,6 +17,45 @@ Configure the Claude Code status line footer — toggle it on/off and control wh
 
 ## Instructions
 
+### 0. Health Check: Verify settings.json statusLine
+
+Before showing the menu, read `~/.claude/settings.json` and inspect the `statusLine` key.
+
+```bash
+SETTINGS="$HOME/.claude/settings.json"
+cat "$SETTINGS" 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print(json.dumps(d.get('statusLine','null')))"
+```
+
+The expected value is:
+
+```json
+{"type":"command","command":"bash ~/.claude/aidev-toolkit/scripts/statusline.sh"}
+```
+
+**If `statusLine` is missing or has type `"command"` pointing at the correct script**: pass silently.
+
+**If `statusLine` is set to an inline script (not pointing at `statusline.sh`)**: warn:
+
+```
+⚠️  statusLine is not pointing at statusline.sh — ctx% color coding is inactive.
+    Current: <show current value>
+    Expected: {"type":"command","command":"bash ~/.claude/aidev-toolkit/scripts/statusline.sh"}
+
+    Auto-correct? (y/n):
+```
+
+Use AskUserQuestion to confirm. If user confirms yes:
+
+```bash
+SETTINGS="$HOME/.claude/settings.json"
+tmp=$(mktemp)
+jq '.statusLine = {"type":"command","command":"bash ~/.claude/aidev-toolkit/scripts/statusline.sh"}' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
+```
+
+Confirm: `✓ statusLine updated — ctx% color coding is now active.`
+
+Skip the health check output entirely if settings.json doesn't exist yet (it will be created by Step 6 when the footer is enabled).
+
 ### 1. Read current config
 
 ```bash
@@ -27,6 +66,7 @@ cat "$CONFIG" 2>/dev/null || echo '{"enabled":true,"components":{"dir":true,"bra
 ### 2. Determine the argument
 
 The argument is one of:
+
 - **(empty)** — show the interactive menu (see step 3)
 - **a number 1–7** — toggle that menu item (see step 4), then show the updated menu
 - **`on`** — set `enabled: true`, confirm, done
@@ -45,12 +85,13 @@ Status Footer Configuration
   1  Footer   ● enabled     — master on/off switch
   2  dir      ● on          — current directory in brackets
   3  branch   ● on          — git branch + dirty symbols
-  4  ctx      ● on          — context window usage %
+  4  ctx      ● on          — context window usage %  🟢 <60  🟡 60–79  🔴 80+
   5  model    ○ off         — shortened model name
   6  effort   ○ off         — reasoning effort level
   7  vim      ○ off         — vim mode indicator
 ────────────────────────────
 /status-footer <number> to toggle
+ctx% colors: 🟢 0–59% (ok) · 🟡 60–79% (filling) · 🔴 80%+ (auto-compact ~85%)
 ```
 
 Then stop — do not ask a follow-up question.
@@ -79,6 +120,7 @@ jq '.components.ctx = (.components.ctx | not)' "$CONFIG" > "$tmp" && mv "$tmp" "
 ```
 
 For number 1 (Footer master switch):
+
 ```bash
 tmp=$(mktemp)
 jq '.enabled = (.enabled | not)' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
@@ -95,6 +137,7 @@ jq '.enabled = (.enabled | not)' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
 **`--hide <component>`** — set `components.<component>: false`. Same validation.
 
 **`--reset`** — write the default config:
+
 ```json
 {"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false}}
 ```
@@ -111,9 +154,11 @@ jq '.components.model = true' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
 After any config change, sync `~/.claude/settings.json`:
 
 - **If `enabled` is now true**: set `statusLine` to:
+
   ```json
   {"type":"command","command":"bash ~/.claude/aidev-toolkit/scripts/statusline.sh"}
   ```
+
 - **If `enabled` is now false**: remove the `statusLine` key entirely.
 
 ```bash
@@ -137,9 +182,11 @@ For `on`/`off`/`--show`/`--hide`/`--reset`, print one confirmation line then sho
 ```
 Footer enabled.
 ```
+
 ```
 model: on
 ```
+
 ```
 Footer reset to defaults.
 ```
