@@ -9,7 +9,7 @@ model: sonnet
 
 # SDD Specs Archive
 
-Move all `✅ Complete` spec files from `specs/` to `specs/completed/` and mark them as `🗄 Archived` in `specs/README.md`.
+Move all `✅ Complete` spec files from `specs/` to `specs/completed/`. Status in `specs/README.md` remains `✅ Complete` — the file move is the archive indicator, not a status change.
 
 ## When to Use
 
@@ -58,7 +58,7 @@ Specs to Archive (✅ Complete)
   N specs total
 
 Destination: specs/completed/
-README: N rows will be marked 🗄 Archived
+README: status retained as ✅ Complete (file location is the archive indicator)
 ```
 
 If `--dry-run`: print preview and stop. Do NOT make any changes.
@@ -94,13 +94,7 @@ git mv specs/spec-v{N}-*.md specs/completed/
 
 If a file is not found, print a warning and continue.
 
-### Step 7: Update Quick Status Table
-
-For each archived spec row in `specs/README.md`, change the Status column value from `✅ Complete` to `🗄 Archived`.
-
-Use Edit tool to make these changes.
-
-### Step 8: Confirm
+### Step 7: Confirm
 
 ```text
 Archive Complete
@@ -111,8 +105,8 @@ Archived: N specs
   ...
 
 Files moved to: specs/completed/
-README updated: N rows marked 🗄 Archived
+README: status retained as ✅ Complete for all archived specs
 
 Run /sdd-specs to see your active specs.
-Run /sdd-specs --archived to browse archived specs.
+Run /sdd-specs --archived to browse completed/archived specs.
 ```

@@ -71,7 +71,8 @@ TILE_W=$(( (WIDTH  + COLS - 1) / COLS ))
 TILE_H=$(( (HEIGHT + ROWS - 1) / ROWS ))
 
 # Temp dir keyed to image identity + tile grid (cache across calls)
-BASENAME=$(basename "$IMAGE" | sed 's/\.[^.]*$//')
+# Sanitize: replace spaces and special chars with underscores so Read tool can load tiles
+BASENAME=$(basename "$IMAGE" | sed 's/\.[^.]*$//' | sed 's/[^A-Za-z0-9._-]/_/g')
 TILE_DIR="/tmp/claude-tiles/${BASENAME}-${WIDTH}x${HEIGHT}-${COLS}x${ROWS}"
 
 if [[ ! -d "$TILE_DIR" ]]; then
