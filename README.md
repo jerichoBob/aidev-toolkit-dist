@@ -289,11 +289,16 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.71.0
+0.71.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.71.1 (2026-05-12)
+
+- fix(install): configure statusLine to point at statusline.sh on install [`a724a05`]
+- chore(specs): sync task counts and statuses in README [`1e956b2`]
 
 #### v0.71.0 (2026-05-12)
 
