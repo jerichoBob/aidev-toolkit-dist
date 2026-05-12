@@ -219,7 +219,7 @@ configure_permissions() {
     local SETTINGS_FILE="$CLAUDE_DIR/settings.json"
 
     # Permissions needed for /aid-update to run without prompts
-    local PERMS_JSON='["Bash(git -C ~/.claude/aidev-toolkit *)","Bash(~/.claude/aidev-toolkit/scripts/install.sh *)","Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)"]'
+    local PERMS_JSON='["Bash(git -C ~/.claude/aidev-toolkit *)","Bash(~/.claude/aidev-toolkit/scripts/install.sh *)","Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)","Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)"]'
 
     # Try jq first (cleanest JSON manipulation)
     if command -v jq &> /dev/null; then
@@ -248,6 +248,7 @@ permissions_to_add = [
     "Bash(git -C ~/.claude/aidev-toolkit *)",
     "Bash(~/.claude/aidev-toolkit/scripts/install.sh *)",
     "Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)",
+    "Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)",
     "Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)"
 ]
 
@@ -441,6 +442,19 @@ if [ "$QUIET" = false ]; then
             USER_EMAIL=$("$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" get)
             echo -e "  User email: ${YELLOW}$USER_EMAIL${NC} ${GREEN}✓${NC}"
         fi
+    fi
+fi
+
+# Set up global CLAUDE.md from template if it doesn't exist (non-quiet only)
+if [ "$QUIET" = false ] && [ ! -f "$CLAUDE_DIR/CLAUDE.md" ]; then
+    echo ""
+    echo -e "Setting up global ${YELLOW}CLAUDE.md${NC} template..."
+    if [ -f "$TOOLKIT_DIR/templates/global-claude.md" ]; then
+        cp "$TOOLKIT_DIR/templates/global-claude.md" "$CLAUDE_DIR/CLAUDE.md"
+        echo -e "  ${GREEN}✓${NC} Created: $CLAUDE_DIR/CLAUDE.md"
+        echo "  Edit this file to customize Claude's behavior across all projects"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  Template not found at $TOOLKIT_DIR/templates/global-claude.md"
     fi
 fi
 

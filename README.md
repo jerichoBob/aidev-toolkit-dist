@@ -5,7 +5,7 @@
 Built for developers who use [Claude Code](https://claude.ai/code) and want a consistent, automated SDLC workflow across all their projects.
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 Then open any project in Claude Code and run `/aid` to see what's available.
@@ -72,7 +72,7 @@ Scrape your inbox and categorize unread emails by urgency — without leaving Cl
 **Requirements:** [Claude Code](https://claude.ai/code), [GitHub CLI](https://cli.github.com/), `git`, `jq`
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -81,11 +81,11 @@ gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 
 ```bash
 # SSH
-git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # HTTPS
-git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -115,7 +115,7 @@ WSL2 runs a full Linux kernel and is the recommended path for Windows users.
 3. Then install aidev-toolkit (same one-liner as macOS):
 
    ```bash
-   gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+   gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
    ~/.claude/aidev-toolkit/scripts/install.sh
    ```
 
@@ -289,11 +289,21 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.69.0
+0.70.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.70.0 (2026-05-12)
+
+- feat(status-footer): add health check, ctx% color legend, fix threshold doc (v71) [`a71c79f`]
+- feat(claudemd): add NO EPHEMERAL SCRIPTS rule distribution via install.sh (v70) [`cf89f71`]
+- feat(claudemd): add Surface Uncertainty principle to global template (v72) [`c517c60`]
+- feat(specs): add spec-v68 — Arch Review Cleanup [`08463b6`]
+- fix(sdd-specs-archive): resolve archive/display status mismatch (v69) [`72628e7`]
+- fix(tile-image): sanitize tile dir name to remove spaces for Read tool compatibility [`a9101e9`]
+- feat(screenshots): dynamic image tiling based on model resolution limits [`69a2d8f`]
 
 #### v0.69.0 (2026-04-29)
 

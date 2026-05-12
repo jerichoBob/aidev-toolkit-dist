@@ -35,8 +35,8 @@ Read `specs/README.md`. Extract the Quick Status table (the markdown table under
 Apply filter based on the active flag:
 
 - **Default (no flag)**: Exclude rows where Status contains `✅ Complete`, `🗄 Archived`, or `⏸ Deferred`, and rows where Progress matches `→ v\d+` (consolidated). Show only actionable work (Draft, In Progress, Blocked).
-- **`--all`**: Split into three groups — active rows first, deferred rows second, archived/complete rows third (see Step F4)
-- **`--archived`**: Include ONLY rows where Status contains `🗄 Archived` or `✅ Complete`
+- **`--all`**: Split into three groups — active rows first, deferred rows second, completed rows third. Completed rows = Status contains `✅ Complete` or `🗄 Archived` (legacy pre-v69).
+- **`--archived`**: Include ONLY rows where Status contains `✅ Complete` or `🗄 Archived` (legacy rows pre-v69)
 
 ### Step F3: Compute Summary
 
@@ -78,8 +78,6 @@ Summary: N active specs (X in progress · Y draft) | Z tasks remaining
 ```
 
 **`--all` format — three tables: active, deferred, completed:**
-
-For the completed table, display `🗄 Archived` rows as `✅ Complete` in the Status column (replace the archive icon with the green check — these are done, show them as done).
 
 Deferred rows are those with Status `⏸ Deferred` or Progress matching `→ v\d+` (consolidated). For deferred task totals: skip `∞` and `→ vN` values; treat them as 0/0.
 
