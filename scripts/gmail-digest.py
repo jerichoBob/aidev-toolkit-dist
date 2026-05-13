@@ -78,7 +78,11 @@ def _run_browser(code: str, timeout: int = 60, cdp_ws: str | None = None) -> str
         env=env,
     )
     if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or "browser-harness exited non-zero")
+        stderr = result.stderr.strip()
+        # Extract just the final error line — don't let a raw Python traceback leak into
+        # output where callers (and tests) might mistake it for our own crash.
+        last_line = stderr.splitlines()[-1] if stderr else ""
+        raise RuntimeError(last_line or "browser-harness exited non-zero")
     return result.stdout
 
 
@@ -419,12 +423,13 @@ def main():
             sys.exit(0)
         else:
             print("✗ Chrome CDP is not reachable.")
-            print("  Opening chrome://inspect/#remote-debugging — tick Allow, then retry.")
-            import subprocess
-            subprocess.Popen([
-                "osascript", "-e",
-                'tell application "Google Chrome" to open location "chrome://inspect/#remote-debugging"'
-            ])
+            if sys.stdout.isatty():
+                print("  Opening chrome://inspect/#remote-debugging — tick Allow, then retry.")
+                import subprocess
+                subprocess.Popen([
+                    "osascript", "-e",
+                    'tell application "Google Chrome" to open location "chrome://inspect/#remote-debugging"'
+                ])
             sys.exit(1)
 
     # ── account resolution ─────────────────────────────────────────────────

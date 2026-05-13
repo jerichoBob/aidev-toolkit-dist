@@ -289,11 +289,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.71.5
+0.71.6
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.71.6 (2026-05-12)
+
+- fix(gmail-digest): suppress chrome://inspect tab in non-interactive mode; clean traceback from error messages [`53e005f`]
 
 #### v0.71.5 (2026-05-12)
 
