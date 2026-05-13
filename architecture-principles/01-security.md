@@ -1,6 +1,6 @@
 ---
 id: AP-001
-title: Security by Default
+title: Secure Development Practices
 severity: required
 category: security
 applies_to: [all]

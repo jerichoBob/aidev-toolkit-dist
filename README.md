@@ -289,11 +289,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.72.1
+0.73.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.73.0 (2026-05-13)
+
+- feat(arch): add AP-006 supply chain integrity and clarify security principle titles [`354bcb2`]
 
 #### v0.72.1 (2026-05-13)
 

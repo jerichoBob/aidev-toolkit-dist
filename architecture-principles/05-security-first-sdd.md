@@ -1,6 +1,6 @@
 ---
 id: AP-005
-title: Security-First Spec Design
+title: Runtime Security Patterns
 severity: required
 category: security
 applies_to: [specs, sdd-workflow]
