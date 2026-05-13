@@ -289,11 +289,16 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.71.2
+0.71.3
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.71.3 (2026-05-12)
+
+- chore(specs): archive 29 completed spec files to specs/completed/ [`8a5fe8e`]
+- fix(ci): add gh auth setup-git for HTTPS push; track .markdownlint.json [`0c0e010`]
 
 #### v0.71.2 (2026-05-12)
 
