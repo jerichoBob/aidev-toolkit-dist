@@ -115,28 +115,14 @@ Done! Version 1.2.4 pushed.
    Parse and display the inline summary (suites / passed / failed / blocked), same format as `/test-run`.
    Continue even if tests fail — report the failure but do not abort.
 
-5. **Publish to dist** (if `scripts/publish-dist.sh` exists):
-
-   ```bash
-   ls scripts/publish-dist.sh 2>/dev/null
-   ```
-
-   If found, run:
-
-   ```bash
-   ./scripts/publish-dist.sh
-   ```
-
-   Report the result (version published or error).
-
-6. **Report completion** (see Output Style above)
+5. **Report completion** (see Output Style above)
 
 ## Difference from /commit
 
-| Command        | Version Bump | Changelog                  | Push      | Tests                    | Dist Publish             |
-| -------------- | ------------ | -------------------------- | --------- | ------------------------ | ------------------------ |
-| `/commit`      | Always       | Always (README.md default) | Asks first | No                      | No                       |
-| `/commit-push` | Always       | Always (README.md default) | Automatic | If `tests/run-all.sh` exists | If `scripts/publish-dist.sh` exists |
+| Command        | Version Bump | Changelog                  | Push       | Tests                         |
+| -------------- | ------------ | -------------------------- | ---------- | ----------------------------- |
+| `/commit`      | Always       | Always (README.md default) | Asks first | No                            |
+| `/commit-push` | Always       | Always (README.md default) | Automatic  | If `tests/run-all.sh` exists  |
 
 See `/commit` for full documentation on grouping, versioning, and release notes.
 
@@ -157,7 +143,6 @@ Bumping 1.2.3 → 1.2.4... OK
 Pushing... OK
 
 Testing... 16 suites, 309 passed, 1 failed, 12 blocked
-Publishing... v1.2.4 → aidev-toolkit-dist OK
 
 Done! Version 1.2.4 pushed.
 ```
@@ -193,8 +178,6 @@ Passed:  309
 Failed:  1
 Blocked: 12 (skipped)
 ────────────────────────────────────────
-
-Publishing... ✓ Published v1.2.4 to aidev-toolkit-dist
 
 Done! Version 1.2.4 pushed.
 ```
