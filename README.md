@@ -289,11 +289,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.72.0
+0.72.1
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.72.1 (2026-05-13)
+
+- feat(specs): add spec-v74 (statusline version) and spec-v75 (toolkit explainer content) [`85e6f9f`]
 
 #### v0.72.0 (2026-05-13)
 
