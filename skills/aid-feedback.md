@@ -71,7 +71,7 @@ Check these conditions:
 #### Step 1: Read Open Feedback Issues
 
 ```bash
-gh issue list --repo jerichoBob/aidev-toolkit --label feedback --state open --json number,title,body,author,createdAt
+gh issue list --repo jerichoBob/aidev-toolkit --label feedback --state open --json number,title,body,author,createdAt,labels
 ```
 
 Capture the JSON output. If the command exits with an error, show the error and stop.
@@ -84,9 +84,19 @@ No open feedback issues — nothing to ingest.
 
 Then stop.
 
+**Filter out already-processed issues:** from the JSON array, remove any issue where the `labels` array contains an entry with `name == "processed"`. Work only with the remaining unprocessed issues.
+
+If the filtered list is empty, print:
+
+```text
+No new feedback issues — all open issues are already processed.
+```
+
+Then stop.
+
 #### Step 2: Parse and Classify Issues
 
-For each issue object `{ number, title, body, author, createdAt }`, determine:
+For each unprocessed issue object `{ number, title, body, author, createdAt, labels }`, determine:
 
 - **type**: one of `bug` / `feature` / `enhancement` / `doc` — infer from title prefix `[TYPE]` if present, otherwise from content
 - **area**: closest match from the title or body — skill name (e.g. `/screenshots`) or `General/Toolkit`

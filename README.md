@@ -289,11 +289,16 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.71.4
+0.71.5
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.71.5 (2026-05-12)
+
+- fix(aid-feedback): exclude already-processed issues from ingestion [`89ed4fb`]
+- feat(specs): add spec-v73 for usage telemetry [`d1ffed0`]
 
 #### v0.71.4 (2026-05-12)
 
