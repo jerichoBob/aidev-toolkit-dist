@@ -219,7 +219,7 @@ configure_permissions() {
     local SETTINGS_FILE="$CLAUDE_DIR/settings.json"
 
     # Permissions needed for /aid-update to run without prompts
-    local PERMS_JSON='["Bash(git -C ~/.claude/aidev-toolkit *)","Bash(~/.claude/aidev-toolkit/scripts/install.sh *)","Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)","Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)"]'
+    local PERMS_JSON='["Bash(git -C ~/.claude/aidev-toolkit *)","Bash(~/.claude/aidev-toolkit/scripts/install.sh *)","Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)","Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)","Bash(~/.claude/aidev-toolkit/scripts/log-usage.sh *)"]'
 
     # Try jq first (cleanest JSON manipulation)
     if command -v jq &> /dev/null; then
@@ -328,6 +328,45 @@ PYTHON_SCRIPT
 
 echo -n "Configuring markdown auto-lint hook... "
 if configure_hooks; then
+    echo -e "${GREEN}✓${NC}"
+else
+    echo -e "${YELLOW}skipped${NC} (python3 required)"
+fi
+
+# Configure UserPromptSubmit hook to log skill invocations passively
+configure_telemetry_hook() {
+    if command -v python3 &> /dev/null; then
+        python3 << 'PYTHON_SCRIPT'
+import json, os
+
+settings_file = os.path.expanduser("~/.claude/settings.json")
+hook_cmd = (
+    "p=$(jq -r '.prompt // empty'); "
+    "s=$(echo \"$p\" | grep -oE '^/[a-zA-Z0-9_-]+' | head -1 | tr -d '/'); "
+    "[ -n \"$s\" ] && (nohup ~/.claude/aidev-toolkit/scripts/log-usage.sh \"$s\" >/dev/null 2>&1 &); true"
+)
+
+settings = {}
+if os.path.exists(settings_file):
+    with open(settings_file) as f:
+        settings = json.load(f)
+
+hooks = settings.setdefault("hooks", {})
+upss = hooks.setdefault("UserPromptSubmit", [])
+
+already_present = any("log-usage.sh" in h.get("command", "") for e in upss for h in e.get("hooks", []))
+if not already_present:
+    upss.append({"hooks": [{"type": "command", "command": hook_cmd}]})
+    with open(settings_file, "w") as f:
+        json.dump(settings, f, indent=2)
+PYTHON_SCRIPT
+        return 0
+    fi
+    return 1
+}
+
+echo -n "Configuring usage telemetry hook... "
+if configure_telemetry_hook; then
     echo -e "${GREEN}✓${NC}"
 else
     echo -e "${YELLOW}skipped${NC} (python3 required)"

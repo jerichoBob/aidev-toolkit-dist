@@ -52,6 +52,35 @@ _remove_toolkit_symlinks() {
 _remove_toolkit_symlinks "$COMMANDS_DIR"
 _remove_toolkit_symlinks "$SKILLS_DIR"
 
+# Remove telemetry hook from settings.json
+if command -v python3 &> /dev/null; then
+    [ "$QUIET" = false ] && echo -n "Removing telemetry hook... "
+    python3 << 'PYTHON_SCRIPT'
+import json, os
+
+settings_file = os.path.expanduser("~/.claude/settings.json")
+if not os.path.exists(settings_file):
+    import sys; sys.exit(0)
+
+with open(settings_file) as f:
+    settings = json.load(f)
+
+hooks = settings.get("hooks", {})
+upss = hooks.get("UserPromptSubmit", [])
+cleaned = [e for e in upss if not any("log-usage.sh" in h.get("command", "") for h in e.get("hooks", []))]
+
+if len(cleaned) != len(upss):
+    if cleaned:
+        hooks["UserPromptSubmit"] = cleaned
+    else:
+        hooks.pop("UserPromptSubmit", None)
+    settings["hooks"] = hooks
+    with open(settings_file, "w") as f:
+        json.dump(settings, f, indent=2)
+PYTHON_SCRIPT
+    [ "$QUIET" = false ] && echo -e "${GREEN}✓${NC}"
+fi
+
 # Remove toolkit directory
 if [ -d "$TOOLKIT_DIR" ]; then
     [ "$QUIET" = false ] && echo -n "Removing toolkit directory... "

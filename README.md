@@ -289,11 +289,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.71.6
+0.72.0
 
 ## Changelog
 
 ### Release Notes
+
+#### v0.72.0 (2026-05-13)
+
+- feat(telemetry): implement v73 usage telemetry — local log + GitHub issue rollup [`ff11104`]
 
 #### v0.71.6 (2026-05-12)
 
