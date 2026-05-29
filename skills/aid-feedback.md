@@ -130,10 +130,25 @@ Use AskUserQuestion to confirm which items to create specs for. The user can des
 
 #### Step 7: Create Specs
 
-For each confirmed item, invoke `/sdd-spec` with a prompt that includes type, area, and description. For example:
+For each confirmed item, handle by type:
+
+**If type is `bug`:** Follow the Bug Triage Protocol before creating a spec:
+
+1. **Reproduce first** — read `.claude/commands/bug-repro.md` and follow it. Do not write any fix or spec until you have a confirmed repro.
+2. State the repro result clearly:
+   - ✅ **Reproduced**: describe the exact command that fails and the exact error
+   - ❌ **Cannot reproduce**: say so, note what was tried, ask for more info — do NOT proceed to spec
+   - ⊘ **Blocked**: note what's missing (hardware, credentials, external service)
+3. Only after a confirmed ✅ repro: write a `.claude/scripts/repro-{area}.sh` that demonstrates the failure, then invoke `/sdd-spec` with the root cause included in the description:
 
 ```text
-/sdd-spec [BUG] /sdd-code — fails when specs dir is missing; add guard and helpful error message
+/sdd-spec [BUG] /sdd-code — fails when specs dir is missing; root cause: X; repro: .claude/scripts/repro-sdd-code.sh
+```
+
+**If type is `feature`, `enhancement`, or `doc`:** Invoke `/sdd-spec` directly:
+
+```text
+/sdd-spec [FEATURE] /commit — add --dry-run flag
 ```
 
 Wait for each spec to be created before proceeding to the next.

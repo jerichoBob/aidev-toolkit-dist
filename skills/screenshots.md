@@ -28,11 +28,18 @@ the model's vision resolution limit are automatically tiled so full detail is pr
    ~/.claude/aidev-toolkit/scripts/screenshots.sh $ARGUMENTS
    ```
 
-3. **Tile each image** to fit within your resolution limit:
+3. **Tile each image** to fit within your resolution limit. Capture the path via command
+   substitution and pass it as a quoted variable — never inline the path as a string literal:
 
    ```bash
-   ~/.claude/aidev-toolkit/scripts/tile-image.sh "<path>" --limit <LIMIT>
+   IMG_PATH=$(~/.claude/aidev-toolkit/scripts/screenshots.sh <N>)
+   ~/.claude/aidev-toolkit/scripts/tile-image.sh "$IMG_PATH" --limit <LIMIT>
    ```
+
+   **Important**: use `$()` to capture the path, then `"$IMG_PATH"` to pass it.
+   macOS screenshot filenames contain a Unicode narrow no-break space (U+202F) before
+   AM/PM. A hardcoded string literal (`IMG_PATH='...'`) will not preserve this character
+   and the file-existence check will fail even though the file is present on disk.
 
    This outputs one path per line:
    - If the image fits: returns the original path (single line)

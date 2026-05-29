@@ -289,11 +289,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.73.0
-
-## Changelog
+0.73.1
 
 ### Release Notes
+
+#### v0.73.1 (2026-05-28)
+
+- fix(screenshots): quote path via shell variable in skill instructions to prevent word-splitting on macOS space-named screenshot files [`spec-v76`]
+- test: add `tests/test-screenshots-spaces.sh` — spaced paths, missing-file error, multi-space edge case
 
 #### v0.73.0 (2026-05-13)
 
