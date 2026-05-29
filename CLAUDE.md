@@ -78,6 +78,25 @@ Update both when bumping versions.
 
 ## Critical Rules
 
+### DO NOT TOUCH `~/.claude` — EVER
+
+**`~/.claude` is a deployment target, not a workspace. Never edit anything under `~/.claude/` directly.**
+
+The source of truth is this repo: `~/Play/github_repos/aidev-toolkit/`
+
+How it works:
+1. Changes are made here, in this repo
+2. Push to GitHub → CI action builds the distribution into `jerichoBob/aidev-toolkit-dist`
+3. Users (including the developer) run `/aid-update` → pulls from dist repo → installer creates symlinks under `~/.claude/`
+
+`~/.claude/aidev-toolkit/`, `~/.claude/skills/`, `~/.claude/commands/` are all **outputs** of the install process. Editing them directly:
+- Gets silently overwritten on the next `/aid-update`
+- Never reaches git history
+- Breaks the installed toolkit in ways that are hard to diagnose
+- Makes the maintainer dismayed
+
+**If you need to change a skill, script, or config: edit it here, commit, push. That's it.**
+
 ### NO MOCKS — EVER
 
 **NEVER use mocks in tests.** No `vi.mock`, no `jest.mock`, no sinon stubs, no mock implementations. They hide bugs, are fragile, and waste time debugging the mock instead of the code. Use real implementations, test fixtures, in-memory databases, actual CLI calls, or integration tests instead. If a dependency isn't available (e.g., no API key, no d2 CLI), skip the test or mark it as **blocked** — don't fake it with mocks.

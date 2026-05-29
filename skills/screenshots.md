@@ -18,36 +18,24 @@ the model's vision resolution limit are automatically tiled so full detail is pr
 
 ## Instructions
 
-1. **Determine your resolution limit** based on your model family:
-   - Claude Opus 4.x → `2576`
-   - Claude Sonnet / Haiku (any version) → `1568`
-
-2. **Get screenshot paths:**
+1. **Get screenshot paths and tile in one step.** The limit is always `1568`:
 
    ```bash
-   ~/.claude/aidev-toolkit/scripts/screenshots.sh $ARGUMENTS
-   ```
-
-3. **Tile each image** to fit within your resolution limit. Capture the path via command
-   substitution and pass it as a quoted variable — never inline the path as a string literal:
-
-   ```bash
-   IMG_PATH=$(~/.claude/aidev-toolkit/scripts/screenshots.sh <N>)
-   ~/.claude/aidev-toolkit/scripts/tile-image.sh "$IMG_PATH" --limit <LIMIT>
+   IMG_PATH=$(~/.claude/aidev-toolkit/scripts/screenshots.sh $ARGUMENTS)
+   ~/.claude/aidev-toolkit/scripts/tile-image.sh "$IMG_PATH" --limit 1568
    ```
 
    **Important**: use `$()` to capture the path, then `"$IMG_PATH"` to pass it.
    macOS screenshot filenames contain a Unicode narrow no-break space (U+202F) before
-   AM/PM. A hardcoded string literal (`IMG_PATH='...'`) will not preserve this character
-   and the file-existence check will fail even though the file is present on disk.
+   AM/PM — `$()` captures the exact bytes; a hardcoded string literal would not.
 
    This outputs one path per line:
    - If the image fits: returns the original path (single line)
    - If the image is too large: returns tile paths in row-major order (top-left → bottom-right)
 
-4. **Read every path** output by the tiling step using the Read tool.
+2. **Read every path** output by the tiling step using the Read tool.
 
-5. **Confirm** what was loaded. If tiles were produced, note the grid (e.g., "Loaded 1 screenshot as 2×1 tiles").
+3. **Confirm** what was loaded. If tiles were produced, note the grid (e.g., "Loaded 1 screenshot as 2×1 tiles").
 
 ## Notes
 

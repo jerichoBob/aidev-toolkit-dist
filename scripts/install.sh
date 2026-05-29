@@ -144,6 +144,30 @@ fi
 mkdir -p "$COMMANDS_DIR"
 mkdir -p "$SKILLS_DIR"
 
+# Write a DO-NOT-EDIT warning into ~/.claude/aidev-toolkit/
+cat > "$TOOLKIT_DIR/DO-NOT-EDIT.md" << 'EOF'
+# DO NOT EDIT ANYTHING IN THIS DIRECTORY
+
+This directory (`~/.claude/aidev-toolkit/`) is a **deployment target**.
+It is overwritten on every `/aid-update`.
+
+## Source of truth
+
+`~/Play/github_repos/aidev-toolkit/`
+
+## How changes propagate
+
+1. Edit in `~/Play/github_repos/aidev-toolkit/`
+2. Commit and push to GitHub
+3. CI builds the distribution into `jerichoBob/aidev-toolkit-dist`
+4. `/aid-update` pulls from dist and runs this installer
+
+Editing files here directly:
+- Gets silently overwritten on next `/aid-update`
+- Never reaches git history
+- Breaks the installed toolkit in ways that are hard to diagnose
+EOF
+
 # Clean up stale aidev-toolkit symlinks (skills that were renamed/removed)
 for dir in "$COMMANDS_DIR" "$SKILLS_DIR"; do
     for file in "$dir"/*.md; do

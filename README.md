@@ -289,9 +289,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.73.1
+0.74.0
 
 ### Release Notes
+
+#### v0.74.0 (2026-05-28)
+
+- feat: add specs v77-v83 — feedback ingestion batch (yaml fix, ac stubs, ready-state, combine-threads, gateway discovery, bedrock docs, architect skill) [`f6fa749`]
+- docs: update specs/README.md — add v77-v83 quick status rows and task checklists [`a0e5a03`]
 
 #### v0.73.1 (2026-05-28)
 
