@@ -2,7 +2,7 @@
 name: aid-login
 tier: extended
 description: Authenticate with GitHub via browser-based OAuth. Stores a verified JWT so spec ownership and future paid features know who you are.
-argument-hint: [status | logout | refresh]
+argument-hint: "[status | logout | refresh]"
 allowed-tools: Bash(~/.claude/aidev-toolkit/scripts/auth.sh:*)
 model: sonnet
 ---

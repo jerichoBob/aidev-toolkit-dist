@@ -2,7 +2,7 @@
 name: commit-push
 tier: core
 description: Same as /commit but auto-pushes after completion.
-argument-hint: [version]
+argument-hint: "[version]"
 allowed-tools: Read, Glob, Grep, Edit, Write, Bash(git:*), Bash(gh:*), AskUserQuestion
 model: inherit
 ---

@@ -2,7 +2,7 @@
 name: inspect
 tier: core
 description: Analyze any codebase - identity, architecture, tech stack.
-argument-hint: [--brief|--deep]
+argument-hint: "[--brief|--deep]"
 allowed-tools: Read, Glob, Grep, Bash(git:*), Bash(ls:*)
 model: inherit
 ---

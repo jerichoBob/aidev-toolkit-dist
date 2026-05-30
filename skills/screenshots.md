@@ -2,7 +2,7 @@
 name: screenshots
 tier: extended
 description: Load recent macOS screenshots into context, auto-tiled to fit model resolution limits.
-argument-hint: [N]
+argument-hint: "[N]"
 allowed-tools: Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *), Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *), Read(~/Desktop/**), Read(/tmp/claude-tiles/**)
 ---
 

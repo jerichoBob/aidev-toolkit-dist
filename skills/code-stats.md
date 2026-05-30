@@ -2,7 +2,7 @@
 name: code-stats
 tier: extended
 description: Count lines of code by language using cloc.
-argument-hint: [path]
+argument-hint: "[path]"
 allowed-tools: Bash(cloc:*)
 model: haiku
 ---

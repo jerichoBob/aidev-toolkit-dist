@@ -71,7 +71,7 @@ See [`docs/native-tool-patterns.md`](../docs/native-tool-patterns.md) for the fu
 ---
 name: my-skill
 description: Short description for menu display (~60-80 chars).
-argument-hint: [arg1] [arg2]
+argument-hint: "[arg1] [arg2]"
 allowed-tools: Read, Grep, Glob, Bash(git:*)
 model: inherit
 ---

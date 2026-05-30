@@ -2,7 +2,7 @@
 name: aid
 tier: core
 description: aidev toolkit help. Shows available commands or details for a specific command.
-argument-hint: [command | --all]
+argument-hint: "[command | --all]"
 allowed-tools:
   - "Read(~/.claude/aidev-toolkit/**)"
   - "Bash(git -C ~/.claude/aidev-toolkit rev-list HEAD..origin/main --count:*)"

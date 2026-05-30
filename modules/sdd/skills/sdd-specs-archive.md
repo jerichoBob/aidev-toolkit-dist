@@ -2,7 +2,7 @@
 name: sdd-specs-archive
 tier: extended
 description: Move completed specs to specs/completed/ to keep the active spec list clean.
-argument-hint: [--dry-run]
+argument-hint: "[--dry-run]"
 allowed-tools: Read, Edit, Bash(mkdir:*), Bash(git:*), Bash(ls:*), AskUserQuestion
 model: sonnet
 ---

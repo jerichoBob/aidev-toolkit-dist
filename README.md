@@ -289,9 +289,18 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.74.0
+0.75.0
 
 ### Release Notes
+
+#### v0.75.0 (2026-05-30)
+
+- fix: quote all YAML-reserved argument-hint values in 15 skill frontmatter files (v77)
+- fix: sdlc-plan.md @ character causing strict YAML parser failure in pi
+- fix: argument-hint `[...]` values parsed as arrays instead of strings in strict parsers
+- feat: add tests/test-yaml-frontmatter.sh — 42 assertions, all skill frontmatter validated
+- feat: add AP-007 Runtime-Adjustable Observability architecture principle
+- feat: add spec v84 — AP-007 principle + arch-review integration
 
 #### v0.74.0 (2026-05-28)
 

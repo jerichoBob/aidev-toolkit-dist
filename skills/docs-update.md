@@ -2,7 +2,7 @@
 name: docs-update
 tier: extended
 description: Update README.md and CLAUDE.md to reflect current codebase state.
-argument-hint: [--deep]
+argument-hint: "[--deep]"
 allowed-tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 ---
