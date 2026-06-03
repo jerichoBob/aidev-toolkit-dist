@@ -289,9 +289,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.75.0
+0.76.0
 
 ### Release Notes
+
+#### v0.76.0 (2026-06-03)
+
+- feat: enhance /lint with MD040 fix-pattern guidance and self-verification loop (v85) [`9557bb1`]
 
 #### v0.75.0 (2026-05-30)
 
