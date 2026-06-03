@@ -37,7 +37,7 @@ Skills marked as core — your daily drivers. Run `/aid --all` to see everything
 - `/sdd-code` — Implement the next single task
 - `/sdd-code-spec [version]` — Implement all remaining tasks in a spec
 
-Run `/aid <command>` for detailed help on any command.
+Run `/aid <command>` for detailed help on any command. For Bedrock/model config: `/aid bedrock`
 
 ··· and 21 extended skills available. Run `/aid --all` to see everything.
 
@@ -120,7 +120,7 @@ Run `/aid <command>` for detailed help on any command.
 - `/sdd-specs-archive [--dry-run]` — Move completed specs to specs/completed/
 - `/sdd-specs-update [--force]` — Sync project with SDD infrastructure
 
-Run `/aid <command>` for detailed help on any command.
+Run `/aid <command>` for detailed help on any command. For Bedrock/model config: `/aid bedrock`
 
 <!-- /OUTPUT -->
 
@@ -1516,6 +1516,45 @@ scripts/auth.sh status     Who am I? When does my token expire?
 scripts/auth.sh logout     Sign out / revoke local token
 scripts/auth.sh refresh    Renew token without re-authenticating
 ```
+
+<!-- /OUTPUT -->
+
+---
+
+### If `$ARGUMENTS` is "bedrock" or "model"
+
+<!-- OUTPUT -->
+
+## Bedrock / AWS Routing
+
+Route Claude Code through AWS Bedrock instead of the direct Anthropic API using two env vars in `.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_USE_BEDROCK": "1",
+    "ANTHROPIC_MODEL": "global.anthropic.claude-sonnet-4-6"
+  }
+}
+```
+
+**How it works:** Setting `CLAUDE_CODE_USE_BEDROCK=1` switches all API calls to go through your AWS account's Bedrock service. `ANTHROPIC_MODEL` must use a Bedrock **cross-region inference profile ID** — not a standard Anthropic model string.
+
+**Model IDs (Bedrock format):**
+
+| Model   | Bedrock Profile ID                                     |
+| ------- | ------------------------------------------------------ |
+| Sonnet  | `global.anthropic.claude-sonnet-4-6`                   |
+| Opus    | `global.anthropic.claude-opus-4-8`                     |
+| Haiku   | `global.anthropic.claude-haiku-4-5-20251001`           |
+
+Older format (still works): `global.anthropic.claude-sonnet-4-5-20250929-v1:0`
+
+> **Note:** Model IDs change as new versions ship. Verify current IDs in the AWS Bedrock console under **Cross-region inference profiles**.
+
+**AWS credentials** must be configured separately (`aws configure` or IAM role). This setting only switches the routing — it does not set up credentials.
+
+**Per-project vs global:** Place the `settings.json` in `.claude/` inside a project to route only that project through Bedrock, or in `~/.claude/` to apply globally.
 
 <!-- /OUTPUT -->
 

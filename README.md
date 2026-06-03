@@ -289,9 +289,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.76.1
+0.77.0
 
 ### Release Notes
+
+#### v0.77.0 (2026-06-03)
+
+- feat: add /aid bedrock help topic — Bedrock/AWS routing via settings.json [`v82`]
+- feat: add tests/test-aid-bedrock-topic.sh — 10 assertions for Bedrock config fields
 
 #### v0.76.1 (2026-06-03)
 
