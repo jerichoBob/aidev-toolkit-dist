@@ -85,11 +85,13 @@ Update both when bumping versions.
 The source of truth is this repo: `~/Play/github_repos/aidev-toolkit/`
 
 How it works:
+
 1. Changes are made here, in this repo
 2. Push to GitHub → CI action builds the distribution into `jerichoBob/aidev-toolkit-dist`
 3. Users (including the developer) run `/aid-update` → pulls from dist repo → installer creates symlinks under `~/.claude/`
 
 `~/.claude/aidev-toolkit/`, `~/.claude/skills/`, `~/.claude/commands/` are all **outputs** of the install process. Editing them directly:
+
 - Gets silently overwritten on the next `/aid-update`
 - Never reaches git history
 - Breaks the installed toolkit in ways that are hard to diagnose

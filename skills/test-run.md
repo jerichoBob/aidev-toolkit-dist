@@ -33,27 +33,27 @@ Create it to use /test-run.
 
 Then stop.
 
-2. Generate a timestamped filename:
+1. Generate a timestamped filename:
 
 ```bash
 REPORT_FILE="tests/results/run-$(date +%Y%m%d-%H%M%S).txt"
 mkdir -p tests/results
 ```
 
-3. Run the full test suite and capture all output:
+1. Run the full test suite and capture all output:
 
 ```bash
 bash tests/run-all.sh 2>&1 | tee "$REPORT_FILE"
 RUN_EXIT=$?
 ```
 
-4. Parse the captured output from `$REPORT_FILE` to extract summary counts:
+1. Parse the captured output from `$REPORT_FILE` to extract summary counts:
    - Count suites: number of lines matching `Running test-`
    - Count passed: sum all `N passed` values from `Results:` lines
    - Count failed: sum all `N failed` values from `Results:` lines
    - Count blocked: sum all `N blocked` values from `Results:` lines (or 0 if not present)
 
-5. Display inline summary:
+2. Display inline summary:
 
 ```text
 ────────────────────────────────────────
@@ -67,7 +67,7 @@ Blocked: N (skipped)
 ────────────────────────────────────────
 ```
 
-6. Exit with the same exit code as `run-all.sh` (non-zero if any suite failed).
+1. Exit with the same exit code as `run-all.sh` (non-zero if any suite failed).
 
 ## Notes
 

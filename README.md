@@ -289,9 +289,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.78.0
+0.78.1
 
 ### Release Notes
+
+#### v0.78.1 (2026-06-03)
+
+- fix: /lint now scans .claude/**/*.md (fixes issue #22) [`7d13d96`]
+- fix: markdown auto-fixes surfaced by new .claude/ lint coverage [`07c35e8`]
 
 #### v0.78.0 (2026-06-03)
 

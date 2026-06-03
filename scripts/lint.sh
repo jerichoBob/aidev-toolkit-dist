@@ -20,21 +20,21 @@ fi
 # Target: argument or default; expand directories to recursive glob
 ARG="${1:-}"
 if [[ -z "$ARG" ]]; then
-  TARGET="**/*.md"
+  TARGETS=("**/*.md" ".claude/**/*.md")
 elif [[ -d "$ARG" ]]; then
-  TARGET="${ARG%/}/**/*.md"
+  TARGETS=("${ARG%/}/**/*.md")
 else
-  TARGET="$ARG"
+  TARGETS=("$ARG")
 fi
 
 # Run auto-fix
-echo "Fixing: $TARGET"
-markdownlint --fix "$TARGET" 2>&1 || true
+echo "Fixing: ${TARGETS[*]}"
+markdownlint --fix "${TARGETS[@]}" 2>&1 || true
 
 # Final check
 echo ""
 echo "Remaining issues:"
-if markdownlint "$TARGET" 2>&1; then
+if markdownlint "${TARGETS[@]}" 2>&1; then
   echo "All clean!"
 else
   echo ""

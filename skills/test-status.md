@@ -27,21 +27,21 @@ Run /test-run to execute the test suite first.
 
 Then stop.
 
-2. Display the report filename as a subtitle:
+1. Display the report filename as a subtitle:
 
 ```text
 Last run: {REPORT}
 ```
 
-3. Read the report file content (use `cat "$REPORT"`).
+1. Read the report file content (use `cat "$REPORT"`).
 
-4. Parse the output to extract per-suite results. For each suite, capture:
+2. Parse the output to extract per-suite results. For each suite, capture:
    - Suite name (from `Running test-{name}...`)
    - Pass count, fail count, blocked count (from `Results:` line)
    - Overall PASSED / FAILED status
    - Coverage description: read the comment block (lines 4–6 after the shebang) from `tests/{suite}.sh`
 
-5. Display a markdown table:
+3. Display a markdown table:
 
 ```text
 Test Suite Status
@@ -58,11 +58,11 @@ Last run: tests/results/{filename}
 Total: N suites — N passed, N failed
 ```
 
-- **Coverage**: one-line summary extracted from the `#` comment block at the top of the test file (strip leading `# `)
+- **Coverage**: one-line summary extracted from the `#` comment block at the top of the test file (strip leading `#`)
 - **Checks**: show `N passed, N failed` (omit if suite has no Results: line — just show status)
 - **Blocked**: show count if > 0, otherwise `—`
 - **Status**: ✅ PASSED or ❌ FAILED
 
-6. If any suite failed, list its name under a `## Failures` heading with the failing test lines (lines containing `✗`).
+1. If any suite failed, list its name under a `## Failures` heading with the failing test lines (lines containing `✗`).
 
-7. If all pass, end with: `All suites green. Run \`/test-run\` for a fresh run.`
+2. If all pass, end with: `All suites green. Run \`/test-run\` for a fresh run.`
