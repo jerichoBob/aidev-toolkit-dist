@@ -153,6 +153,17 @@ For each confirmed item, handle by type:
 
 Wait for each spec to be created before proceeding to the next.
 
+**After each spec is created**, patch it with the source issue number:
+
+1. Add `github_issue: {number}` to the spec's YAML frontmatter (after `depends_on`)
+2. Add a final task to the spec's README section:
+
+   ```
+   - [ ] Close GitHub issue #{number} (gh issue close {number} --repo jerichoBob/aidev-toolkit)
+   ```
+
+   This task must be the last item in the last phase of the README section — it is the archival handoff step.
+
 #### Step 8: Label Processed Issues
 
 For each issue that was confirmed (specced or intentionally skipped), add the `processed` label:

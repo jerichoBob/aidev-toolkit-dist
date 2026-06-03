@@ -289,9 +289,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.77.0
+0.78.0
 
 ### Release Notes
+
+#### v0.78.0 (2026-06-03)
+
+- feat: wire github issue tracking into /aid-feedback ingestion [`9064e90`]
+- feat: add v86 spec for /lint .claude/ coverage bug with repro script [`ca47978`]
 
 #### v0.77.0 (2026-06-03)
 
