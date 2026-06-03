@@ -289,9 +289,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.76.0
+0.76.1
 
 ### Release Notes
+
+#### v0.76.1 (2026-06-03)
+
+- feat: add --detail flag to /sdd-specs for task-level breakdown of open specs [`cbc0c38`]
 
 #### v0.76.0 (2026-06-03)
 

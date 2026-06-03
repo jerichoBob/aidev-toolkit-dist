@@ -3,7 +3,7 @@ name: sdd-specs
 tier: core
 description: "Quick specs status from README, or deep scan with --deep/--verify/--stats flags"
 disable-model-invocation: false
-argument-hint: "[--deep] [--verify] [--stats] [--all] [--archived]"
+argument-hint: "[--deep] [--verify] [--stats] [--all] [--archived] [--detail]"
 allowed-tools: Read, Grep, Glob, Edit, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*)
 ---
 
@@ -18,6 +18,7 @@ Check `$ARGUMENTS` to determine which path to take:
 - If `$ARGUMENTS` contains `--verify`: go to **Deep Scan Path** below (--verify implies --deep)
 - If `$ARGUMENTS` contains `--archived`: go to **Fast Path** with archived-only filter
 - If `$ARGUMENTS` contains `--all`: go to **Fast Path** with no filter (show everything)
+- If `$ARGUMENTS` contains `--detail`: go to **Detail Path** below
 - Otherwise (empty or unrecognized): go to **Fast Path** with active-only filter (default)
 
 ---
@@ -111,6 +112,58 @@ Summary: Active: A/B tasks (X%) | Completed: C/D | Deferred: N specs
 ```text
 (Showing archived specs only. Use --all to include active specs.)
 ```
+
+**STOP here.** Do not run any bash commands or do any scanning.
+
+---
+
+## Detail Path (--detail)
+
+Task-level breakdown of all open (non-complete, non-archived) specs. Read-only — reads only `specs/README.md`, nothing else.
+
+### Step DT1: Read README
+
+Read `specs/README.md` in full.
+
+### Step DT2: Collect Open Specs
+
+From the Quick Status table, collect all rows where Status is NOT `✅ Complete` and NOT `🗄 Archived`, and Progress does NOT match `→ v\d+`. These are the same rows that default Fast Path shows (Draft, In Progress, Blocked, Deferred).
+
+### Step DT3: Extract Task Sections
+
+For each open spec version `vN`, find its body section in the README: the `## vN:` heading and all content until the next `## v` heading or `---` separator.
+
+Within that section, extract:
+
+- Each `### Phase N:` heading
+- Each task line (`- [ ]` pending or `- [x]` done) under that phase
+
+Skip any HTML comment lines (task-meta).
+
+### Step DT4: Display
+
+For each open spec, output:
+
+```text
+### vN: {Name}  [{progress}] {status_emoji}
+
+**{Phase heading}**
+- [ ] task one
+- [ ] task two
+- [x] completed task
+
+**{Phase heading}**
+- [ ] task three
+```
+
+After all specs:
+
+```text
+---
+{N} open specs · {total_remaining} tasks remaining
+```
+
+Omit phases that have no tasks. Strip markdown links from task text (same `\[([^\]]+)\]\([^)]+\)` pattern as Fast Path). Show ALL tasks per phase — pending and done — so the reader sees full phase context.
 
 **STOP here.** Do not run any bash commands or do any scanning.
 
