@@ -208,6 +208,14 @@ Run `/aid --all` to see these in the terminal.
 | `/analyze-changes`   | Analyze git changes and determine version bump type (support skill)       |
 | `/version-bump`      | Bump version and update changelog (support skill)                         |
 
+#### Multi-Agent Coordination
+
+| Command             | What it does                                                                 |
+| ------------------- | ---------------------------------------------------------------------------- |
+| `/backbone-setup`   | Clone agent-backbone as a sibling repo and install backbone commands here    |
+
+After setup, the full backbone command set (`/backbone-join`, `/backbone-publish`, `/backbone-inbox`, etc.) is available in the project. See [agent-backbone](https://github.com/jerichoBob/agent-backbone) for the full coordination workflow.
+
 #### Analysis & Planning
 
 | Command      | What it does                                                       |
@@ -289,9 +297,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.78.1
+0.79.0
 
 ### Release Notes
+
+#### v0.79.0 (2026-06-06)
+
+- feat: add /backbone-setup skill for agent-backbone coordination layer [`41a96a8`]
 
 #### v0.78.1 (2026-06-03)
 
