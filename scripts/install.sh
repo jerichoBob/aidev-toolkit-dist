@@ -63,6 +63,7 @@ SKILLS=(
     "test-run.md"
     "test-status.md"
     "status-footer.md"
+    "backbone-setup.md"
 )
 
 # SDD module skills (sourced from modules/sdd/skills/)

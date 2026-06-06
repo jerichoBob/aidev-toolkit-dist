@@ -102,6 +102,7 @@ Run `/aid <command>` for detailed help on any command. For Bedrock/model config:
 - `/code-stats [path]` — Count lines of code
 - `/screenshots [N]` — Load recent macOS screenshots into context
 - `/should-i-trust-it` — Verify skill safety before installation
+- `/backbone-setup [--install-only | --check]` — Bootstrap the agent-backbone coordination layer as a sibling repo and install backbone commands into the current project
 - `/aws-costs [--profile <name>] [--all-profiles]` — Show AWS spend by service, daily trend, and active resources
 - `/test-run` — Run the full test suite and save a timestamped report to `tests/results/`
 - `/test-status` — Display results table from the last test run (no re-run)

@@ -297,9 +297,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.79.0
+0.79.1
 
 ### Release Notes
+
+#### v0.79.1 (2026-06-06)
+
+- fix: add backbone-setup to install.sh SKILLS array and aid-help docs [`7259440`]
 
 #### v0.79.0 (2026-06-06)
 
