@@ -297,9 +297,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.79.1
+0.79.2
 
 ### Release Notes
+
+#### v0.79.2 (2026-06-09)
+
+- chore: deprecate and remove sdd-code, sdd-code-phase, sdd-next, sdd-next-phase skills [`74cb64f`]
 
 #### v0.79.1 (2026-06-06)
 

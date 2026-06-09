@@ -34,7 +34,6 @@ Skills marked as core — your daily drivers. Run `/aid --all` to see everything
 - `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
 - `/sdd-spec <description>` — Create a new specification document
 - `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
-- `/sdd-code` — Implement the next single task
 - `/sdd-code-spec [version]` — Implement all remaining tasks in a spec
 
 Run `/aid <command>` for detailed help on any command. For Bedrock/model config: `/aid bedrock`
@@ -77,7 +76,6 @@ Run `/aid <command>` for detailed help on any command. For Bedrock/model config:
 - `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
 - `/sdd-spec <description>` — Create a new specification document
 - `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
-- `/sdd-code` — Implement the next single task
 - `/sdd-code-spec [version]` — Implement all remaining tasks in a spec
 
 ---
@@ -110,9 +108,6 @@ Run `/aid <command>` for detailed help on any command. For Bedrock/model config:
 
 #### Spec-Driven Development (SDD) — Extended
 
-- `/sdd-next` — Show the next task to implement
-- `/sdd-next-phase` — Show all tasks in the current phase
-- `/sdd-code-phase` — Implement all tasks in current phase
 - `/sdd-spec-prioritize [N]` — Recommend top N specs to focus on next
 - `/sdd-spec-status <vN>` — Show phase-by-phase progress for a specific spec
 - `/sdd-spec-owner <version> [set <email> | unset]` — Set or unset spec owner
@@ -1055,26 +1050,6 @@ Create a new specification document from a description.
 
 ---
 
-### If `$ARGUMENTS` is "sdd-next"
-
-<!-- OUTPUT -->
-
-## `/sdd-next` — Show Next Task
-
-**Usage:** `/sdd-next`
-
-Show the next task that would be implemented if `/sdd-code` is run. Displays the spec, phase, task, and a brief preview of what implementation would involve.
-
-**Examples:**
-
-```text
-/sdd-next                Show what's next to implement
-```
-
-<!-- /OUTPUT -->
-
----
-
 ### If `$ARGUMENTS` is "sdd-spec-prioritize"
 
 <!-- OUTPUT -->
@@ -1090,86 +1065,6 @@ Analyze all active (incomplete) specs and recommend the top N to focus on next (
 ```text
 /sdd-spec-prioritize          Show top 5 specs to work on next
 /sdd-spec-prioritize 10       Show top 10 specs
-```
-
-<!-- /OUTPUT -->
-
----
-
-### If `$ARGUMENTS` is "sdd-next-phase"
-
-<!-- OUTPUT -->
-
-## `/sdd-next-phase` — Show Next Phase
-
-**Usage:** `/sdd-next-phase`
-
-Show all tasks in the current working phase with their completion status and progress summary.
-
-**Examples:**
-
-```text
-/sdd-next-phase          Show all tasks in current phase
-```
-
-<!-- /OUTPUT -->
-
----
-
-### If `$ARGUMENTS` is "sdd-code"
-
-<!-- OUTPUT -->
-
-## `/sdd-code` — Implement Next Task
-
-**Usage:** `/sdd-code`
-
-Implement the single next unchecked task from the specs checklist. Reads the spec for context, implements the task, updates the README checklist, and reports completion.
-
-**Workflow:**
-
-1. Finds next unchecked task in `specs/README.md`
-2. Reads the spec file for implementation context
-3. Implements the task following existing code patterns
-4. Marks the task complete in README (`- [x]`)
-5. Reports what was done and previews the next task
-
-**Important:** Implements only ONE task per invocation.
-
-**Examples:**
-
-```text
-/sdd-code                Implement the next task
-```
-
-<!-- /OUTPUT -->
-
----
-
-### If `$ARGUMENTS` is "sdd-code-phase"
-
-<!-- OUTPUT -->
-
-## `/sdd-code-phase` — Implement Current Phase
-
-**Usage:** `/sdd-code-phase`
-
-Implement all remaining tasks in the current phase without stopping. Works through each task sequentially, updating the checklist after each one.
-
-**Workflow:**
-
-1. Gets all tasks in the current working phase
-2. Implements each unchecked task sequentially
-3. Updates README after each task
-4. Runs tests if available
-5. Reports phase completion summary
-
-**Important:** Does not stop between tasks — implements the entire phase.
-
-**Examples:**
-
-```text
-/sdd-code-phase          Implement all tasks in current phase
 ```
 
 <!-- /OUTPUT -->
@@ -1360,10 +1255,6 @@ Code against the spec checklist.
 | Command                    | Purpose                                             |
 | -------------------------- | --------------------------------------------------- |
 | `/sdd-spec-prioritize [N]` | Recommend top N specs to focus on next (default: 5) |
-| `/sdd-next`                | Preview the next task to implement                  |
-| `/sdd-next-phase`          | Preview all tasks in the current phase              |
-| `/sdd-code`                | Implement the single next task                      |
-| `/sdd-code-phase`          | Implement all tasks in the current phase            |
 | `/sdd-code-spec [vN]`      | Implement an entire spec end-to-end                 |
 | `/sdd-spec-tagging`        | Commit tagging convention (`[vN:pN:sN]`)            |
 
@@ -1382,11 +1273,9 @@ Code against the spec checklist.
 
 # 3. Check what's next and start coding
 /sdd-specs
-/sdd-next
-/sdd-code
+/sdd-spec-prioritize
 
-# 4. Implement a full phase or full spec
-/sdd-code-phase
+# 4. Implement a spec end-to-end
 /sdd-code-spec v1
 ```
 

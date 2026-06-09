@@ -68,11 +68,7 @@ SKILLS=(
 
 # SDD module skills (sourced from modules/sdd/skills/)
 SDD_SKILLS=(
-    "sdd-code.md"
-    "sdd-code-phase.md"
     "sdd-code-spec.md"
-    "sdd-next.md"
-    "sdd-next-phase.md"
     "sdd-spec-prioritize.md"
     "sdd-spec.md"
     "sdd-spec-owner.md"
@@ -586,10 +582,6 @@ echo "Spec-Driven Development (SDD):"
 echo -e "  ${YELLOW}/sdd-specs${NC}          Show specs status, staleness, progress"
 echo -e "  ${YELLOW}/sdd-specs-update${NC}   Sync project with SDD infrastructure"
 echo -e "  ${YELLOW}/sdd-spec${NC}           Create a new specification document"
-echo -e "  ${YELLOW}/sdd-next${NC}           Show the next task to implement"
-echo -e "  ${YELLOW}/sdd-next-phase${NC}     Show all tasks in the current phase"
-echo -e "  ${YELLOW}/sdd-code${NC}           Implement the next single task"
-echo -e "  ${YELLOW}/sdd-code-phase${NC}     Implement all tasks in current phase"
 echo -e "  ${YELLOW}/sdd-code-spec${NC}      Implement all remaining tasks in a spec"
 echo -e "  ${YELLOW}/sdd-spec-tagging${NC}   Commit tagging convention reference"
 echo ""
