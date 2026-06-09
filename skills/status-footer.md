@@ -36,7 +36,7 @@ The expected value is:
 
 **If `statusLine` is set to an inline script (not pointing at `statusline.sh`)**: warn:
 
-```
+```text
 ⚠️  statusLine is not pointing at statusline.sh — ctx% color coding is inactive.
     Current: <show current value>
     Expected: {"type":"command","command":"bash ~/.claude/aidev-toolkit/scripts/statusline.sh"}
@@ -79,7 +79,7 @@ The argument is one of:
 
 Show the menu using this exact format, substituting `●` for enabled/on and `○` for disabled/off:
 
-```
+```text
 Status Footer Configuration
 ────────────────────────────
   1  Footer   ● enabled     — master on/off switch
@@ -179,14 +179,14 @@ For component-only changes (steps 2–7 toggles), only sync settings.json when t
 
 For `on`/`off`/`--show`/`--hide`/`--reset`, print one confirmation line then show the updated menu:
 
-```
+```text
 Footer enabled.
 ```
 
-```
+```text
 model: on
 ```
 
-```
+```text
 Footer reset to defaults.
 ```

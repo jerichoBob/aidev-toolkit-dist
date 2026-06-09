@@ -14,7 +14,7 @@ aidev-toolkit is a developer CLI distributed as shell scripts and markdown. This
 
 ## Trust Boundaries
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │  USER MACHINE (untrusted)                                       │
 │                                                                 │
@@ -51,7 +51,7 @@ aidev-toolkit is a developer CLI distributed as shell scripts and markdown. This
 
 ## Auth Flow
 
-```
+```text
 User runs: scripts/auth.sh login
            │
            ├─ 1. Generate: random state (32-byte hex), random callback port
@@ -230,7 +230,7 @@ Compare: `gh` CLI is open source. Its auth scripts are fully readable. GitHub's 
 
 ### Current (v52): Allowlist
 
-```
+```text
 ALLOWED_GITHUB_USERS=bseaton,collaborator2,collaborator3
 ```
 
@@ -238,7 +238,7 @@ Simple, maintainer-controlled. Suitable for small trusted user base.
 
 ### Future (v49 Monetization): Entitlement Check
 
-```
+```text
 Worker checks: does this GitHub login have an active subscription?
   └─ query entitlement DB (Stripe customer lookup or similar)
   └─ issue JWT with tier claims: { "tier": "pro", "features": ["sdd", "aws-costs"] }

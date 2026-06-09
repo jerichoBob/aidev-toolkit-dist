@@ -297,9 +297,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.79.2
+0.79.3
 
 ### Release Notes
+
+#### v0.79.3 (2026-06-09)
+
+- style: fix MD040 fenced code block language specifiers [`526cc9b`]
 
 #### v0.79.2 (2026-06-09)
 

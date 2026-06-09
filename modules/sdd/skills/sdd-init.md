@@ -79,7 +79,7 @@ Report: `✓ Created specs/README.md`
 
 Print warning and skip:
 
-```
+```text
 ⚠  specs/README.md already exists — skipping to avoid data loss.
    Run /sdd-init --force to overwrite.
 ```
@@ -88,7 +88,7 @@ Print warning and skip:
 
 Print what will be overwritten:
 
-```
+```text
 Overwriting specs/README.md (--force)
 ```
 

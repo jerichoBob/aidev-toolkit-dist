@@ -27,22 +27,20 @@ When fixing fenced-code-language (MD040) errors, the language specifier **must**
 
 **Correct:**
 
-```
+````text
 ```bash
 some code
 ```
-
-```
+````
 
 **Incorrect (do NOT do this):**
-```
 
+````text
 ```
 bash
 some code
 ```
-
-```
+````
 
 This rule applies to all language specifiers: `bash`, `json`, `yaml`, `plaintext`, `python`, `typescript`, `javascript`, `text`, etc.
 

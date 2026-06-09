@@ -158,7 +158,7 @@ Wait for each spec to be created before proceeding to the next.
 1. Add `github_issue: {number}` to the spec's YAML frontmatter (after `depends_on`)
 2. Add a final task to the spec's README section:
 
-   ```
+   ```text
    - [ ] Close GitHub issue #{number} (gh issue close {number} --repo jerichoBob/aidev-toolkit)
    ```
 

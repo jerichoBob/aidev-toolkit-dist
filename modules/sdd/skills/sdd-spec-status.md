@@ -31,7 +31,7 @@ Read `specs/README.md`. Search for a section header matching `## v{N}:` (e.g., `
 
 If not found in `specs/README.md`, also check `specs/completed/` for archived specs:
 
-```
+```text
 Glob: specs/completed/spec-v{N}-*.md  (to confirm it exists)
 ```
 

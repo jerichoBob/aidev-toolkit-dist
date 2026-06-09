@@ -118,7 +118,7 @@ BU_CDP_WS="$WS" uv run ~/.claude/aidev-toolkit/scripts/gmail-digest.py --dry-run
 
 4. Format the digest:
 
-```
+```text
 # Gmail Digest — {label}
 N emails (unread / all)
 

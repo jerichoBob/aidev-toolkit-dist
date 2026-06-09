@@ -6,7 +6,7 @@ for whoever operates the auth infrastructure.
 
 ## Architecture Overview
 
-```
+```text
 User machine                    Cloudflare Worker              GitHub
 ─────────────────               ──────────────────             ──────
 auth.sh login

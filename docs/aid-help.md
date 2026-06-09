@@ -2,7 +2,7 @@
 
 ---
 
-### If `$ARGUMENTS` is empty or blank
+## If `$ARGUMENTS` is empty or blank
 
 <!-- OUTPUT -->
 
@@ -44,7 +44,7 @@ Run `/aid <command>` for detailed help on any command. For Bedrock/model config:
 
 ---
 
-### If `$ARGUMENTS` is "--all"
+## If `$ARGUMENTS` is "--all"
 
 <!-- OUTPUT -->
 
@@ -122,7 +122,7 @@ Run `/aid <command>` for detailed help on any command. For Bedrock/model config:
 
 ---
 
-### If `$ARGUMENTS` is "update"
+## If `$ARGUMENTS` is "update"
 
 <!-- OUTPUT -->
 
@@ -134,7 +134,7 @@ Run `/aid-update` to pull the latest toolkit updates.
 
 ---
 
-### If `$ARGUMENTS` is "inspect"
+## If `$ARGUMENTS` is "inspect"
 
 <!-- OUTPUT -->
 
@@ -170,7 +170,7 @@ Analyze the current codebase and provide a structured overview. Think of it as "
 
 ---
 
-### If `$ARGUMENTS` is "arch-review"
+## If `$ARGUMENTS` is "arch-review"
 
 <!-- OUTPUT -->
 
@@ -252,7 +252,7 @@ retention_days: 90 # Auto-prune old reviews
 
 ---
 
-### If `$ARGUMENTS` is "commit"
+## If `$ARGUMENTS` is "commit"
 
 <!-- OUTPUT -->
 
@@ -301,7 +301,7 @@ Analyze changes, group them logically, commit each group with conventional commi
 
 ---
 
-### If `$ARGUMENTS` is "commit-push"
+## If `$ARGUMENTS` is "commit-push"
 
 <!-- OUTPUT -->
 
@@ -330,7 +330,7 @@ See `/aid commit` for full documentation.
 
 ---
 
-### If `$ARGUMENTS` is "code-stats"
+## If `$ARGUMENTS` is "code-stats"
 
 <!-- OUTPUT -->
 
@@ -370,7 +370,7 @@ Requires `cloc` to be installed:
 
 ---
 
-### If `$ARGUMENTS` is "lint"
+## If `$ARGUMENTS` is "lint"
 
 <!-- OUTPUT -->
 
@@ -435,7 +435,7 @@ aidev toolkit config disables overly strict rules (line length, inline HTML). Pr
 
 ---
 
-### If `$ARGUMENTS` is "risk-analysis"
+## If `$ARGUMENTS` is "risk-analysis"
 
 <!-- OUTPUT -->
 
@@ -447,7 +447,7 @@ Run `/deal-desk ./docs` to analyze deal documents for risks. Run `/aid deal-desk
 
 ---
 
-### If `$ARGUMENTS` is "deal-desk"
+## If `$ARGUMENTS` is "deal-desk"
 
 <!-- OUTPUT -->
 
@@ -547,7 +547,7 @@ Creates `deal-desk-output/` directory with:
 
 ---
 
-### If `$ARGUMENTS` is "sdlc-plan"
+## If `$ARGUMENTS` is "sdlc-plan"
 
 <!-- OUTPUT -->
 
@@ -613,7 +613,7 @@ Creates `sdlc-plan/` directory with:
 
 ---
 
-### If `$ARGUMENTS` is "analyze"
+## If `$ARGUMENTS` is "analyze"
 
 <!-- OUTPUT -->
 
@@ -625,7 +625,7 @@ Run `/sdlc-plan @document` to analyze business documents. Run `/aid sdlc-plan` f
 
 ---
 
-### If `$ARGUMENTS` is "should-i-trust-it"
+## If `$ARGUMENTS` is "should-i-trust-it"
 
 <!-- OUTPUT -->
 
@@ -680,7 +680,7 @@ Analyze a Claude Code skill file for potentially malicious patterns before insta
 
 ---
 
-### If `$ARGUMENTS` is "aid-feedback" or "feedback"
+## If `$ARGUMENTS` is "aid-feedback" or "feedback"
 
 <!-- OUTPUT -->
 
@@ -740,7 +740,7 @@ Ingestion mode triggers automatically when run from inside the aidev-toolkit pro
 
 ---
 
-### If `$ARGUMENTS` is "docs-update"
+## If `$ARGUMENTS` is "docs-update"
 
 <!-- OUTPUT -->
 
@@ -797,7 +797,7 @@ Update README.md and CLAUDE.md to reflect the current codebase state.
 
 ---
 
-### If `$ARGUMENTS` is "screenshots"
+## If `$ARGUMENTS` is "screenshots"
 
 <!-- OUTPUT -->
 
@@ -832,7 +832,7 @@ Load the N most recent macOS screenshots from ~/Desktop into context. Claude nat
 
 ---
 
-### If `$ARGUMENTS` is "sdd-specs"
+## If `$ARGUMENTS` is "sdd-specs"
 
 <!-- OUTPUT -->
 
@@ -902,7 +902,7 @@ When specs are implemented with token tracking enabled:
 
 ---
 
-### If `$ARGUMENTS` is "sdd-init"
+## If `$ARGUMENTS` is "sdd-init"
 
 <!-- OUTPUT -->
 
@@ -938,7 +938,7 @@ Scaffold the `specs/` directory so it's ready for Spec-Driven Development. This 
 
 ---
 
-### If `$ARGUMENTS` is "sdd-spec-status"
+## If `$ARGUMENTS` is "sdd-spec-status"
 
 <!-- OUTPUT -->
 
@@ -978,7 +978,7 @@ v21: Feedback Ingestion & Spec Generation — 3/15
 
 ---
 
-### If `$ARGUMENTS` is "sdd-specs-update"
+## If `$ARGUMENTS` is "sdd-specs-update"
 
 <!-- OUTPUT -->
 
@@ -1015,7 +1015,7 @@ Initialize or sync a project with SDD methodology infrastructure.
 
 ---
 
-### If `$ARGUMENTS` is "sdd-spec"
+## If `$ARGUMENTS` is "sdd-spec"
 
 <!-- OUTPUT -->
 
@@ -1050,7 +1050,7 @@ Create a new specification document from a description.
 
 ---
 
-### If `$ARGUMENTS` is "sdd-spec-prioritize"
+## If `$ARGUMENTS` is "sdd-spec-prioritize"
 
 <!-- OUTPUT -->
 
@@ -1071,7 +1071,7 @@ Analyze all active (incomplete) specs and recommend the top N to focus on next (
 
 ---
 
-### If `$ARGUMENTS` is "sdd-code-spec"
+## If `$ARGUMENTS` is "sdd-code-spec"
 
 <!-- OUTPUT -->
 
@@ -1108,7 +1108,7 @@ Implement all remaining phases and tasks in a spec without stopping.
 
 ---
 
-### If `$ARGUMENTS` is "sdd-specs-doctor"
+## If `$ARGUMENTS` is "sdd-specs-doctor"
 
 <!-- OUTPUT -->
 
@@ -1148,7 +1148,7 @@ Scan `specs/spec-v*.md` files and migrate them from the old format (inline metad
 
 ---
 
-### If `$ARGUMENTS` is "sdd-specs-archive"
+## If `$ARGUMENTS` is "sdd-specs-archive"
 
 <!-- OUTPUT -->
 
@@ -1182,7 +1182,7 @@ Move all `✅ Complete` spec files from `specs/` to `specs/completed/` and mark 
 
 ---
 
-### If `$ARGUMENTS` is "sdd-spec-tagging"
+## If `$ARGUMENTS` is "sdd-spec-tagging"
 
 <!-- OUTPUT -->
 
@@ -1212,7 +1212,7 @@ Run `/sdd-spec-tagging` for full documentation.
 
 ---
 
-### If `$ARGUMENTS` is "sdd"
+## If `$ARGUMENTS` is "sdd"
 
 <!-- OUTPUT -->
 
@@ -1285,7 +1285,7 @@ Run `/aid <command>` for detailed help on any individual command.
 
 ---
 
-### If `$ARGUMENTS` is "aws-costs"
+## If `$ARGUMENTS` is "aws-costs"
 
 <!-- OUTPUT -->
 
@@ -1334,7 +1334,7 @@ Show current AWS spend broken down by service, daily trend for the last 7 days, 
 
 ---
 
-### If `$ARGUMENTS` is "remember"
+## If `$ARGUMENTS` is "remember"
 
 <!-- OUTPUT -->
 
@@ -1365,7 +1365,7 @@ Save a piece of knowledge, preference, or instruction to persistent memory so it
 
 ---
 
-### If `$ARGUMENTS` is "auth"
+## If `$ARGUMENTS` is "auth"
 
 <!-- OUTPUT -->
 
@@ -1411,7 +1411,7 @@ scripts/auth.sh refresh    Renew token without re-authenticating
 
 ---
 
-### If `$ARGUMENTS` is "bedrock" or "model"
+## If `$ARGUMENTS` is "bedrock" or "model"
 
 <!-- OUTPUT -->
 
@@ -1450,7 +1450,7 @@ Older format (still works): `global.anthropic.claude-sonnet-4-5-20250929-v1:0`
 
 ---
 
-### If `$ARGUMENTS` is anything else (unknown command)
+## If `$ARGUMENTS` is anything else (unknown command)
 
 <!-- OUTPUT -->
 

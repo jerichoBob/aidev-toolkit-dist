@@ -57,7 +57,7 @@ ls ../agent-backbone/messages/ 2>/dev/null && echo "EXISTS" || echo "MISSING"
 
 **If MISSING and `--install-only`:**
 
-```
+```text
 Error: ../agent-backbone/ not found. Remove --install-only to clone it automatically.
 ```
 
@@ -98,7 +98,7 @@ If the script fails, show the error and stop.
 
 ### Step 5: Confirm
 
-```
+```text
 Backbone Setup Complete
 =======================
 

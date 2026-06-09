@@ -4,7 +4,6 @@ tier: extended
 description: Move completed specs to specs/completed/ to keep the active spec list clean.
 argument-hint: "[--dry-run]"
 allowed-tools: Read, Edit, Bash(mkdir:*), Bash(git:*), Bash(ls:*), AskUserQuestion
-model: sonnet
 ---
 
 # SDD Specs Archive
@@ -29,7 +28,7 @@ Read `specs/README.md`. Extract all rows from the Quick Status table where Statu
 
 If no complete specs found:
 
-```
+```text
 No completed specs to archive.
 ```
 
@@ -67,7 +66,7 @@ If `--dry-run`: print preview and stop. Do NOT make any changes.
 
 Use AskUserQuestion:
 
-```
+```text
 Archive N completed specs to specs/completed/?
 ```
 

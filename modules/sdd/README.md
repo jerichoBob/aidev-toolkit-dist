@@ -156,7 +156,7 @@ Example structure:
 
 \`\`\`markdown
 
-# Spec Title
+## Spec Title
 
 ## Why (Problem Statement)
 

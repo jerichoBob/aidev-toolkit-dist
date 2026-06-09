@@ -33,7 +33,7 @@ Run the mapped command and relay its output verbatim to the user.
 
 If `auth.sh` is not found at `~/.claude/aidev-toolkit/scripts/auth.sh`, print:
 
-```
+```text
 aidev-toolkit is not installed. Run the installer first:
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jerichoBob/aidev-toolkit/main/scripts/install.sh)"
 ```
