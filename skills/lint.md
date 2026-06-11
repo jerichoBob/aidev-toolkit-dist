@@ -9,6 +9,18 @@ argument-hint: "[file|directory|glob]"
 
 # Lint
 
+## Lint on Write Rule
+
+**When writing any `.md` file** (via Edit, Write, or any other tool): run `markdownlint {file}` immediately after writing and fix all errors before returning. Do not wait to be asked — lint and fix inline.
+
+```bash
+markdownlint --fix --config ~/.claude/aidev-toolkit/templates/markdownlint.json {file}
+```
+
+If errors remain after `--fix`, apply manual fixes using the patterns in Step 2, then re-run to confirm clean.
+
+---
+
 ## Step 1: Run the lint script
 
 ```bash

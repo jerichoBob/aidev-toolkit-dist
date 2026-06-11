@@ -111,6 +111,7 @@ Ephemeral scripts are wasted tokens. If you create a script to complete a task, 
 
 - **Always use `/commit-push`** for syncing local changes with remote (smart commit + push workflow).
 - **Always use `/aid-update`** to update `~/.claude/skills` and `~/.claude/commands` after making changes to skills or scripts — unless explicitly instructed otherwise.
+- **After writing any `.md` file**: run `markdownlint --fix --config ~/.claude/aidev-toolkit/templates/markdownlint.json {file}` immediately and fix any remaining errors before proceeding. Never leave a markdown file in a lint-failing state.
 
 ## File Purposes
 

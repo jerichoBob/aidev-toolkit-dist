@@ -297,9 +297,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.79.3
+0.80.0
 
 ### Release Notes
+
+#### v0.80.0 (2026-06-11)
+
+- feat: implement markdown lint-on-write (spec v87) [`ea209f3`]
+- docs: track spec v87 completion in README [`88d4b10`]
 
 #### v0.79.3 (2026-06-09)
 

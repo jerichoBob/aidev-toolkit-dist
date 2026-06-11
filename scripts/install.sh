@@ -318,7 +318,7 @@ configure_hooks() {
 import json, os
 
 settings_file = os.path.expanduser("~/.claude/settings.json")
-hook_cmd = "f=$(jq -r '.tool_input.file_path'); [[\"$f\" == *.md]] && markdownlint --fix --config ~/.claude/aidev-toolkit/templates/markdownlint.json \"$f\" 2>&1 || true"
+hook_cmd = "f=$(jq -r '.tool_input.file_path'); [[ \"$f\" == *.md ]] && [[ \"$f\" != *node_modules* ]] && { command -v markdownlint &>/dev/null || { echo '[aidev] markdownlint not found — skipping lint-on-write'; exit 0; }; markdownlint --fix --config ~/.claude/aidev-toolkit/templates/markdownlint.json \"$f\" 2>&1; } || true"
 matcher = "Write|Edit|MultiEdit"
 
 settings = {}
@@ -335,12 +335,16 @@ if entry is None:
     entry = {"matcher": matcher, "hooks": []}
     ptus.append(entry)
 
-# Add markdownlint hook only if not already present
-already_present = any("markdownlint" in h.get("command", "") for h in entry.get("hooks", []))
-if not already_present:
+# Replace stale markdownlint hook or add if not present
+existing = [h for h in entry.get("hooks", []) if "markdownlint" in h.get("command", "")]
+if existing:
+    # Update existing hook to current command
+    for h in existing:
+        h["command"] = hook_cmd
+else:
     entry.setdefault("hooks", []).append({"type": "command", "command": hook_cmd})
-    with open(settings_file, "w") as f:
-        json.dump(settings, f, indent=2)
+with open(settings_file, "w") as f:
+    json.dump(settings, f, indent=2)
 PYTHON_SCRIPT
         return 0
     fi
