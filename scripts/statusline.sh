@@ -58,11 +58,27 @@ if [[ "$(jq -r '.components.ctx // true' "$CONFIG" 2>/dev/null)" == "true" ]]; t
   ctx_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty' 2>/dev/null)
   if [[ -n "$ctx_pct" ]]; then
     ctx_int=${ctx_pct%.*}
-    if   (( ctx_int >= 80 )); then color="\033[31m"
-    elif (( ctx_int >= 60 )); then color="\033[33m"
+    if   (( ctx_int >= 70 )); then color="\033[31m"
+    elif (( ctx_int >= 50 )); then color="\033[33m"
     else                           color="\033[32m"
     fi
     parts+=("${color}ctx:${ctx_int}%\033[0m")
+
+    # Persist usage for the context-thermostat hook (UserPromptSubmit can't
+    # read context_window itself — this file is the only channel it has).
+    # Redraws happen far more often than prompts, so preserve the hook-owned
+    # "notified" flag across rewrites instead of clobbering it each time.
+    CTX_STATE="${HOME}/.claude/ctx-state.json"
+    prev_notified=$(jq -r '.notified // false' "$CTX_STATE" 2>/dev/null)
+    [[ -z "$prev_notified" ]] && prev_notified=false
+    if awk -v p="$ctx_pct" 'BEGIN { exit !(p >= 5) }'; then
+      new_armed=true
+    else
+      new_armed=false
+      prev_notified=false
+    fi
+    jq -n --argjson pct "$ctx_pct" --argjson armed "$new_armed" --argjson notified "$prev_notified" \
+      '{armed: $armed, last_pct: $pct, notified: $notified}' > "$CTX_STATE" 2>/dev/null
   fi
 fi
 

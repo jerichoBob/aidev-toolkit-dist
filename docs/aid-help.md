@@ -105,6 +105,7 @@ Run `/aid <command>` for detailed help on any command. For Bedrock/model config:
 - `/test-run` — Run the full test suite and save a timestamped report to `tests/results/`
 - `/test-status` — Display results table from the last test run (no re-run)
 - `/status-footer [on|off] [--show <component>] [--hide <component>]` — Configure the Claude Code status footer
+- `/handoff [--task <scope>] [--save]` — Compress current conversation into an actionable briefing for a new thread
 
 #### Spec-Driven Development (SDD) — Extended
 

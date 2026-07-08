@@ -64,6 +64,7 @@ SKILLS=(
     "test-status.md"
     "status-footer.md"
     "backbone-setup.md"
+    "handoff.md"
 )
 
 # SDD module skills (sourced from modules/sdd/skills/)
@@ -392,6 +393,41 @@ PYTHON_SCRIPT
 
 echo -n "Configuring usage telemetry hook... "
 if configure_telemetry_hook; then
+    echo -e "${GREEN}✓${NC}"
+else
+    echo -e "${YELLOW}skipped${NC} (python3 required)"
+fi
+
+# Configure UserPromptSubmit hook to nudge /compact when context usage crosses threshold
+configure_context_thermostat_hook() {
+    if command -v python3 &> /dev/null; then
+        python3 << 'PYTHON_SCRIPT'
+import json, os
+
+settings_file = os.path.expanduser("~/.claude/settings.json")
+hook_cmd = "bash ~/.claude/aidev-toolkit/scripts/context-thermostat.sh"
+
+settings = {}
+if os.path.exists(settings_file):
+    with open(settings_file) as f:
+        settings = json.load(f)
+
+hooks = settings.setdefault("hooks", {})
+upss = hooks.setdefault("UserPromptSubmit", [])
+
+already_present = any("context-thermostat.sh" in h.get("command", "") for e in upss for h in e.get("hooks", []))
+if not already_present:
+    upss.append({"hooks": [{"type": "command", "command": hook_cmd}]})
+    with open(settings_file, "w") as f:
+        json.dump(settings, f, indent=2)
+PYTHON_SCRIPT
+        return 0
+    fi
+    return 1
+}
+
+echo -n "Configuring context thermostat hook... "
+if configure_context_thermostat_hook; then
     echo -e "${GREEN}✓${NC}"
 else
     echo -e "${YELLOW}skipped${NC} (python3 required)"

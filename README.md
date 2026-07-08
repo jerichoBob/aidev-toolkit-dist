@@ -297,9 +297,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.80.0
+0.81.0
 
 ### Release Notes
+
+#### v0.81.0 (2026-07-08)
+
+- feat: add /handoff skill for conversation-to-briefing handoffs [`a2bc3ef`]
 
 #### v0.80.0 (2026-06-11)
 
