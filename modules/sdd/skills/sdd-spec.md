@@ -211,7 +211,7 @@ After filling in the Security section, confirm it was populated in the report (S
    - Filename: `spec-v{N}-{short-name}.md`
    - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
    - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
-   - Next steps: Edit the spec file to flesh out details, then run `/sdd-code-spec v{N}`
+   - Next steps: Edit the spec file to flesh out details, then run `/sdd-code v{N}`
 
 ## Two-File Model
 
@@ -373,4 +373,4 @@ Tell user:
 - Filename: `spec-v{N.M}-{short-name}.md`
 - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
 - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
-- Next steps: Edit the spec file to flesh out What/How sections, then run `/sdd-code-spec v{N.M}`
+- Next steps: Edit the spec file to flesh out What/How sections, then run `/sdd-code v{N.M}`

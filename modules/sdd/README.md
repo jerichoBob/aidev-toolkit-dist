@@ -13,7 +13,7 @@ The SDD (Spec-Driven Development) module provides a complete workflow for managi
 
 ## Token Usage Tracking
 
-SDD automatically tracks token usage for each task during `/sdd-code-spec` execution, enabling you to:
+SDD automatically tracks token usage for each task during `/sdd-code` execution, enabling you to:
 
 - Measure algorithm efficiency across different implementations
 - Compare token costs for similar tasks and features
@@ -76,7 +76,7 @@ Cache: \$2.03 @ \$0.30/MTok
 
 ### Automatic Tracking
 
-Token tracking is **enabled by default** when running \`/sdd-code-spec\`:
+Token tracking is **enabled by default** when running \`/sdd-code\`:
 
 1. Captures token snapshot **before** each task
 2. Captures token snapshot **after** each task
@@ -87,7 +87,7 @@ Token tracking is **enabled by default** when running \`/sdd-code-spec\`:
 **Disable tracking** (for privacy or testing):
 
 \`\`\`bash
-/sdd-code-spec v17 --no-stats
+/sdd-code v17 --no-stats
 \`\`\`
 
 ### Data Source
@@ -194,8 +194,8 @@ Example structure:
 ### Step 2: Start Implementation
 
 \`\`\`bash
-/sdd-code-spec v17 # Implement spec v17
-/sdd-code-spec v17 --no-stats # Without token tracking
+/sdd-code v17 # Implement spec v17
+/sdd-code v17 --no-stats # Without token tracking
 \`\`\`
 
 This will:

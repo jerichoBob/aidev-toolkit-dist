@@ -296,9 +296,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.84.0
+0.84.1
 
 ### Release Notes
+
+#### v0.84.1 (2026-07-14)
+
+- fix: remove stale sdd-code-phase/sdd-next test checks and dead PRD.md reference [`0dac072`]
+- docs: sweep remaining /sdd-code-spec references to /sdd-code [`25d90cc`]
 
 #### v0.84.0 (2026-07-14)
 

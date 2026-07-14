@@ -120,7 +120,7 @@ Ephemeral scripts are wasted tokens. If you create a script to complete a task, 
 | `scripts/install.sh`          | Clones repo, symlinks skills, configures permissions            |
 | `scripts/uninstall.sh`        | Removes symlinks and toolkit directory                          |
 | `scripts/clean-install.sh`    | Fresh reinstall                                                 |
-| `scripts/test-install.sh`     | Installation test script for CI/validation                      |
+| `tests/test-install.sh`       | Installation test script for CI/validation                      |
 | `scripts/package-skill.sh`    | Package a skill into a single .skill file for Claude Desktop    |
 | `skills/SKILL-TEMPLATE.md`    | Reference for creating new skills                               |
 | `templates/deal-desk/`        | Output templates for /deal-desk skill                           |

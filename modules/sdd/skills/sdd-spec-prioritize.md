@@ -63,7 +63,7 @@ Top {N} Specs to Focus On
    {reasoning}
 
 ---
-To implement: /sdd-code-spec v{N}
+To implement: /sdd-code v{N}
 ```
 
 If fewer than N viable candidates exist, show all of them and note that the backlog is nearly clear.
@@ -78,4 +78,4 @@ After displaying the ranked list, use `AskUserQuestion` to ask:
 - If the user enters a spec version directly, use that
 - If the user enters 'skip' or dismisses, exit gracefully with no further action
 
-Once a spec is selected, invoke `/sdd-code-spec` for that spec version by following the full instructions in `~/.claude/skills/sdd-code-spec.md` (read it and execute its workflow for the chosen spec).
+Once a spec is selected, invoke `/sdd-code` for that spec version by following the full instructions in `~/.claude/skills/sdd-code.md` (read it and execute its workflow for the chosen spec).
