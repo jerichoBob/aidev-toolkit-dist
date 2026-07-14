@@ -30,7 +30,7 @@ Describe a feature, get a full implementation plan with phases and tasks:
 
 ```text
 /sdd-spec "add OAuth login with GitHub"
-/sdd-code-spec v5
+/sdd-code v5
 ```
 
 Claude creates the spec, then implements it phase by phase with a living checklist in `specs/README.md`. You always know what's done, what's next, and why decisions were made.
@@ -176,8 +176,7 @@ A full workflow for writing specs before code, tracking implementation phase by 
 | ---------------- | ------------------------------------------------------- |
 | `/sdd-spec`      | Create a new specification document from a description  |
 | `/sdd-specs`     | Show all specs — status, staleness, progress summary    |
-| `/sdd-code`      | Implement the next single task                          |
-| `/sdd-code-spec` | Implement all remaining tasks in a spec end-to-end      |
+| `/sdd-code`      | Implement all remaining tasks in a spec end-to-end      |
 | `/sdd-init`      | Scaffold a `specs/` directory for a new project         |
 
 ### Toolkit Management
@@ -297,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.83.0
+0.84.0
 
 ### Release Notes
+
+#### v0.84.0 (2026-07-14)
+
+- feat: rename /sdd-code-spec to /sdd-code with deprecation wrapper (spec v88)
 
 #### v0.83.0 (2026-07-14)
 

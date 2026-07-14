@@ -69,6 +69,7 @@ SKILLS=(
 
 # SDD module skills (sourced from modules/sdd/skills/)
 SDD_SKILLS=(
+    "sdd-code.md"
     "sdd-code-spec.md"
     "sdd-spec-prioritize.md"
     "sdd-spec.md"

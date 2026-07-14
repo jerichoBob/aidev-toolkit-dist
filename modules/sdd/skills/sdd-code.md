@@ -1,90 +1,115 @@
 ---
 name: sdd-code
+display-name: "/sdd-code"
 tier: core
-description: "Implement the single next task from the specs checklist"
-disable-model-invocation: true
+description: "Implement ALL remaining phases and tasks in a spec without stopping"
+argument-hint: "[spec-version] [--no-stats]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git:*), Bash(date:*), AskUserQuestion
 ---
 
-# Implement Next Task
+# Implement Complete Spec
 
-Implement the single next task from the specs checklist.
+Implement all remaining phases and tasks in the current spec without stopping between phases or tasks.
 
 ## Step 1: Gather Data
 
-1. Run this command first to find the next task:
+1. Check if token tracking is disabled:
+   - If `$ARGUMENTS` contains `--no-stats`, skip all token capture steps (graceful degradation)
+   - Otherwise, enable token tracking for each task
+
+2. Run this command to see all specs and their status:
 
 ```bash
-~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh next-task
+~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh status
 ```
 
-1. **Load coding rules** (if present): Check for `coding-rules.md` in project root, then `.claude/`. If found, read it.
+1. **Load coding rules** (if present): Check for `coding-rules.md` in project root, then `.claude/`. If found, read it. These rules govern what code is acceptable to write.
 
 ## Step 2: Implement
 
-1. If the output shows `NO_TASKS_REMAINING`, report that all specs are complete and suggest creating a new spec with `/sdd-spec`.
+1. **Find the target spec**:
+   - If `$ARGUMENTS` contains a spec version (e.g., `v3`), find that spec in the status output
+   - Otherwise, use the first spec with status `In Progress` or `Draft`
+   - Read the full spec file for context (find it at `specs/spec-v{N}-*.md`)
 
-2. **Read the spec file** shown in `spec_file` for full implementation context.
+2. **Identify all remaining work**: Read `specs/README.md` and collect ALL unchecked items across ALL phases of the target spec.
 
-2.3. **Surface the Security section** (always required):
+3. **Check pending tasks against coding rules** (only if rules were loaded):
+   - Scan each pending task for potential violations of any loaded rule
+   - For each violation found, surface it: task text, rule violated, suggested rewrite
+   - Use `AskUserQuestion` to present all violations at once and ask how to proceed:
+     - "Rewrite all violating tasks to comply" (recommended)
+     - "Skip violating tasks"
+     - "Proceed anyway (ignore rules)"
+   - **Never silently proceed if a violation is detected**
+   - If user selects rewrite: update the task descriptions in README before coding begins
 
-Read the `## Security` section from the spec file. Display it as a reminder before implementing any task:
+4. **Create a todo list**: Use TodoWrite to create tasks for ALL unchecked items across ALL phases, organized by phase.
 
-```text
-Security Requirements (from spec)
-  AuthN: {value}
-  AuthZ: {value}
-  Audit: {value}
-```
+5. **Implement phase by phase, task by task**:
+   - Work through phases in order (Phase 1, then Phase 2, etc.)
+   - Within each phase, implement each task sequentially
+   - For each task:
+     - If token tracking is enabled (no `--no-stats` flag):
+       - Capture token snapshot before: `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/task-before-$RANDOM.json`
+     - Mark each task as `in_progress` when starting
+     - Implement the task fully
+     - If token tracking is enabled:
+       - Capture token snapshot after: `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/task-after-$RANDOM.json`
+       - Calculate delta: `delta_output=$(~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh delta /tmp/task-before-*.json /tmp/task-after-*.json)`
+       - Parse delta into: in_tokens, out_tokens, cache_tokens
+       - Get current timestamp: `start_time=2026-02-21T$(date +%H:%M:%SZ)` and `end_time=2026-02-21T$(date +%H:%M:%SZ)`
+       - Get git commit SHA: `commit_sha=$(git rev-parse --short HEAD)`
+       - Insert HTML comment after task checkbox in `specs/README.md`: `<!-- task-meta: v={version},t={task_num},in={in_tokens},out={out_tokens},cache={cache_tokens},start={start_time},end={end_time},commit={commit_sha} -->`
+       - Clean up temp snapshot files
+     - Update `specs/README.md` to mark the task as complete (`- [x]`)
+     - Mark the todo as `completed`
+     - Move immediately to the next task
+   - When a phase is complete, move immediately to the next phase
 
-**Boilerplate check**: If the Security section is missing, blank, or contains only template placeholder text (e.g., lines containing `{e.g.,` or `(e.g.,` with no actual decision text, or subsection headers with no content), halt with:
+6. **Do NOT stop between tasks or phases**: Continue implementing until ALL phases in the spec are complete.
 
-```text
-⛔ Security section incomplete in spec v{N}.
-Fill in the Authentication, Authorization, and Audit Logging subsections before implementing.
-Even "Not applicable — [rationale]" is acceptable, but the decision must be explicit.
-```
-
-Do not proceed with implementation until the user updates the spec and re-runs `/sdd-code`.
-
-2.5. **Check task against coding rules** (only if rules were loaded):
-
-- If the task would violate a loaded rule (e.g., "write mock-based tests" violates a no-mocks rule), surface the violation
-- Use `AskUserQuestion` to ask: "This task may violate a coding rule: [rule]. Rewrite the task or proceed anyway?"
-- Never silently implement a task that violates a rule
-
-1. **Report what you're implementing**:
-
-   ```text
-   Implementing Task
-
-   Spec: v{N} - {Name}
-   Phase: {Phase Name}
-   Task: {Task description}
-   ```
-
-2. **Implement the task**:
-   - Follow existing code patterns in the codebase
-   - Make the minimal changes needed to complete the task
-   - Test the implementation when practical
-
-3. **Update the checklist**: Mark the task as complete in `specs/README.md` (`- [x]`)
-
-4. **Bump version if needed**: If code was changed (not just docs), bump the patch version in `app.py`
-
-5. **Report completion**:
-
-   ```text
-   Task Complete
-
-   {Brief summary of what was done}
-
-   Next task: {Preview of the next unchecked task, or "Phase complete!" if phase is done}
-   ```
+7. **After completing the entire spec**:
+   - Update the Quick Status table row in `specs/README.md` to show completion
+   - Update the spec file's YAML frontmatter `status` field to `complete`
+   - Run any relevant tests if they exist
+   - Bump the version (patch for fixes, minor for features)
+   - Report a summary of what was implemented
 
 ## Important
 
-- **Implement only ONE task** — stop after completing it
-- **Update specs/README.md** — keep the checklist in sync
-- **Read the full spec file** for additional context
+- **Do not ask for confirmation between tasks or phases** — implement the entire spec end-to-end
+- **Update specs/README.md after each task** — keep the checklist in sync
+- **Update spec file YAML frontmatter** when completing a spec (`status: complete`)
+- **Read the full spec file** for additional context on implementation details
 - **Follow existing code patterns** in the codebase
+- **Test as you go** when practical
+- **If a task is blocked** (missing dependency, requires external config), mark it as blocked, skip it, and continue. Report blocked tasks in the summary.
+- **Token tracking**: If token capture fails (snapshot command errors), skip the metadata insertion and continue normally. Do NOT block the workflow on token tracking issues.
+
+## Output Format
+
+When starting:
+
+```text
+Implementing Spec: v{N} - {Name}
+Phases to complete: {count}
+Total tasks remaining: {count}
+
+Starting Phase 1: {Phase Name}...
+```
+
+When complete:
+
+```text
+Spec Complete: v{N} - {Name}
+
+Phase 1: {Phase Name}
+- {Task 1}
+- {Task 2}
+
+{Blocked (if any):}
+{- {Task} — {reason}}
+
+Version bumped: {old} -> {new}
+```

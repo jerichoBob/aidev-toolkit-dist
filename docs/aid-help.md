@@ -34,7 +34,7 @@ Skills marked as core — your daily drivers. Run `/aid --all` to see everything
 - `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
 - `/sdd-spec <description>` — Create a new specification document
 - `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
-- `/sdd-code-spec [version]` — Implement all remaining tasks in a spec
+- `/sdd-code [version]` — Implement all remaining tasks in a spec (formerly `/sdd-code-spec`)
 
 Run `/aid <command>` for detailed help on any command. For Bedrock/model config: `/aid bedrock`
 
@@ -76,7 +76,7 @@ Run `/aid <command>` for detailed help on any command. For Bedrock/model config:
 - `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
 - `/sdd-spec <description>` — Create a new specification document
 - `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
-- `/sdd-code-spec [version]` — Implement all remaining tasks in a spec
+- `/sdd-code [version]` — Implement all remaining tasks in a spec (formerly `/sdd-code-spec`)
 
 ---
 
@@ -1059,7 +1059,7 @@ Create a new specification document from a description.
 
 **Usage:** `/sdd-spec-prioritize`
 
-Analyze all active (incomplete) specs and recommend the top N to focus on next (default: 5). Reads each spec file to assess type, scope, dependencies, and value — then ranks them with one-paragraph reasoning per recommendation. After displaying results, prompts you to pick a spec and hands off directly to `/sdd-code-spec`.
+Analyze all active (incomplete) specs and recommend the top N to focus on next (default: 5). Reads each spec file to assess type, scope, dependencies, and value — then ranks them with one-paragraph reasoning per recommendation. After displaying results, prompts you to pick a spec and hands off directly to `/sdd-code`.
 
 **Examples:**
 
@@ -1072,13 +1072,15 @@ Analyze all active (incomplete) specs and recommend the top N to focus on next (
 
 ---
 
-## If `$ARGUMENTS` is "sdd-code-spec"
+## If `$ARGUMENTS` is "sdd-code"
 
 <!-- OUTPUT -->
 
-## `/sdd-code-spec` — Implement Complete Spec
+## `/sdd-code` — Implement Complete Spec
 
-**Usage:** `/sdd-code-spec [version]`
+_(formerly `/sdd-code-spec`)_
+
+**Usage:** `/sdd-code [version]`
 
 Implement all remaining phases and tasks in a spec without stopping.
 
@@ -1101,9 +1103,21 @@ Implement all remaining phases and tasks in a spec without stopping.
 **Examples:**
 
 ```text
-/sdd-code-spec           Implement first active spec
-/sdd-code-spec v3        Implement spec v3 specifically
+/sdd-code           Implement first active spec
+/sdd-code v3        Implement spec v3 specifically
 ```
+
+<!-- /OUTPUT -->
+
+---
+
+## If `$ARGUMENTS` is "sdd-code-spec"
+
+<!-- OUTPUT -->
+
+## `/sdd-code-spec` — (deprecated — use `/sdd-code`)
+
+`/sdd-code-spec` is deprecated. Use `/sdd-code` instead — it forwards all arguments automatically and shows a deprecation warning.
 
 <!-- /OUTPUT -->
 
@@ -1256,7 +1270,7 @@ Code against the spec checklist.
 | Command                    | Purpose                                             |
 | -------------------------- | --------------------------------------------------- |
 | `/sdd-spec-prioritize [N]` | Recommend top N specs to focus on next (default: 5) |
-| `/sdd-code-spec [vN]`      | Implement an entire spec end-to-end                 |
+| `/sdd-code [vN]`           | Implement an entire spec end-to-end                 |
 | `/sdd-spec-tagging`        | Commit tagging convention (`[vN:pN:sN]`)            |
 
 ---
@@ -1277,7 +1291,7 @@ Code against the spec checklist.
 /sdd-spec-prioritize
 
 # 4. Implement a spec end-to-end
-/sdd-code-spec v1
+/sdd-code v1
 ```
 
 Run `/aid <command>` for detailed help on any individual command.
