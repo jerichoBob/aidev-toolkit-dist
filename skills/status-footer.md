@@ -1,7 +1,7 @@
 ---
 name: status-footer
 tier: extended
-description: Enable/disable the Claude Code status footer and toggle individual components (dir, branch, ctx%, model, effort, vim mode).
+description: Enable/disable the Claude Code status footer and toggle individual components (dir, branch, ctx%, model, effort, vim mode, aidev-toolkit version).
 argument-hint: "[<number>|on|off|--show <component>|--hide <component>|--reset]"
 allowed-tools: Read, Edit, Write, Bash(cat:*), Bash(jq:*), Bash(mkdir:*), Bash(chmod:*)
 model: inherit
@@ -60,7 +60,7 @@ Skip the health check output entirely if settings.json doesn't exist yet (it wil
 
 ```bash
 CONFIG="$HOME/.claude/statusline-config.json"
-cat "$CONFIG" 2>/dev/null || echo '{"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false}}'
+cat "$CONFIG" 2>/dev/null || echo '{"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false,"aid_version":false}}'
 ```
 
 ### 2. Determine the argument
@@ -68,7 +68,7 @@ cat "$CONFIG" 2>/dev/null || echo '{"enabled":true,"components":{"dir":true,"bra
 The argument is one of:
 
 - **(empty)** — show the interactive menu (see step 3)
-- **a number 1–7** — toggle that menu item (see step 4), then show the updated menu
+- **a number 1–8** — toggle that menu item (see step 4), then show the updated menu
 - **`on`** — set `enabled: true`, confirm, done
 - **`off`** — set `enabled: false`, confirm, done
 - **`--show <component>`** — set that component to true, confirm, done
@@ -89,6 +89,7 @@ Status Footer Configuration
   5  model    ○ off         — shortened model name
   6  effort   ○ off         — reasoning effort level
   7  vim      ○ off         — vim mode indicator
+  8  aid_version ○ off      — installed aidev-toolkit version (aid:X.Y.Z)
 ────────────────────────────
 /status-footer <number> to toggle
 ctx% colors: 🟢 0–59% (ok) · 🟡 60–79% (filling) · 🔴 80%+ (auto-compact ~85%)
@@ -109,6 +110,7 @@ Map number to field:
 | 5 | model    | `components.model`      |
 | 6 | effort   | `components.effort`     |
 | 7 | vim      | `components.vim`        |
+| 8 | aid_version | `components.aid_version` |
 
 Read the current value for that field, flip it (true→false, false→true), write it back with `jq`, then show the updated menu (step 3).
 
@@ -132,14 +134,14 @@ jq '.enabled = (.enabled | not)' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
 
 **`off`** — set `enabled: false`.
 
-**`--show <component>`** — set `components.<component>: true`. Valid: `dir`, `branch`, `ctx`, `model`, `effort`, `vim`. Error on unknown component.
+**`--show <component>`** — set `components.<component>: true`. Valid: `dir`, `branch`, `ctx`, `model`, `effort`, `vim`, `aid_version`. Error on unknown component.
 
 **`--hide <component>`** — set `components.<component>: false`. Same validation.
 
 **`--reset`** — write the default config:
 
 ```json
-{"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false}}
+{"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false,"aid_version":false}}
 ```
 
 ```bash

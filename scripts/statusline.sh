@@ -17,7 +17,8 @@ if [[ ! -f "$CONFIG" ]]; then
     "ctx": true,
     "model": false,
     "effort": false,
-    "vim": false
+    "vim": false,
+    "aid_version": false
   }
 }
 EOF
@@ -108,6 +109,15 @@ if [[ "$(jq -r '.components.vim // false' "$CONFIG" 2>/dev/null)" == "true" ]]; 
       *)           color="\033[0m"  ;;
     esac
     parts+=("${color}${vim_mode}\033[0m")
+  fi
+fi
+
+# aid_version — installed aidev-toolkit version
+if [[ "$(jq -r '.components.aid_version // false' "$CONFIG" 2>/dev/null)" == "true" ]]; then
+  AID_VERSION_FILE="${HOME}/.claude/aidev-toolkit/VERSION"
+  if [[ -f "$AID_VERSION_FILE" ]]; then
+    aid_version=$(cat "$AID_VERSION_FILE" 2>/dev/null | tr -d '[:space:]')
+    [[ -n "$aid_version" ]] && parts+=("\033[90maid:${aid_version}\033[0m")
   fi
 fi
 

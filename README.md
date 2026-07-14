@@ -297,9 +297,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.81.0
+0.82.0
 
 ### Release Notes
+
+#### v0.82.0 (2026-07-14)
+
+- feat: add aid_version statusline component (spec v74) [`2e10e79`]
 
 #### v0.81.0 (2026-07-08)
 
