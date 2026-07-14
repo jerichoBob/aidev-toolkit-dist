@@ -89,7 +89,7 @@ Status Footer Configuration
   5  model    ○ off         — shortened model name
   6  effort   ○ off         — reasoning effort level
   7  vim      ○ off         — vim mode indicator
-  8  aid_version ○ off      — installed aidev-toolkit version (aid:X.Y.Z)
+  8  aid_version ○ off      — installed aidev-toolkit version (aid:X.Y.Z, pulses dim/bright every ~10s)
 ────────────────────────────
 /status-footer <number> to toggle
 ctx% colors: 🟢 <10% (ok) · 🟡 10–30% (filling) · 🔴 30%+ (auto-compact ~85%)

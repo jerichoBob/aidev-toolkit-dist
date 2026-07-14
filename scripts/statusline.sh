@@ -112,12 +112,19 @@ if [[ "$(jq -r '.components.vim // false' "$CONFIG" 2>/dev/null)" == "true" ]]; 
   fi
 fi
 
-# aid_version — installed aidev-toolkit version
+# aid_version — installed aidev-toolkit version, pulsing dim-gray/bright-white every ~10s
 if [[ "$(jq -r '.components.aid_version // false' "$CONFIG" 2>/dev/null)" == "true" ]]; then
   AID_VERSION_FILE="${HOME}/.claude/aidev-toolkit/VERSION"
   if [[ -f "$AID_VERSION_FILE" ]]; then
     aid_version=$(cat "$AID_VERSION_FILE" 2>/dev/null | tr -d '[:space:]')
-    [[ -n "$aid_version" ]] && parts+=("\033[90maid:${aid_version}\033[0m")
+    if [[ -n "$aid_version" ]]; then
+      if (( ($(date +%s) / 10) % 2 == 0 )); then
+        pulse_color="\033[97m"
+      else
+        pulse_color="\033[90m"
+      fi
+      parts+=("${pulse_color}aid:${aid_version}\033[0m")
+    fi
   fi
 fi
 

@@ -297,9 +297,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.82.1
+0.83.0
 
 ### Release Notes
+
+#### v0.83.0 (2026-07-14)
+
+- feat: pulse aid_version between dim-gray and bright-white every ~10s [`e7282ad`]
 
 #### v0.82.1 (2026-07-14)
 
