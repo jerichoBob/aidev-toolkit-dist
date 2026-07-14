@@ -297,9 +297,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.82.0
+0.82.1
 
 ### Release Notes
+
+#### v0.82.1 (2026-07-14)
+
+- fix: lower ctx% color thresholds for 1M context window [`865254f`]
 
 #### v0.82.0 (2026-07-14)
 

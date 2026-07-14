@@ -85,14 +85,14 @@ Status Footer Configuration
   1  Footer   ● enabled     — master on/off switch
   2  dir      ● on          — current directory in brackets
   3  branch   ● on          — git branch + dirty symbols
-  4  ctx      ● on          — context window usage %  🟢 <60  🟡 60–79  🔴 80+
+  4  ctx      ● on          — context window usage %  🟢 <10  🟡 10–30  🔴 30+
   5  model    ○ off         — shortened model name
   6  effort   ○ off         — reasoning effort level
   7  vim      ○ off         — vim mode indicator
   8  aid_version ○ off      — installed aidev-toolkit version (aid:X.Y.Z)
 ────────────────────────────
 /status-footer <number> to toggle
-ctx% colors: 🟢 0–59% (ok) · 🟡 60–79% (filling) · 🔴 80%+ (auto-compact ~85%)
+ctx% colors: 🟢 <10% (ok) · 🟡 10–30% (filling) · 🔴 30%+ (auto-compact ~85%)
 ```
 
 Then stop — do not ask a follow-up question.

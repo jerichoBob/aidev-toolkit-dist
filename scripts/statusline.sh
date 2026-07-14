@@ -59,8 +59,8 @@ if [[ "$(jq -r '.components.ctx // true' "$CONFIG" 2>/dev/null)" == "true" ]]; t
   ctx_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty' 2>/dev/null)
   if [[ -n "$ctx_pct" ]]; then
     ctx_int=${ctx_pct%.*}
-    if   (( ctx_int >= 70 )); then color="\033[31m"
-    elif (( ctx_int >= 50 )); then color="\033[33m"
+    if   (( ctx_int > 30 )); then color="\033[31m"
+    elif (( ctx_int >= 10 )); then color="\033[33m"
     else                           color="\033[32m"
     fi
     parts+=("${color}ctx:${ctx_int}%\033[0m")
