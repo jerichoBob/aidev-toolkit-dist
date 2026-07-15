@@ -28,7 +28,7 @@ The `modules/` directory holds self-contained skill groups. Each module has its 
 
 **Current modules:**
 
-- `modules/sdd/` — Spec-Driven Development (9 skills, parse script, spec template)
+- `modules/sdd/` — Spec-Driven Development (parse script, spec template)
 
 **Adding a module skill:**
 
@@ -48,17 +48,6 @@ Located in `architecture-principles/`. Each uses YAML frontmatter with:
 Used by `/arch-review` to validate codebases.
 
 ## Development Workflow
-
-### Testing Skill Changes
-
-```bash
-# Run install to update symlinks
-./scripts/install.sh
-
-# Test in Claude Code
-claude
-/aid
-```
 
 ### Adding a New Skill
 
@@ -112,20 +101,6 @@ Ephemeral scripts are wasted tokens. If you create a script to complete a task, 
 - **Always use `/commit-push`** for syncing local changes with remote (smart commit + push workflow).
 - **Always use `/aid-update`** to update `~/.claude/skills` and `~/.claude/commands` after making changes to skills or scripts — unless explicitly instructed otherwise.
 - **After writing any `.md` file**: run `markdownlint --fix --config ~/.claude/aidev-toolkit/templates/markdownlint.json {file}` immediately and fix any remaining errors before proceeding. Never leave a markdown file in a lint-failing state.
-
-## File Purposes
-
-| File                          | Purpose                                                         |
-| ----------------------------- | --------------------------------------------------------------- |
-| `scripts/install.sh`          | Clones repo, symlinks skills, configures permissions            |
-| `scripts/uninstall.sh`        | Removes symlinks and toolkit directory                          |
-| `scripts/clean-install.sh`    | Fresh reinstall                                                 |
-| `tests/test-install.sh`       | Installation test script for CI/validation                      |
-| `scripts/package-skill.sh`    | Package a skill into a single .skill file for Claude Desktop    |
-| `skills/SKILL-TEMPLATE.md`    | Reference for creating new skills                               |
-| `templates/deal-desk/`        | Output templates for /deal-desk skill                           |
-| `templates/markdownlint.json` | Default config for /lint skill                                  |
-| `modules/sdd/`                | Spec-Driven Development module (skills, parse script, template) |
 
 ## Development Methodology
 

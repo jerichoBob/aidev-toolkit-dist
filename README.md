@@ -296,9 +296,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.84.1
+0.84.2
 
 ### Release Notes
+
+#### v0.84.2 (2026-07-15)
+
+- chore: add doctor-scan.py transcript scanner [`dbda682`]
+- docs: trim derivable/stale content from CLAUDE.md [`f21d3df`]
 
 #### v0.84.1 (2026-07-14)
 
