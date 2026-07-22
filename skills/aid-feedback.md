@@ -48,11 +48,13 @@ Stop here.
 
 ### Step 0b: Ensure Required Labels Exist
 
-Ensure the `feedback` and `processed` labels exist on the repo (safe to run even if they already exist):
+Ensure the `feedback` and `processed` labels exist on both repos (safe to run even if they already exist):
 
 ```bash
 gh label create feedback --repo jerichoBob/aidev-toolkit --description "User feedback submitted via /aid-feedback" --color "0075ca" --force 2>/dev/null || true
 gh label create processed --repo jerichoBob/aidev-toolkit --description "Feedback ingested and specced" --color "e4e669" --force 2>/dev/null || true
+gh label create feedback --repo jerichoBob/aidev-toolkit-dist --description "User feedback submitted via /aid-feedback" --color "0075ca" --force 2>/dev/null || true
+gh label create processed --repo jerichoBob/aidev-toolkit-dist --description "Feedback ingested and specced" --color "e4e669" --force 2>/dev/null || true
 ```
 
 These labels are required for ingestion filtering and processing. The `--force` flag updates color/description if the label already exists.
@@ -70,13 +72,23 @@ Check these conditions:
 
 #### Step 1: Read Open Feedback Issues
 
+Query both repos and merge the results:
+
 ```bash
 gh issue list --repo jerichoBob/aidev-toolkit --label feedback --state open --json number,title,body,author,createdAt,labels
+gh issue list --repo jerichoBob/aidev-toolkit-dist --label feedback --state open --json number,title,body,author,createdAt,labels
 ```
 
-Capture the JSON output. If the command exits with an error, show the error and stop.
+If either command fails, show the error and stop.
 
-If the JSON array is empty (`[]`), print:
+Merge the two JSON arrays into a single combined list. Tag each issue object with a synthetic `repo` field indicating its source:
+
+- Issues from `jerichoBob/aidev-toolkit` → `"repo": "jerichoBob/aidev-toolkit"`
+- Issues from `jerichoBob/aidev-toolkit-dist` → `"repo": "jerichoBob/aidev-toolkit-dist"`
+
+Note: if the dist repo has no `feedback` label yet (command returns empty `[]`), that is fine — treat it as zero issues from that repo and continue.
+
+If the combined merged list is empty (`[]`), print:
 
 ```text
 No open feedback issues — nothing to ingest.
@@ -84,7 +96,7 @@ No open feedback issues — nothing to ingest.
 
 Then stop.
 
-**Filter out already-processed issues:** from the JSON array, remove any issue where the `labels` array contains an entry with `name == "processed"`. Work only with the remaining unprocessed issues.
+**Filter out already-processed issues:** from the combined array, remove any issue where the `labels` array contains an entry with `name == "processed"`. Work only with the remaining unprocessed issues.
 
 If the filtered list is empty, print:
 
@@ -153,24 +165,27 @@ For each confirmed item, handle by type:
 
 Wait for each spec to be created before proceeding to the next.
 
-**After each spec is created**, patch it with the source issue number:
+**After each spec is created**, patch it with the source issue number and repo:
 
 1. Add `github_issue: {number}` to the spec's YAML frontmatter (after `depends_on`)
-2. Add a final task to the spec's README section:
+2. Add `github_issue_repo: {repo}` to the spec's YAML frontmatter (immediately after `github_issue`), where `{repo}` is the `repo` field from the issue object (e.g., `jerichoBob/aidev-toolkit-dist`)
+3. Add a final task to the spec's README section:
 
    ```text
-   - [ ] Close GitHub issue #{number} (gh issue close {number} --repo jerichoBob/aidev-toolkit)
+   - [ ] Close GitHub issue #{number} (gh issue close {number} --repo {repo})
    ```
 
-   This task must be the last item in the last phase of the README section — it is the archival handoff step.
+   Use the correct `{repo}` from the issue object. This task must be the last item in the last phase of the README section — it is the archival handoff step.
 
 #### Step 8: Label Processed Issues
 
-For each issue that was confirmed (specced or intentionally skipped), add the `processed` label:
+For each issue that was confirmed (specced or intentionally skipped), add the `processed` label using the `repo` field from the issue object:
 
 ```bash
-gh issue edit {number} --repo jerichoBob/aidev-toolkit --add-label processed
+gh issue edit {number} --repo {repo} --add-label processed
 ```
+
+Use the correct `{repo}` value (`jerichoBob/aidev-toolkit` or `jerichoBob/aidev-toolkit-dist`) from each issue's `repo` field so the label is applied to the right repository.
 
 #### Step 9: Print Summary
 

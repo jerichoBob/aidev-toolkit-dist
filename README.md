@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.84.2
+0.84.3
 
 ### Release Notes
+
+#### v0.84.3 (2026-07-22)
+
+- feat: /aid-feedback ingest now queries both jerichoBob/aidev-toolkit-dist and jerichoBob/aidev-toolkit-dist-dist (v90)
 
 #### v0.84.2 (2026-07-15)
 
