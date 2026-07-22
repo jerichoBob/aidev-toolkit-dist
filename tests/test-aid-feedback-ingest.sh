@@ -3,8 +3,8 @@
 # test-aid-feedback-ingest.sh — aid-feedback dual-repo ingest tests
 #
 # Verifies that skills/aid-feedback.md correctly implements dual-repo ingest:
-# both repos queried, issues tagged with repo field, labels created on both
-# repos, processed label applied to correct repo, spec frontmatter updated.
+# both repos queried, dist repo queried unfiltered, issues tagged with repo
+# field, labels created on both repos, processed+feedback labels applied.
 #
 
 set -e
@@ -35,11 +35,17 @@ check 'grep -q "gh issue list --repo jerichoBob/aidev-toolkit " "$SKILL_FILE"' \
 check 'grep -q "gh issue list --repo jerichoBob/aidev-toolkit-dist" "$SKILL_FILE"' \
     "Step 1 queries jerichoBob/aidev-toolkit-dist"
 
-check 'grep -q '"'"'repo.*jerichoBob/aidev-toolkit-dist'"'"' "$SKILL_FILE"' \
-    "dist repo issues tagged with repo field"
+check 'grep -q "gh issue list --repo jerichoBob/aidev-toolkit-dist --state open" "$SKILL_FILE"' \
+    "dist repo queried unfiltered (no --label filter)"
+
+check '! grep "gh issue list --repo jerichoBob/aidev-toolkit-dist" "$SKILL_FILE" | grep -q "\-\-label"' \
+    "dist repo query does not have --label flag"
 
 check 'grep -q '"'"'"repo": "jerichoBob/aidev-toolkit"'"'"' "$SKILL_FILE"' \
     "source repo issues tagged with repo field"
+
+check 'grep -q '"'"'"repo": "jerichoBob/aidev-toolkit-dist"'"'"' "$SKILL_FILE"' \
+    "dist repo issues tagged with repo field"
 
 echo ""
 echo "Phase 2: Labels created on both repos..."
@@ -66,12 +72,18 @@ check 'grep -q "gh issue close {number} --repo {repo}" "$SKILL_FILE"' \
     "close-issue task uses per-issue repo variable"
 
 echo ""
-echo "Phase 4: processed label applied to correct repo..."
+echo "Phase 4: Both feedback and processed labels applied on correct repo..."
 
 check 'grep -q "gh issue edit {number} --repo {repo}" "$SKILL_FILE"' \
     "Step 8 uses {repo} field for gh issue edit"
 
-check '! grep -A2 "add the \`processed\` label" "$SKILL_FILE" | grep -q "jerichoBob/aidev-toolkit --add-label"' \
+check 'grep "gh issue edit {number} --repo {repo}" "$SKILL_FILE" | grep -q "\-\-add-label processed"' \
+    "Step 8 adds processed label"
+
+check 'grep "gh issue edit {number} --repo {repo}" "$SKILL_FILE" | grep -q "\-\-add-label feedback"' \
+    "Step 8 also adds feedback label (retroactive tagging)"
+
+check '! grep -A2 "apply labels" "$SKILL_FILE" | grep -q "jerichoBob/aidev-toolkit --add-label"' \
     "Step 8 no longer hardcodes jerichoBob/aidev-toolkit"
 
 echo ""

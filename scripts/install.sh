@@ -297,7 +297,8 @@ for perm in permissions_to_add:
 with open(settings_file, "w") as f:
     json.dump(settings, f, indent=2)
 PYTHON_SCRIPT
-        return 0
+        local rc=$?
+        return $rc
     fi
 
     # Neither jq nor python3 available
@@ -348,7 +349,8 @@ else:
 with open(settings_file, "w") as f:
     json.dump(settings, f, indent=2)
 PYTHON_SCRIPT
-        return 0
+        local rc=$?
+        return $rc
     fi
     return 1
 }
@@ -387,7 +389,8 @@ if not already_present:
     with open(settings_file, "w") as f:
         json.dump(settings, f, indent=2)
 PYTHON_SCRIPT
-        return 0
+        local rc=$?
+        return $rc
     fi
     return 1
 }
@@ -422,7 +425,8 @@ if not already_present:
     with open(settings_file, "w") as f:
         json.dump(settings, f, indent=2)
 PYTHON_SCRIPT
-        return 0
+        local rc=$?
+        return $rc
     fi
     return 1
 }
@@ -457,7 +461,8 @@ settings["statusLine"] = {"type": "command", "command": statusline_cmd}
 with open(settings_file, "w") as f:
     json.dump(settings, f, indent=2)
 PYTHON_SCRIPT
-        return 0
+        local rc=$?
+        return $rc
     fi
     return 1
 }

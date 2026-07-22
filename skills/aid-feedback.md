@@ -76,8 +76,10 @@ Query both repos and merge the results:
 
 ```bash
 gh issue list --repo jerichoBob/aidev-toolkit --label feedback --state open --json number,title,body,author,createdAt,labels
-gh issue list --repo jerichoBob/aidev-toolkit-dist --label feedback --state open --json number,title,body,author,createdAt,labels
+gh issue list --repo jerichoBob/aidev-toolkit-dist --state open --json number,title,body,author,createdAt,labels
 ```
+
+The source repo (`aidev-toolkit`) is filtered by the `feedback` label since all issues there are intentional toolkit feedback. The dist repo (`aidev-toolkit-dist`) is queried unfiltered — users filing issues against the dist repo may not know to add the label, and we should never blind ourselves to those reports.
 
 If either command fails, show the error and stop.
 
@@ -85,8 +87,6 @@ Merge the two JSON arrays into a single combined list. Tag each issue object wit
 
 - Issues from `jerichoBob/aidev-toolkit` → `"repo": "jerichoBob/aidev-toolkit"`
 - Issues from `jerichoBob/aidev-toolkit-dist` → `"repo": "jerichoBob/aidev-toolkit-dist"`
-
-Note: if the dist repo has no `feedback` label yet (command returns empty `[]`), that is fine — treat it as zero issues from that repo and continue.
 
 If the combined merged list is empty (`[]`), print:
 
@@ -179,13 +179,13 @@ Wait for each spec to be created before proceeding to the next.
 
 #### Step 8: Label Processed Issues
 
-For each issue that was confirmed (specced or intentionally skipped), add the `processed` label using the `repo` field from the issue object:
+For each issue that was confirmed (specced or intentionally skipped), apply labels using the `repo` field from the issue object:
 
 ```bash
-gh issue edit {number} --repo {repo} --add-label processed
+gh issue edit {number} --repo {repo} --add-label processed --add-label feedback
 ```
 
-Use the correct `{repo}` value (`jerichoBob/aidev-toolkit` or `jerichoBob/aidev-toolkit-dist`) from each issue's `repo` field so the label is applied to the right repository.
+Adding both labels ensures every processed issue is also tagged `feedback` — catching dist repo issues that were filed without it. The `--force` label creation in Step 0b guarantees both labels exist before this runs.
 
 #### Step 9: Print Summary
 

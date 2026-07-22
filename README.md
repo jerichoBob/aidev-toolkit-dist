@@ -5,7 +5,7 @@
 Built for developers who use [Claude Code](https://claude.ai/code) and want a consistent, automated SDLC workflow across all their projects.
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 Then open any project in Claude Code and run `/aid` to see what's available.
@@ -72,7 +72,7 @@ Scrape your inbox and categorize unread emails by urgency — without leaving Cl
 **Requirements:** [Claude Code](https://claude.ai/code), [GitHub CLI](https://cli.github.com/), `git`, `jq`
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -81,11 +81,11 @@ gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 
 ```bash
 # SSH
-git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # HTTPS
-git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -115,7 +115,7 @@ WSL2 runs a full Linux kernel and is the recommended path for Windows users.
 3. Then install aidev-toolkit (same one-liner as macOS):
 
    ```bash
-   gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
+   gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
    ~/.claude/aidev-toolkit/scripts/install.sh
    ```
 
@@ -296,13 +296,20 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.84.3
+0.85.0
 
 ### Release Notes
 
+#### v0.85.0 (2026-07-22)
+
+- fix: auth.sh — unbound variable/arithmetic crash on Windows/Git Bash (spec v91)
+- fix: dist repo README — nonexistent aidev-toolkit-dist-dist repo reference (spec v92)
+- fix: install.sh configure_* functions now propagate python3 failures instead of reporting false success (spec v93)
+- feat: /screenshots — configurable source directory/pattern via AIDEV_SCREENSHOTS_DIR/AIDEV_SCREENSHOTS_PATTERN (spec v94)
+
 #### v0.84.3 (2026-07-22)
 
-- feat: /aid-feedback ingest now queries both jerichoBob/aidev-toolkit-dist and jerichoBob/aidev-toolkit-dist (v90)
+- feat: /aid-feedback ingest now queries both jerichoBob/aidev-toolkit-dist and jerichoBob/aidev-toolkit-dist-dist (v90)
 
 #### v0.84.2 (2026-07-15)
 

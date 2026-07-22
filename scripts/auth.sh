@@ -46,7 +46,7 @@ json_field() {
 # Decode JWT payload section and extract a field
 jwt_field() {
   local token="$1" key="$2"
-  local payload
+  local payload=""
   payload=$(echo "$token" | cut -d. -f2)
   b64url_decode "$payload" | json_field /dev/stdin "$key" 2>/dev/null || \
     b64url_decode "$payload" | python3 -c "import json,sys; d=json.loads(sys.stdin.read()); print(d.get('$key',''))"
@@ -65,7 +65,7 @@ cmd_login() {
   echo ""
 
   # Pick a random unprivileged port
-  local port
+  local port=""
   port=$(python3 -c "import random; print(random.randint(10000, 65000))")
 
   # Temp files scoped to this PID
@@ -126,7 +126,7 @@ PYEOF
   local bind_wait=0
   while ! python3 -c "import socket; s=socket.socket(); s.connect(('127.0.0.1',$port)); s.close()" 2>/dev/null; do
     sleep 0.1
-    (( bind_wait++ ))
+    bind_wait=$(( bind_wait + 1 ))
     [[ $bind_wait -lt 30 ]] || die "Local callback server failed to start"
   done
 
@@ -141,13 +141,13 @@ PYEOF
   local waited=0
   while [[ ! -f "$token_file" ]]; do
     sleep 1
-    (( waited++ ))
+    waited=$(( waited + 1 ))
     if (( waited >= 60 )); then
       die "Timed out waiting for authentication (60s). Try again."
     fi
   done
 
-  local raw_token
+  local raw_token=""
   raw_token=$(cat "$token_file")
 
   if [[ "$raw_token" == ERROR:* ]]; then
@@ -155,7 +155,7 @@ PYEOF
   fi
 
   # Basic JWT shape check (header.payload.sig)
-  local parts
+  local parts=""
   parts=$(echo "$raw_token" | tr '.' '\n' | wc -l | tr -d ' ')
   [[ "$parts" -eq 3 ]] || die "Received malformed token from server"
 
@@ -168,7 +168,7 @@ PYEOF
   login=$(jwt_field "$raw_token" github_login)
   name=$(jwt_field "$raw_token" name)
   expires_at=$(jwt_field "$raw_token" expires_at)
-  local expiry_str
+  local expiry_str=""
   expiry_str=$(python3 -c "import datetime; print(datetime.datetime.fromtimestamp(${expires_at}).strftime('%Y-%m-%d'))" 2>/dev/null || echo "unknown")
 
   echo -e "${GREEN}✓ Authenticated as @${login} (${name})${NC}"
@@ -177,7 +177,7 @@ PYEOF
 }
 
 cmd_status() {
-  local token
+  local token=""
   token=$(read_token)
 
   local login name email issued_at expires_at
@@ -187,7 +187,7 @@ cmd_status() {
   issued_at=$(jwt_field "$token" issued_at)
   expires_at=$(jwt_field "$token" expires_at)
 
-  local now
+  local now=""
   now=$(date +%s)
 
   if (( expires_at < now )); then
@@ -226,7 +226,7 @@ cmd_token() {
 }
 
 cmd_refresh() {
-  local token
+  local token=""
   token=$(read_token)
 
   echo "Refreshing token..."
@@ -240,7 +240,7 @@ cmd_refresh() {
 
   case "$http_code" in
     200)
-      local new_token
+      local new_token=""
       new_token=$(echo "$body" | python3 -c "import json,sys; print(json.load(sys.stdin)['token'])")
       install -m 600 /dev/null "$AUTH_FILE"
       echo "$new_token" > "$AUTH_FILE"

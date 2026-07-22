@@ -806,7 +806,7 @@ Update README.md and CLAUDE.md to reflect the current codebase state.
 
 **Usage:** `/screenshots [N]`
 
-Load the N most recent macOS screenshots from ~/Desktop into context. Claude natively views PNG images, so loaded screenshots are immediately available for discussion, analysis, or reference.
+Load the N most recent macOS screenshots into context. Claude natively views PNG images, so loaded screenshots are immediately available for discussion, analysis, or reference.
 
 **Arguments:**
 
@@ -815,9 +815,18 @@ Load the N most recent macOS screenshots from ~/Desktop into context. Claude nat
 | _(empty)_ | Load the most recent screenshot (default: 1) |
 | `N`       | Load the N most recent screenshots           |
 
+**Configuration (optional):**
+
+| Env var                     | Default              | Description                              |
+| ---------------------------- | --------------------- | ----------------------------------------- |
+| `AIDEV_SCREENSHOTS_DIR`      | `~/Desktop`           | Source directory to scan for screenshots |
+| `AIDEV_SCREENSHOTS_PATTERN`  | `Screenshot*.png`     | Filename glob pattern                    |
+
+Set these in your environment, or in `~/.claude/aidev-toolkit/.env` (see `.env.example`), to use a custom screenshot location — e.g. `~/Pictures/Screenshots` on Linux/WSL or a non-default macOS setup.
+
 **How It Works:**
 
-1. Finds `Screenshot*.png` files on `~/Desktop` sorted by modification time
+1. Finds files matching the configured pattern (default `Screenshot*.png`) in the configured directory (default `~/Desktop`), sorted by modification time
 2. Returns the N most recent (newest first)
 3. Reads each file so Claude can see the image
 
