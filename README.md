@@ -57,7 +57,7 @@ Flags issues against documented principles with severity levels and remediation 
 
 **Gmail triage**
 
-Scrape your inbox and categorize unread emails by urgency — without leaving Claude Code:
+Fetch your inbox via the Gmail API and categorize unread emails by urgency — without leaving Claude Code:
 
 ```text
 /gmail-digest
@@ -133,7 +133,7 @@ gh auth login
 
 Then run the same installer. The install script will warn you about symlink requirements automatically.
 
-> **macOS-only skills:** `/screenshots`, `/browser-harness`, and `/gmail-digest` require macOS
+> **macOS-only skills:** `/screenshots` and `/browser-harness` require macOS
 > (macOS screenshot paths, Google Chrome via `osascript`). These skills will display a clear
 > error message on Linux/Windows rather than silently failing.
 
@@ -158,7 +158,7 @@ Skills are organized into two tiers: **core** (daily drivers, shown by default i
 | `/commit`       | Group changes, write conventional commit messages, bump version |
 | `/commit-push`  | Same as `/commit` plus auto-push, tests, and dist publish       |
 | `/lint`         | Lint and auto-fix markdown files                                |
-| `/gmail-digest` | Scrape Gmail inbox and categorize unread emails by urgency      |
+| `/gmail-digest` | Fetch Gmail inbox via OAuth and categorize unread emails by urgency |
 | `/remember`     | Save a note to persistent memory (project or user scope)        |
 
 ### Analysis & Review
@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.85.4
+0.86.0
 
 ### Release Notes
+
+#### v0.86.0 (2026-07-23)
+
+- feat: /gmail-digest — switch to OAuth Gmail API instead of browser-harness/Chrome CDP scraping; now cross-platform (spec v98)
 
 #### v0.85.4 (2026-07-23)
 

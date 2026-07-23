@@ -123,9 +123,6 @@ echo "Skill File macOS Guards:"
 check "grep -q 'macOS only' '$REPO_DIR/skills/browser-harness.md'" \
     "browser-harness.md documents macOS-only restriction"
 
-check "grep -q 'macOS only' '$REPO_DIR/skills/gmail-digest.md'" \
-    "gmail-digest.md documents macOS-only restriction"
-
 check "grep -q 'macOS only\|macOS' '$REPO_DIR/skills/screenshots.md'" \
     "screenshots.md documents macOS-only scope"
 

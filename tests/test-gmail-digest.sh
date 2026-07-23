@@ -2,29 +2,29 @@
 #
 # aidev toolkit gmail-digest.py Integration Test Suite
 #
-# Live integration tests — requires Chrome with CDP enabled.
+# Live integration tests — requires real OAuth credentials/token.
 # Tests that need live dependencies are marked blocked when unavailable.
 # No mocks. All tests invoke the real script against real services.
 #
 # Coverage:
 #   - No args exits cleanly (no traceback)
-#   - --check reports Chrome reachability
-#   - --dry-run scrapes inbox, shows email list or inbox-clear
+#   - --check reports OAuth credentials/token status
+#   - Missing credentials.json produces a clear, non-traceback error
+#   - --dry-run fetches inbox, shows email list or inbox-clear
 #   - --output file= writes to path
-#   - --date flag scrapes a specific date
-#   - --days N scrapes a multi-day range
+#   - --date flag fetches a specific date
+#   - --days N fetches a multi-day range
 #   - --weeks N is shorthand for --days N*7
 #   - --all includes read emails
-#   - --account list shows logged-in accounts
-#   - --account N targets a specific account index
-#   - --account email@domain unknown address gives clear error
-#   - --account email@domain launches dedicated Chrome for non-default profile
+#   - --account list shows accounts with a cached token
+#   - --account email@domain targets a specific account
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 SCRIPT="$REPO_DIR/scripts/gmail-digest.py"
+CONFIG_DIR="$REPO_DIR/config"
 
 PASS=0
 FAIL=0
@@ -44,11 +44,11 @@ echo "================================================"
 
 # ── Prereq check ──────────────────────────────────────────────────────────
 
-CHROME_LIVE=false
+GMAIL_AUTH_LIVE=false
 
-if command -v browser-harness &>/dev/null; then
+if [ -f "$CONFIG_DIR/credentials.json" ]; then
     if uv run "$SCRIPT" --check 2>/dev/null; then
-        CHROME_LIVE=true
+        GMAIL_AUTH_LIVE=true
     fi
 fi
 
@@ -68,37 +68,59 @@ else
     pass "script exits cleanly (no Python traceback)"
 fi
 
-# ─── Test 2: --check reports Chrome status ────────────────────────────────
+# ─── Test 2: --check reports OAuth status ─────────────────────────────────
 
 echo ""
-echo "Test: --check reports Chrome status..."
+echo "Test: --check reports OAuth credentials/token status..."
 
 set +e
 check_output=$(uv run "$SCRIPT" --check 2>&1)
 check_exit=$?
 set -e
 
-if $CHROME_LIVE; then
-    if [ "$check_exit" -eq 0 ] && echo "$check_output" | grep -q "reachable"; then
-        pass "--check exits 0 and reports reachable when Chrome is live"
+if $GMAIL_AUTH_LIVE; then
+    if [ "$check_exit" -eq 0 ] && echo "$check_output" | grep -qi "valid"; then
+        pass "--check exits 0 and reports valid credentials when auth is live"
     else
         fail "--check unexpected result (exit=$check_exit): $check_output"
     fi
 else
-    if [ "$check_exit" -ne 0 ] && echo "$check_output" | grep -qi "not reachable\|not found\|timed out"; then
-        pass "--check exits non-zero with clear error when Chrome is down"
+    if [ "$check_exit" -ne 0 ] && echo "$check_output" | grep -qi "not found\|no cached token"; then
+        pass "--check exits non-zero with clear error when auth is unavailable"
     else
         fail "--check did not produce a clear error: $check_output"
     fi
 fi
 
-# ─── Test 3: --dry-run scrapes inbox ──────────────────────────────────────
+# ─── Test 3: missing credentials.json gives a clear, non-traceback error ──
 
 echo ""
-echo "Test: --dry-run scrapes inbox (live Chrome)..."
+echo "Test: missing credentials.json produces a clear error (AC-11)..."
 
-if ! $CHROME_LIVE; then
-    skip_blocked "--dry-run against real Gmail inbox" "Chrome CDP not reachable"
+if [ -f "$CONFIG_DIR/credentials.json" ]; then
+    skip_blocked "missing credentials.json test" "credentials.json is present in this environment"
+else
+    set +e
+    missing_output=$(uv run "$SCRIPT" --dry-run 2>&1)
+    missing_exit=$?
+    set -e
+
+    if echo "$missing_output" | grep -q "Traceback"; then
+        fail "missing credentials.json produced a Python traceback: $missing_output"
+    elif [ "$missing_exit" -ne 0 ] && echo "$missing_output" | grep -qi "credentials.*not found\|not found.*credentials"; then
+        pass "missing credentials.json produces a clear, non-traceback error"
+    else
+        fail "missing credentials.json error message unclear (exit=$missing_exit): $missing_output"
+    fi
+fi
+
+# ─── Test 4: --dry-run fetches inbox ──────────────────────────────────────
+
+echo ""
+echo "Test: --dry-run fetches inbox (live auth)..."
+
+if ! $GMAIL_AUTH_LIVE; then
+    skip_blocked "--dry-run against real Gmail inbox" "GMAIL_AUTH_LIVE unavailable (no credentials.json/cached token)"
 else
     set +e
     dry_output=$(uv run "$SCRIPT" --dry-run 2>&1)
@@ -117,13 +139,13 @@ else
     fi
 fi
 
-# ─── Test 4: --output file= writes to path ────────────────────────────────
+# ─── Test 5: --output file= writes to path ────────────────────────────────
 
 echo ""
 echo "Test: --output file= writes email list to path..."
 
-if ! $CHROME_LIVE; then
-    skip_blocked "--output file= test" "Chrome CDP not reachable"
+if ! $GMAIL_AUTH_LIVE; then
+    skip_blocked "--output file= test" "GMAIL_AUTH_LIVE unavailable"
 else
     OUT_FILE="$TEST_HOME/emails.txt"
 
@@ -148,13 +170,13 @@ else
     fi
 fi
 
-# ─── Test 5: --date flag ──────────────────────────────────────────────────
+# ─── Test 6: --date flag ──────────────────────────────────────────────────
 
 echo ""
 echo "Test: --date flag with yesterday's date..."
 
-if ! $CHROME_LIVE; then
-    skip_blocked "--date flag" "Chrome CDP not reachable"
+if ! $GMAIL_AUTH_LIVE; then
+    skip_blocked "--date flag" "GMAIL_AUTH_LIVE unavailable"
 else
     YESTERDAY=$(date -v-1d +%Y-%m-%d 2>/dev/null || date -d yesterday +%Y-%m-%d)
 
@@ -175,13 +197,13 @@ else
     fi
 fi
 
-# ─── Test 6: --days N multi-day range ─────────────────────────────────────
+# ─── Test 7: --days N multi-day range ─────────────────────────────────────
 
 echo ""
-echo "Test: --days 3 scrapes last 3 days..."
+echo "Test: --days 3 fetches last 3 days..."
 
-if ! $CHROME_LIVE; then
-    skip_blocked "--days flag" "Chrome CDP not reachable"
+if ! $GMAIL_AUTH_LIVE; then
+    skip_blocked "--days flag" "GMAIL_AUTH_LIVE unavailable"
 else
     set +e
     days_output=$(uv run "$SCRIPT" --dry-run --days 3 2>&1)
@@ -200,13 +222,13 @@ else
     fi
 fi
 
-# ─── Test 7: --weeks N shorthand ──────────────────────────────────────────
+# ─── Test 8: --weeks N shorthand ──────────────────────────────────────────
 
 echo ""
 echo "Test: --weeks 1 equals --days 7..."
 
-if ! $CHROME_LIVE; then
-    skip_blocked "--weeks flag" "Chrome CDP not reachable"
+if ! $GMAIL_AUTH_LIVE; then
+    skip_blocked "--weeks flag" "GMAIL_AUTH_LIVE unavailable"
 else
     set +e
     weeks_output=$(uv run "$SCRIPT" --dry-run --weeks 1 2>&1)
@@ -225,13 +247,13 @@ else
     fi
 fi
 
-# ─── Test 8: --all includes read emails ───────────────────────────────────
+# ─── Test 9: --all includes read emails ───────────────────────────────────
 
 echo ""
 echo "Test: --all includes read emails..."
 
-if ! $CHROME_LIVE; then
-    skip_blocked "--all flag" "Chrome CDP not reachable"
+if ! $GMAIL_AUTH_LIVE; then
+    skip_blocked "--all flag" "GMAIL_AUTH_LIVE unavailable"
 else
     set +e
     all_output=$(uv run "$SCRIPT" --dry-run --all 2>&1)
@@ -240,7 +262,6 @@ else
 
     if [ "$all_exit" -eq 0 ]; then
         pass "--all exits 0"
-        # Should show "emails" not "unread emails" in label
         if echo "$all_output" | grep -q "Inbox clear\|emails"; then
             pass "--all output shows inbox status"
         else
@@ -251,105 +272,50 @@ else
     fi
 fi
 
-# ─── Test 9: --account list shows logged-in accounts ────────────────────
+# ─── Test 10: --account list shows accounts with a cached token ──────────
 
 echo ""
-echo "Test: --account list shows logged-in Gmail accounts..."
+echo "Test: --account list shows accounts with a cached token..."
 
-# No Chrome required — reads Chrome Preferences files directly
-set +e
-acct_output=$(uv run "$SCRIPT" --account list 2>&1)
-acct_exit=$?
-set -e
-if true; then
+if [ ! -d "$CONFIG_DIR" ] || [ -z "$(ls -A "$CONFIG_DIR"/token*.json 2>/dev/null)" ]; then
+    skip_blocked "--account list" "no cached token files under $CONFIG_DIR"
+else
+    set +e
+    acct_output=$(uv run "$SCRIPT" --account list 2>&1)
+    acct_exit=$?
+    set -e
 
     if [ "$acct_exit" -eq 0 ]; then
         pass "--account list exits 0"
-        if echo "$acct_output" | grep -q "\[Default\]\|\[Profile"; then
-            pass "--account list shows Chrome profile entries"
+        if echo "$acct_output" | grep -qi "default\|token-"; then
+            pass "--account list shows cached account entries"
         else
-            fail "--account list output missing profile entries: $acct_output"
+            fail "--account list output missing account entries: $acct_output"
         fi
     else
         fail "--account list exited non-zero (exit=$acct_exit): $acct_output"
     fi
 fi
 
-# ─── Test 10: --account 0 explicit default account ───────────────────────
+# ─── Test 11: --account email@domain targets a specific account ──────────
 
 echo ""
-echo "Test: --account 0 targets default account..."
+echo "Test: --account email@domain fetches via a per-account token..."
 
-if ! $CHROME_LIVE; then
-    skip_blocked "--account 0" "Chrome CDP not reachable"
+if ! $GMAIL_AUTH_LIVE; then
+    skip_blocked "--account email@domain" "GMAIL_AUTH_LIVE unavailable"
 else
     set +e
-    acct0_output=$(uv run "$SCRIPT" --dry-run --account 0 2>&1)
-    acct0_exit=$?
+    acct_email_output=$(uv run "$SCRIPT" --dry-run --account "$GMAIL_DIGEST_TEST_ACCOUNT" 2>&1)
+    acct_email_exit=$?
     set -e
 
-    if [ "$acct0_exit" -eq 0 ]; then
-        pass "--account 0 exits 0"
+    if [ -z "$GMAIL_DIGEST_TEST_ACCOUNT" ]; then
+        skip_blocked "--account email@domain" "GMAIL_DIGEST_TEST_ACCOUNT not set"
+    elif [ "$acct_email_exit" -eq 0 ]; then
+        pass "--account $GMAIL_DIGEST_TEST_ACCOUNT exits 0"
     else
-        fail "--account 0 exited non-zero (exit=$acct0_exit): $acct0_output"
-    fi
-fi
-
-# ─── Test 11: --account email@domain unknown address gives clear error ────
-
-echo ""
-echo "Test: --account unknown@example.com gives clear error..."
-
-# No Chrome required — fails before any browser interaction
-set +e
-unknown_output=$(uv run "$SCRIPT" --dry-run --account "unknown-test-address-xyz@example.com" 2>&1)
-unknown_exit=$?
-set -e
-
-if [ "$unknown_exit" -ne 0 ]; then
-    pass "--account unknown email exits non-zero"
-    if echo "$unknown_output" | grep -qi "No Chrome profile found\|not found\|--account list"; then
-        pass "--account unknown email shows helpful error message"
-    else
-        fail "--account unknown email error message unclear: $unknown_output"
-    fi
-else
-    fail "--account unknown email should have exited non-zero (exit=$unknown_exit)"
-fi
-
-# ─── Test 12: --account email@domain launches dedicated Chrome (live) ─────
-
-echo ""
-echo "Test: --account email@domain scrapes via dedicated Chrome instance..."
-
-# Determine a real second account to test with (first non-default profile account)
-TARGET_EMAIL=""
-if command -v uv &>/dev/null; then
-    acct_json=$(uv run "$SCRIPT" --account list 2>&1)
-    # Extract an email from a non-Default profile entry (Profile 1, Profile 4, etc.)
-    # Format: "  [Profile N]  email@domain  Full Name" — email is the last word on the [...] token line
-    TARGET_EMAIL=$(echo "$acct_json" | grep "\[Profile" | head -1 | grep -oE '[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}')
-fi
-
-if [ -z "$TARGET_EMAIL" ]; then
-    skip_blocked "--account email scrape" "No non-default profile account found"
-elif ! $CHROME_LIVE; then
-    skip_blocked "--account $TARGET_EMAIL" "Chrome CDP not reachable"
-else
-    set +e
-    email_output=$(uv run "$SCRIPT" --dry-run --account "$TARGET_EMAIL" 2>&1)
-    email_exit=$?
-    set -e
-
-    if [ "$email_exit" -eq 0 ]; then
-        pass "--account $TARGET_EMAIL exits 0"
-        if echo "$email_output" | grep -qi "Inbox clear\|unread emails\|emails"; then
-            pass "--account $TARGET_EMAIL output shows inbox status"
-        else
-            fail "--account $TARGET_EMAIL output unrecognized: $(echo "$email_output" | tail -5)"
-        fi
-    else
-        fail "--account $TARGET_EMAIL exited non-zero (exit=$email_exit): $(echo "$email_output" | tail -5)"
+        fail "--account $GMAIL_DIGEST_TEST_ACCOUNT exited non-zero (exit=$acct_email_exit): $(echo "$acct_email_output" | tail -5)"
     fi
 fi
 
