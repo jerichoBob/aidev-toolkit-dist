@@ -151,7 +151,22 @@ PYEOF
   raw_token=$(cat "$token_file")
 
   if [[ "$raw_token" == ERROR:* ]]; then
-    die "${raw_token#ERROR:}"
+    local err_msg="${raw_token#ERROR:}"
+    if [[ "$err_msg" == *"not on the access list"* ]]; then
+      die "$(cat <<EOF
+${err_msg}
+
+This is a private-beta entitlement gate, not an identity problem — your GitHub
+login succeeded. Some aidev-toolkit features are currently limited to an
+allowlist while in private beta.
+
+To request access, open an issue at:
+  https://github.com/jerichoBob/aidev-toolkit-dist/issues/new
+mentioning your GitHub username and which feature you are trying to use.
+EOF
+)"
+    fi
+    die "$err_msg"
   fi
 
   # Basic JWT shape check (header.payload.sig)

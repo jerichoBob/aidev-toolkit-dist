@@ -11,7 +11,7 @@ model: sonnet
 
 <!-- NO LOCAL FILES — GitHub Issues only, no Slack, no secrets required -->
 
-Submit feedback, suggestions, bug reports, or feature requests for aidev toolkit. Feedback is posted as GitHub Issues on `jerichoBob/aidev-toolkit` using your existing `gh` CLI auth — no webhook, no tokens, no setup.
+Submit feedback, suggestions, bug reports, or feature requests for aidev toolkit. Feedback is posted as GitHub Issues on `jerichoBob/aidev-toolkit-dist` (the public distribution repo) using your existing `gh` CLI auth — no webhook, no tokens, no setup.
 
 ## When to Use
 
@@ -51,8 +51,11 @@ Stop here.
 Ensure the `feedback` and `processed` labels exist on both repos (safe to run even if they already exist):
 
 ```bash
+# aidev-toolkit (private): labels retained for ingestion-side labeling of
+# historical/legacy issues only — this repo is no longer a filing target.
 gh label create feedback --repo jerichoBob/aidev-toolkit --description "User feedback submitted via /aid-feedback" --color "0075ca" --force 2>/dev/null || true
 gh label create processed --repo jerichoBob/aidev-toolkit --description "Feedback ingested and specced" --color "e4e669" --force 2>/dev/null || true
+# aidev-toolkit-dist (public): sole filing target for all new feedback issues.
 gh label create feedback --repo jerichoBob/aidev-toolkit-dist --description "User feedback submitted via /aid-feedback" --color "0075ca" --force 2>/dev/null || true
 gh label create processed --repo jerichoBob/aidev-toolkit-dist --description "Feedback ingested and specced" --color "e4e669" --force 2>/dev/null || true
 ```
@@ -244,7 +247,7 @@ Use the returned GitHub username as the submitter.
 
 ```bash
 gh issue create \
-  --repo jerichoBob/aidev-toolkit \
+  --repo jerichoBob/aidev-toolkit-dist \
   --title "[TYPE] area — description" \
   --body "$(cat <<'EOF'
 ## aidev toolkit Feedback
@@ -271,7 +274,7 @@ Capture the issue URL from the output.
 #### Step 5: Confirm
 
 ```text
-✓ Feedback submitted to jerichoBob/aidev-toolkit
+✓ Feedback submitted to jerichoBob/aidev-toolkit-dist
 
 Type:    {type}
 Area:    {area}

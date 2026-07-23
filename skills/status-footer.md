@@ -17,7 +17,30 @@ Configure the Claude Code status line footer — toggle it on/off and control wh
 
 ## Instructions
 
-### 0. Health Check: Verify settings.json statusLine
+### 0a. Dependency Check: Require jq
+
+Before anything else, check that `jq` is available:
+
+```bash
+command -v jq >/dev/null 2>&1
+```
+
+**If `jq` is missing**, print the following and stop immediately — do not proceed to any other step (health check, menu, toggle, or config read/write):
+
+```text
+Error: jq is required for /status-footer.
+
+Install it:
+  macOS:   brew install jq
+  Windows: winget install jqlang.jq
+  Linux:   apt install jq   (or your distro's package manager)
+
+Then retry /status-footer.
+```
+
+**If `jq` IS installed**, proceed to Step 0b with no output — this check is a silent fast-path.
+
+### 0b. Health Check: Verify settings.json statusLine
 
 Before showing the menu, read `~/.claude/settings.json` and inspect the `statusLine` key.
 
@@ -58,9 +81,16 @@ Skip the health check output entirely if settings.json doesn't exist yet (it wil
 
 ### 1. Read current config
 
+If `~/.claude/statusline-config.json` doesn't exist yet, create it with defaults first, then read it — this is what actually makes "created automatically with defaults on first run" (see Config File, above) true:
+
 ```bash
 CONFIG="$HOME/.claude/statusline-config.json"
-cat "$CONFIG" 2>/dev/null || echo '{"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false,"aid_version":false}}'
+if [[ ! -f "$CONFIG" ]]; then
+  mkdir -p "$(dirname "$CONFIG")"
+  echo '{"enabled":true,"components":{"dir":true,"branch":true,"ctx":true,"model":false,"effort":false,"vim":false,"aid_version":false}}' > "$CONFIG"
+  chmod 644 "$CONFIG"
+fi
+cat "$CONFIG"
 ```
 
 ### 2. Determine the argument

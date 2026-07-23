@@ -296,9 +296,21 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.85.0
+0.85.3
 
 ### Release Notes
+
+#### v0.85.3 (2026-07-23)
+
+- fix: /aid-login — scripts/auth.sh now explains access-list-style rejections as a private-beta entitlement gate with a link to request access, instead of a bare passthrough error (spec v97)
+
+#### v0.85.2 (2026-07-23)
+
+- fix: /status-footer — hard-requires jq with a fail-fast, actionable install-hint error (brew/winget/apt); statusline-config.json is now actually created with defaults on first run (spec v96)
+
+#### v0.85.1 (2026-07-23)
+
+- fix: /aid-feedback — new issues now filed to jerichoBob/aidev-toolkit-dist-dist (public) instead of the private jerichoBob/aidev-toolkit-dist repo, so dist-only users can submit feedback (spec v95)
 
 #### v0.85.0 (2026-07-22)
 
