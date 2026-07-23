@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.85.3
+0.85.4
 
 ### Release Notes
+
+#### v0.85.4 (2026-07-23)
+
+- chore: archive completed specs v95-v97 to specs/completed/ [`198bbe4`]
 
 #### v0.85.3 (2026-07-23)
 
