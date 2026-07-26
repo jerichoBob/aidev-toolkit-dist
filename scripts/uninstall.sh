@@ -28,29 +28,30 @@ if [ "$QUIET" = false ]; then
     echo ""
 fi
 
-# Remove ONLY symlinks in commands/ and skills/ that point to aidev-toolkit
-# This is surgical - we check each symlink's target before removing
-[ "$QUIET" = false ] && echo "Removing aidev-toolkit symlinks..."
+# Remove aidev-toolkit skill files from commands/ and skills/ by known name
+[ "$QUIET" = false ] && echo "Removing aidev-toolkit skill files..."
 
-_remove_toolkit_symlinks() {
-    local dir="$1"
-    [ -d "$dir" ] || return 0
-    for file in "$dir"/*.md; do
-        [ -e "$file" ] || continue  # Handle empty glob
-        if [ -L "$file" ]; then
-            target=$(readlink "$file")
-            if [[ "$target" == *"aidev-toolkit/skills/"* ]] || [[ "$target" == "../aidev-toolkit/skills/"* ]] || [[ "$target" == *"aidev-toolkit/modules/"* ]]; then
-                filename=$(basename "$file")
-                rm "$file"
-                [ "$QUIET" = false ] && echo -e "  - $filename ${GREEN}✓${NC}"
-            fi
+SKILLS=(
+    "aid.md" "aid-update.md" "aid-feedback.md" "docs-update.md" "inspect.md"
+    "sdlc-plan.md" "arch-review.md" "deal-desk.md" "commit.md" "commit-push.md"
+    "analyze-changes.md" "version-bump.md" "code-stats.md" "lint.md" "screenshots.md"
+    "should-i-trust-it.md" "remember.md" "aws-costs.md" "browser-harness.md"
+    "aid-login.md" "gmail-digest.md" "test-run.md" "test-status.md" "status-footer.md"
+    "backbone-setup.md" "handoff.md"
+    "sdd-code.md" "sdd-code-spec.md" "sdd-spec-prioritize.md" "sdd-spec.md"
+    "sdd-spec-owner.md" "sdd-specs.md" "sdd-specs-update.md" "sdd-spec-tagging.md"
+    "sdd-specs-doctor.md" "sdd-specs-archive.md" "sdd-init.md" "sdd-spec-status.md"
+)
+
+for skill in "${SKILLS[@]}"; do
+    for dir in "$COMMANDS_DIR" "$SKILLS_DIR"; do
+        target="$dir/$skill"
+        if [ -e "$target" ] || [ -L "$target" ]; then
+            rm -f "$target"
+            [ "$QUIET" = false ] && echo -e "  - $skill ${GREEN}✓${NC}"
         fi
     done
-    return 0
-}
-
-_remove_toolkit_symlinks "$COMMANDS_DIR"
-_remove_toolkit_symlinks "$SKILLS_DIR"
+done
 
 # Remove telemetry hook from settings.json
 if command -v python3 &> /dev/null; then

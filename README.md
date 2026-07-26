@@ -296,9 +296,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.86.0
+0.87.0
 
 ### Release Notes
+
+#### v0.87.0 (2026-07-26)
+
+- feat(installer): copy skill files instead of symlinks — fixes Ollama and other tools that reject symlinked entries [`328c7cc`]
+- feat(gmail-digest): switch to OAuth Gmail API instead of browser scraping [`80d97c8`]
+- docs: mark v99 spec complete and add spec document [`4049229`]
 
 #### v0.86.0 (2026-07-23)
 

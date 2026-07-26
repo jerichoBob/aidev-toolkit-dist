@@ -131,11 +131,8 @@ if ! gh auth status &> /dev/null 2>&1; then
     gh auth login
 fi
 
-# Warn Git Bash users about symlink requirements
 if [[ "$OS_PLATFORM" == "gitbash" ]]; then
     echo -e "${YELLOW}Git Bash detected.${NC}"
-    echo "  Symlink creation requires Developer Mode or elevated privileges on Windows."
-    echo "  If symlinks fail, enable Developer Mode in Windows Settings or use WSL2 instead."
     echo ""
 fi
 
@@ -167,23 +164,17 @@ Editing files here directly:
 - Breaks the installed toolkit in ways that are hard to diagnose
 EOF
 
-# Clean up stale aidev-toolkit symlinks (skills that were renamed/removed)
+# Clean up stale aidev-toolkit skill files (skills that were renamed/removed)
 for dir in "$COMMANDS_DIR" "$SKILLS_DIR"; do
     for file in "$dir"/*.md; do
-        if [ -L "$file" ]; then
-            target=$(readlink "$file")
-            if [[ "$target" == *"aidev-toolkit/skills/"* ]]; then
-                filename=$(basename "$file")
-                if [[ ! " ${SKILLS[*]} " =~ " ${filename} " ]]; then
-                    rm "$file"
-                    echo -e "  - Removed stale symlink: $filename"
-                fi
-            elif [[ "$target" == *"aidev-toolkit/modules/"* ]]; then
-                filename=$(basename "$file")
-                if [[ ! " ${SDD_SKILLS[*]} " =~ " ${filename} " ]]; then
-                    rm "$file"
-                    echo -e "  - Removed stale symlink: $filename"
-                fi
+        [ -e "$file" ] || continue
+        filename=$(basename "$file")
+        # Check if this file is a known core skill or SDD skill; if not, remove it
+        if [[ ! " ${SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${SDD_SKILLS[*]} " =~ " ${filename} " ]]; then
+            # Only remove files that look like they were installed by us (plain .md or former symlink)
+            if [ -L "$file" ] || [ -f "$file" ]; then
+                rm "$file"
+                echo -e "  - Removed stale skill file: $filename"
             fi
         fi
     done
@@ -474,27 +465,19 @@ else
     echo -e "${YELLOW}skipped${NC} (python3 required)"
 fi
 
-# Create/update symlinks for skills (in both commands/ and skills/ directories)
-echo -e "Linking skills to ${YELLOW}$COMMANDS_DIR${NC} and ${YELLOW}$SKILLS_DIR${NC}..."
+# Copy skills to both commands/ and skills/ directories (real files, not symlinks)
+echo -e "Copying skills to ${YELLOW}$COMMANDS_DIR${NC} and ${YELLOW}$SKILLS_DIR${NC}..."
 for skill in "${SKILLS[@]}"; do
     SOURCE="$TOOLKIT_DIR/skills/$skill"
 
-    # Create symlinks in both directories
     for TARGET_DIR in "$COMMANDS_DIR" "$SKILLS_DIR"; do
         TARGET="$TARGET_DIR/$skill"
-
-        # Remove existing symlink or file
-        if [ -L "$TARGET" ] || [ -f "$TARGET" ]; then
-            rm "$TARGET"
-        fi
-
-        # Create symlink
         if [ -f "$SOURCE" ]; then
-            ln -s "$SOURCE" "$TARGET"
+            rm -f "$TARGET"
+            cp "$SOURCE" "$TARGET"
         fi
     done
 
-    # Report status once per skill
     if [ -f "$SOURCE" ]; then
         echo -e "  - $skill ${GREEN}✓${NC}"
     else
@@ -502,27 +485,19 @@ for skill in "${SKILLS[@]}"; do
     fi
 done
 
-# Create/update symlinks for SDD module skills
-echo -e "Linking SDD module skills..."
+# Copy SDD module skills
+echo -e "Copying SDD module skills..."
 for skill in "${SDD_SKILLS[@]}"; do
     SOURCE="$TOOLKIT_DIR/modules/sdd/skills/$skill"
 
-    # Create symlinks in both directories
     for TARGET_DIR in "$COMMANDS_DIR" "$SKILLS_DIR"; do
         TARGET="$TARGET_DIR/$skill"
-
-        # Remove existing symlink or file
-        if [ -L "$TARGET" ] || [ -f "$TARGET" ]; then
-            rm "$TARGET"
-        fi
-
-        # Create symlink
         if [ -f "$SOURCE" ]; then
-            ln -s "$SOURCE" "$TARGET"
+            rm -f "$TARGET"
+            cp "$SOURCE" "$TARGET"
         fi
     done
 
-    # Report status once per skill
     if [ -f "$SOURCE" ]; then
         echo -e "  - $skill ${GREEN}✓${NC}"
     else
@@ -604,8 +579,8 @@ echo -e "${GREEN}Installation complete!${NC}"
 echo ""
 echo "Installed:"
 echo "  Toolkit:  $TOOLKIT_DIR"
-echo "  Skills:   $COMMANDS_DIR/ (symlinked)"
-echo "            $SKILLS_DIR/ (symlinked)"
+echo "  Skills:   $COMMANDS_DIR/ (copied)"
+echo "            $SKILLS_DIR/ (copied)"
 echo ""
 echo "Available commands:"
 echo -e "  ${YELLOW}/aid${NC}            Show all aidev toolkit commands"
