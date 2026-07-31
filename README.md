@@ -296,9 +296,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.87.0
+0.87.1
 
 ### Release Notes
+
+#### v0.87.1 (2026-07-31)
+
+- fix(sdd-spec): prefer local `specs/TEMPLATE.md` over global fallback [`980d0dc`]
+- docs: add spec v100 (onboarding runbook) and v101 (skill folder migration) [`c2d0684`]
 
 #### v0.87.0 (2026-07-26)
 

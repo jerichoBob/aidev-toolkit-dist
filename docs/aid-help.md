@@ -1044,9 +1044,10 @@ Create a new specification document from a description.
 **Workflow:**
 
 1. Finds highest existing spec version, increments by 1
-2. Creates kebab-case filename: `spec-v{N}-{short-name}.md`
-3. Fills template with Why/What/How from your description
-4. Updates `specs/README.md` with new spec section
+2. Resolves the spec template — prefers a local `specs/TEMPLATE.md` if present, otherwise falls back to the toolkit's global template. Reports which source was used.
+3. Creates kebab-case filename: `spec-v{N}-{short-name}.md`
+4. Fills template with Why/What/How from your description
+5. Updates `specs/README.md` with new spec section
 
 **Examples:**
 

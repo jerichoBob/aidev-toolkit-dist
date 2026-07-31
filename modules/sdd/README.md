@@ -180,6 +180,15 @@ Example structure:
 - Task 1
   \`\`\`
 
+### Customizing the Spec Template
+
+`/sdd-spec` resolves the template used for new specs in this order:
+
+1. **Local project**: `specs/TEMPLATE.md`, if present
+2. **Global fallback**: the toolkit's canonical `modules/sdd/templates/TEMPLATE.md`
+
+To enforce project-specific conventions (custom phases, section ordering, boilerplate), create or edit `specs/TEMPLATE.md` — every `/sdd-spec` invocation in this project will then use it automatically. `/sdd-spec` reports which template source was used after creating a spec, so you can confirm resolution worked as expected.
+
 ---
 
 ## Implementation Workflow

@@ -158,7 +158,11 @@ Run this command first to see existing specs:
 
 1. **Determine the version number**: Using the spec-list output, find the highest version number and increment by 1. If no specs exist, start at v1.
 
-2. **Find the template**: Read `specs/TEMPLATE.md` if it exists. If not, use the canonical template at `~/.claude/aidev-toolkit/modules/sdd/templates/TEMPLATE.md`.
+2. **Find the template**: Resolve the template path in this order:
+   1. **Local project**: `specs/TEMPLATE.md` — if present, use it. If it exists but fails to read or is empty/malformed, stop and report an error (do NOT silently fall back to the global template).
+   2. **Global fallback**: `~/.claude/aidev-toolkit/modules/sdd/templates/TEMPLATE.md` — used only if `specs/TEMPLATE.md` does not exist.
+
+   Store the resolved path and its source (`local` or `global`) for the report in Step 3.
 
 3. **Create a short name**: Based on the user's prompt (`$ARGUMENTS`), create a kebab-case name (e.g., "user-authentication", "dark-mode"). The filename should be: `spec-v{N}-{short-name}.md`
 
@@ -209,6 +213,7 @@ After filling in the Security section, confirm it was populated in the report (S
 3. **Report back**: Tell the user:
    - Spec was created with version v{N}
    - Filename: `spec-v{N}-{short-name}.md`
+   - **Template source**: `Using template: {path} (local | global)` — from the resolution in Step 2
    - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
    - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
    - Next steps: Edit the spec file to flesh out details, then run `/sdd-code v{N}`
@@ -348,7 +353,12 @@ Before creating the spec file, check the tasks defined in Step 5 against any loa
 
 ## Step 7: Create Spec File
 
-Use template from `~/.claude/aidev-toolkit/modules/sdd/templates/TEMPLATE.md`.
+**Find the template**: Resolve the template path in this order:
+
+1. **Local project**: `specs/TEMPLATE.md` — if present, use it. If it exists but fails to read or is empty/malformed, stop and report an error (do NOT silently fall back to the global template).
+2. **Global fallback**: `~/.claude/aidev-toolkit/modules/sdd/templates/TEMPLATE.md` — used only if `specs/TEMPLATE.md` does not exist.
+
+Store the resolved path and its source (`local` or `global`) for the report in Step 8.
 
 Fill in:
 
@@ -371,6 +381,7 @@ Tell user:
 - Spec created with version v{N.M}
 - Inserted before v{target} (or "at the end" if appended)
 - Filename: `spec-v{N.M}-{short-name}.md`
+- **Template source**: `Using template: {path} (local | global)` — from the resolution in Step 7
 - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
 - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
 - Next steps: Edit the spec file to flesh out What/How sections, then run `/sdd-code v{N.M}`
