@@ -78,6 +78,8 @@ Read the architectural principles from `architecture-principles/*.md`:
 - `architecture-principles/03-error-handling.md` (AP-003)
 - `architecture-principles/04-testing.md` (AP-004)
 - `architecture-principles/05-security-first-sdd.md` (AP-005)
+- `architecture-principles/06-supply-chain-integrity.md` (AP-006)
+- `architecture-principles/07-runtime-observability.md` (AP-007)
 
 Also check for **custom project-level principles** in `.aid/principles/`:
 
@@ -193,6 +195,42 @@ For each principle, check the validation checklist items.
 - Security subsections containing placeholder text: lines matching `\(e\.g\.,` or `\{e\.g\.,` that were never replaced
 - Subsection headers with no content on the following lines
 
+#### AP-006: Supply Chain Integrity
+
+- [ ] Lockfile is committed and `npm ci` is used in CI
+- [ ] Production dependencies use exact version pins
+- [ ] Dependabot/Renovate configured with minimum release age for non-security updates
+- [ ] `npm audit` runs in CI and fails on high/critical
+- [ ] No unexpected `postinstall` scripts in direct dependencies
+- [ ] CI/CD secrets are short-lived or OIDC-based where possible
+
+**Search patterns:**
+
+- Missing lockfile: no `package-lock.json`/`yarn.lock`/`pnpm-lock.yaml` committed
+- `npm install` (not `npm ci`) in CI workflow files under `.github/workflows/`
+- Range versions (`^`, `~`) in `package.json` `dependencies` (not `devDependencies`)
+- No `.github/dependabot.yml` or `renovate.json`, or one missing `minimumReleaseAge`
+- No `npm audit` step in CI workflows
+- `postinstall`/`preinstall`/`prepare` scripts in direct dependencies' `package.json`
+
+#### AP-007: Runtime-Adjustable Observability
+
+- [ ] Verbosity config persists across restarts (not in-process memory only)
+- [ ] `GET /internal/obs` (or equivalent) returns current level, actor, and timestamp
+- [ ] `POST /internal/obs` is protected by highest-privilege gate
+- [ ] Every level change writes an audit entry
+- [ ] `obs_level` field present in structured log entries
+- [ ] Secret redaction filter active at `trace` level
+- [ ] If admin UI exists: elevated banner shown when level > `normal`
+
+**Search patterns:**
+
+- No verbosity/log-level config storage (config file, DB table, or env override) and no `/internal/obs`-style endpoint
+- Level-change code paths (config writes to a log-level/verbosity setting) with no corresponding audit-log call
+- Structured log call sites missing an `obs_level` (or equivalent) field
+- `trace`/`debug` level branches with no redaction filter applied to logged values
+- Admin UI routes/components with no elevated-verbosity banner component when a verbosity control exists
+
 ### Step 4: Assign Violation IDs
 
 For each finding, compute the violation ID:
@@ -221,12 +259,14 @@ Checking AP-002: Observable Systems...
 ... (continue for each principle)
 
 Summary
-  Principles: 5 checked (+ N custom)
+  Principles: 7 checked (+ N custom)
   Violations: X found
     AP-001: X
     AP-002: X
     AP-003: X
     AP-004: X
+    AP-006: X
+    AP-007: X
 
 Exit code: {0|1|2} (see CI Integration section)
 ```
@@ -238,7 +278,7 @@ Exit code: {0|1|2} (see CI Integration section)
   "timestamp": "2026-02-11T14:30:00Z",
   "commit": "abc1234",
   "branch": "main",
-  "principles_checked": 4,
+  "principles_checked": 7,
   "violations": [
     {
       "id": "V-a3f2bc01",
@@ -253,7 +293,7 @@ Exit code: {0|1|2} (see CI Integration section)
   ],
   "summary": {
     "total_violations": 1,
-    "by_principle": { "AP-001": 1, "AP-002": 0, "AP-003": 0, "AP-004": 0 },
+    "by_principle": { "AP-001": 1, "AP-002": 0, "AP-003": 0, "AP-004": 0, "AP-006": 0, "AP-007": 0 },
     "by_severity": { "required": 1, "recommended": 0 }
   },
   "exit_code": 2

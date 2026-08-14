@@ -296,9 +296,22 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.87.1
+0.89.0
 
 ### Release Notes
+
+#### v0.89.0 (2026-08-14)
+
+- feat(sdd-init): scaffold `docs/ONBOARDING.md` from a new generic onboarding runbook template (`modules/sdd/templates/ONBOARDING-TEMPLATE.md`), with skip/`--force` semantics matching `specs/TEMPLATE.md`
+- test: add `tests/test-sdd-init-onboarding.sh`
+- completes spec-v100 (Onboarding Runbook Template); closes jerichoBob/aidev-toolkit-dist-dist#8
+
+#### v0.88.0 (2026-08-11)
+
+- feat(arch-review): add AP-006 (Supply Chain Integrity) and AP-007 (Runtime-Adjustable Observability) checks — closes the gap where both existed as principle documents but were never loaded or checked by `/arch-review`
+- docs: list AP-006 and AP-007 in `docs/aid-help.md` architecture principles reference
+- test: add `tests/test-ap007-arch-review.sh`
+- completes spec-v84 (AP-007: Runtime-Adjustable Observability Principle)
 
 #### v0.87.1 (2026-07-31)
 

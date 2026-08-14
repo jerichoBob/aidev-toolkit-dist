@@ -8,6 +8,12 @@
 
 ## aidev toolkit v{VERSION}
 
+AI-powered slash commands & skills for Claude Code that automate SDLC busywork
+— commits, spec-driven development, architecture review, and more. Skills are
+markdown instruction files (not compiled code) that install into `~/.claude/`
+and become slash commands in any project. Full architecture writeup:
+`~/.claude/aidev-toolkit/docs/architecture-overview.md`.
+
 Skills marked as core — your daily drivers. Run `/aid --all` to see everything.
 
 ### Toolkit & Documentation
@@ -49,6 +55,12 @@ Run `/aid <command>` for detailed help on any command. For Bedrock/model config:
 <!-- OUTPUT -->
 
 ## aidev toolkit v{VERSION}
+
+AI-powered slash commands & skills for Claude Code that automate SDLC busywork
+— commits, spec-driven development, architecture review, and more. Skills are
+markdown instruction files (not compiled code) that install into `~/.claude/`
+and become slash commands in any project. Full architecture writeup:
+`~/.claude/aidev-toolkit/docs/architecture-overview.md`.
 
 ### Core — Daily Drivers
 
@@ -203,6 +215,8 @@ Validate the codebase against aidev toolkit architectural principles and documen
 | AP-003 | Intentional Error Handling | No silent failures, consistent errors           |
 | AP-004 | Test Critical Paths        | Test coverage, testable architecture            |
 | AP-005 | Security-First Spec Design | Mandatory AuthN/AuthZ/audit section in every spec |
+| AP-006 | Supply Chain Integrity     | Lockfiles, `npm ci`, dependency vetting, CI secret handling |
+| AP-007 | Runtime-Adjustable Observability | Runtime verbosity control, audit trail, `obs_level` logging |
 
 Custom project-level principles can be added in `.aid/principles/` (same YAML frontmatter format).
 

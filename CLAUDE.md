@@ -18,13 +18,13 @@ Skills are markdown files in `skills/` that Claude Code executes as slash comman
 
 - Uses YAML frontmatter for metadata (name, description, allowed-tools)
 - Contains instructions Claude follows when the command is invoked
-- Is symlinked to both `~/.claude/commands/` and `~/.claude/skills/` during installation
+- Is copied to both `~/.claude/commands/` and `~/.claude/skills/` during installation (real files, not symlinks — symlinks were dropped in spec-v99 because tools like Ollama reject symlinked skill entries)
 
 To create a new skill, use `skills/SKILL-TEMPLATE.md` as reference.
 
 ### Modules
 
-The `modules/` directory holds self-contained skill groups. Each module has its own `scripts/`, `templates/`, and `skills/` subdirectories. Module skills are symlinked alongside core skills during installation.
+The `modules/` directory holds self-contained skill groups. Each module has its own `scripts/`, `templates/`, and `skills/` subdirectories. Module skills are copied alongside core skills during installation.
 
 **Current modules:**
 

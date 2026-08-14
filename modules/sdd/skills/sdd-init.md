@@ -3,7 +3,7 @@ name: sdd-init
 tier: core
 description: "Scaffold specs/ directory for a new SDD project"
 argument-hint: "[--force]"
-allowed-tools: Read, Write, Bash(mkdir:*), Bash(ls:*), Bash(cp:*)
+allowed-tools: Read, Write, Bash(mkdir:*), Bash(ls:*), Bash(cp:*), Bash(basename:*)
 ---
 
 # SDD Init
@@ -96,21 +96,49 @@ Then overwrite with the standard scaffold (same as Case A).
 
 Report: `✓ Overwrote specs/README.md`
 
-## Step 5: Report Summary
+## Step 5: Handle docs/ONBOARDING.md
+
+Check whether `docs/ONBOARDING.md` exists:
+
+```bash
+ls docs/ONBOARDING.md 2>/dev/null
+```
+
+- **If it exists and `FORCE=false`**: skip silently (safe to re-run, matches
+  `specs/TEMPLATE.md` skip behavior)
+- **If it exists and `FORCE=true`**: overwrite (see below)
+- **If it does not exist**: create it
+
+To create or overwrite:
+
+```bash
+mkdir -p docs
+cp ~/.claude/aidev-toolkit/modules/sdd/templates/ONBOARDING-TEMPLATE.md docs/ONBOARDING.md
+```
+
+Report one of:
+
+- `✓ Created docs/ONBOARDING.md`
+- `✓ Overwrote docs/ONBOARDING.md (--force)`
+- (no output — skipped silently when it already exists and `FORCE=false`,
+  consistent with `specs/TEMPLATE.md`)
+
+## Step 6: Report Summary
 
 Print a summary of what happened:
 
 ```text
 SDD initialized
 ===============
-  specs/TEMPLATE.md  — {created | already existed}
-  specs/README.md    — {created | skipped (already exists) | overwritten}
+  specs/TEMPLATE.md    — {created | already existed}
+  specs/README.md      — {created | skipped (already exists) | overwritten}
+  docs/ONBOARDING.md   — {created | already existed | overwritten}
 
 Next step: /sdd-spec <description>
   Example: /sdd-spec add user authentication with OAuth
 ```
 
-If both files were skipped (project already initialized), end with:
+If all three files were skipped/already existed (project already initialized), end with:
 
 ```text
 Project already initialized. Run /sdd-specs to check status.
