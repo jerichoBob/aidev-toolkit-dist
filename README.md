@@ -296,9 +296,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.89.0
+0.90.0
 
 ### Release Notes
+
+#### v0.90.0 (2026-08-15)
+
+- feat(sdd): document separate Claude Code vs. runtime keys in `modules/sdd/templates/ONBOARDING-TEMPLATE.md`
+- chore: add nexAir onboarding docx generation/patch scripts (`.claude/scripts/gen-nexair-onboarding-docx.js`, `.claude/scripts/nexair-docx-add-claude-keys-section.py`)
 
 #### v0.89.0 (2026-08-14)
 

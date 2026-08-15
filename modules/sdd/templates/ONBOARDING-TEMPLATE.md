@@ -12,11 +12,24 @@ software installs; steps 7–8 are verification before calling setup done.
 
 ### 1. Accounts and access (IT / project lead)
 
-- Claude account provisioned by whoever owns SaaS/tooling provisioning for
-  the org
 - Repo access (GitHub or equivalent)
 - `[project-specific]` access the new person needs: cloud project access,
   VPN, shared drives, credentials for `.env`, client systems
+- **Two separate Claude accounts/keys — do not conflate them.** Think of
+  these as two independent keys that get provisioned, billed, and rotated
+  on their own schedules, not one "Claude access" checkbox:
+  1. **Claude Code key** — the AI pair-programmer used to *build* the
+     product (write code, run `/commands`, drive SDD). Every contributor
+     needs this one, day one.
+  2. **Product/runtime Claude key** — the credential the *application
+     itself* calls at runtime to power in-app AI features. This is a
+     different account, usually a different owner, and often a different
+     billing/cost center than the Claude Code key above. Only contributors
+     working on the AI-feature code paths in the product need this one —
+     most new hires never touch it.
+  `[project-specific]`: name who provisions each key, where each one lives
+  (e.g. individual developer accounts vs. a shared project-level API key),
+  and confirm that rotating/revoking one has no effect on the other.
 
 ### 2. Platform check: Windows vs Mac
 
