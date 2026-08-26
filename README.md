@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.91.0
+0.91.1
 
 ### Release Notes
+
+#### v0.91.1 (2026-08-26)
+
+- perf: reduce mechanical overhead across 6 high-frequency commands (spec-v108) [`07d7f1d`]
 
 #### v0.91.0 (2026-08-26)
 

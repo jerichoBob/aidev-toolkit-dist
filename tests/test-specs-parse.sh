@@ -312,6 +312,46 @@ test_whitespace() {
     fi
 }
 
+# Test: next-version returns highest+1
+test_next_version() {
+    echo ""
+    echo "Test: next-version returns highest existing version + 1"
+
+    local temp_dir=$(mktemp -d)
+    mkdir -p "$temp_dir/specs" "$temp_dir/specs/completed"
+    touch "$temp_dir/specs/spec-v3-foo.md"
+    touch "$temp_dir/specs/spec-v5-bar.md"
+    touch "$temp_dir/specs/completed/spec-v9-baz.md"
+    touch "$temp_dir/specs/spec-v2.5-decimal.md"
+
+    local output=$(cd "$temp_dir" && "$PARSE_SCRIPT" "next-version" 2>&1)
+    rm -rf "$temp_dir"
+
+    if [ "$output" = "10" ]; then
+        pass "next-version returns 10 when highest integer version is v9"
+    else
+        fail "next-version expected 10, got: $output"
+    fi
+}
+
+# Test: next-version with no specs at all
+test_next_version_empty() {
+    echo ""
+    echo "Test: next-version with no existing specs returns 1"
+
+    local temp_dir=$(mktemp -d)
+    mkdir -p "$temp_dir/specs"
+
+    local output=$(cd "$temp_dir" && "$PARSE_SCRIPT" "next-version" 2>&1)
+    rm -rf "$temp_dir"
+
+    if [ "$output" = "1" ]; then
+        pass "next-version returns 1 when no specs exist"
+    else
+        fail "next-version expected 1, got: $output"
+    fi
+}
+
 # Main test execution
 echo ""
 echo "aidev toolkit specs-parse.sh Test Suite"
@@ -335,6 +375,8 @@ test_staleness
 test_structure_missing_readme
 test_spec_list
 test_whitespace
+test_next_version
+test_next_version_empty
 
 # Summary
 echo ""

@@ -148,15 +148,15 @@ If no unfinished specs exist (all complete or empty):
 
 ## Step 1: Gather Data
 
-Run this command first to see existing specs:
+Run this command to get the next version number directly (lighter-weight than parsing the full spec list):
 
 ```bash
-~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh spec-list
+~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh next-version
 ```
 
 ## Step 2: Create the Spec
 
-1. **Determine the version number**: Using the spec-list output, find the highest version number and increment by 1. If no specs exist, start at v1.
+1. **Determine the version number**: Use the integer returned by `next-version` directly. If no specs exist, it returns `1`.
 
 2. **Find the template**: Resolve the template path in this order:
    1. **Local project**: `specs/TEMPLATE.md` — if present, use it. If it exists but fails to read or is empty/malformed, stop and report an error (do NOT silently fall back to the global template).

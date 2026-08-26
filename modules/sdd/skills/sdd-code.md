@@ -49,23 +49,24 @@ Implement all remaining phases and tasks in the current spec without stopping be
 5. **Implement phase by phase, task by task**:
    - Work through phases in order (Phase 1, then Phase 2, etc.)
    - Within each phase, implement each task sequentially
+   - **Token-tracking file reuse (per-phase, not per-task)**: use two fixed, alternating snapshot files for the whole phase — `/tmp/sdd-code-phase-{version}-{phase_num}-a.json` and `/tmp/sdd-code-phase-{version}-{phase_num}-b.json`. A task's "after" snapshot IS the next task's "before" snapshot — no copy, no re-snapshot, just point the `delta` call at whichever file already holds that state. This drops the redundant "before" snapshot Bash call for every task after the first in a phase (only one `snapshot` call per task instead of two).
    - For each task:
      - If token tracking is enabled (no `--no-stats` flag):
-       - Capture token snapshot before: `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/task-before-$RANDOM.json`
+       - **First task in the phase**: capture a real before-snapshot into file `a`: `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/sdd-code-phase-{version}-{phase_num}-a.json`
+       - **Subsequent tasks in the phase**: no snapshot call needed — the previous task's "after" file already holds this task's "before" state; just track which of `a`/`b` currently holds it.
      - Mark each task as `in_progress` when starting
      - Implement the task fully
      - If token tracking is enabled:
-       - Capture token snapshot after: `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/task-after-$RANDOM.json`
-       - Calculate delta: `delta_output=$(~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh delta /tmp/task-before-*.json /tmp/task-after-*.json)`
+       - Capture token snapshot after into the *other* alternating file (e.g. task uses `a` as before → snapshot after into `b`; next task will then use `b` as before → snapshot after into `a`): `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/sdd-code-phase-{version}-{phase_num}-{other_letter}.json`
+       - Calculate delta: `delta_output=$(~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh delta /tmp/sdd-code-phase-{version}-{phase_num}-{before_letter}.json /tmp/sdd-code-phase-{version}-{phase_num}-{after_letter}.json)`
        - Parse delta into: in_tokens, out_tokens, cache_tokens
        - Get current timestamp: `start_time=2026-02-21T$(date +%H:%M:%SZ)` and `end_time=2026-02-21T$(date +%H:%M:%SZ)`
        - Get git commit SHA: `commit_sha=$(git rev-parse --short HEAD)`
-       - Insert HTML comment after task checkbox in `specs/README.md`: `<!-- task-meta: v={version},t={task_num},in={in_tokens},out={out_tokens},cache={cache_tokens},start={start_time},end={end_time},commit={commit_sha} -->`
-       - Clean up temp snapshot files
+       - Insert HTML comment after task checkbox in `specs/README.md`: `<!-- task-meta: v={version},t={task_num},in={in_tokens},out={out_tokens},cache={cache_tokens},start={start_time},end={end_time},commit={commit_sha} -->` — per-task attribution is preserved even though the snapshot files are shared/alternated across the phase
      - Update `specs/README.md` to mark the task as complete (`- [x]`)
      - Mark the todo as `completed`
      - Move immediately to the next task
-   - When a phase is complete, move immediately to the next phase
+   - When a phase is complete, move immediately to the next phase. Delete that phase's snapshot files (`rm -f /tmp/sdd-code-phase-{version}-{phase_num}-a.json /tmp/sdd-code-phase-{version}-{phase_num}-b.json`) and start a fresh before-snapshot for the first task of the next phase.
 
 6. **Do NOT stop between tasks or phases**: Continue implementing until ALL phases in the spec are complete.
 

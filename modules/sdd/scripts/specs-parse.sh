@@ -4,7 +4,7 @@ set -euo pipefail
 # specs-parse.sh — Shared parsing infrastructure for SDD module
 # Reads specs/README.md and outputs structured data for skill consumption.
 # Usage: specs-parse.sh <subcommand>
-# Subcommands: status, next-task, next-phase, staleness, structure, spec-list
+# Subcommands: status, next-task, next-phase, next-version, staleness, structure, spec-list
 
 README="specs/README.md"
 
@@ -284,16 +284,36 @@ cmd_spec_list() {
   rm -f "$temp_output"
 }
 
+# Return just the next integer version number (highest existing + 1).
+# Lighter-weight than spec-list: no per-file basename regex table, just the max.
+cmd_next_version() {
+  local max=0
+  for dir in specs specs/completed; do
+    [[ -d "$dir" ]] || continue
+    for f in "$dir"/spec-v*.md; do
+      [[ -f "$f" ]] || continue
+      local basename
+      basename=$(basename "$f")
+      if [[ "$basename" =~ spec-v([0-9]+)(\.[0-9]+)?- ]]; then
+        local v="${BASH_REMATCH[1]}"
+        (( v > max )) && max=$v
+      fi
+    done
+  done
+  echo $(( max + 1 ))
+}
+
 # --- Main dispatch ---
 case "${1:-}" in
-  status)     cmd_status ;;
-  next-task)  cmd_next_task ;;
-  next-phase) cmd_next_phase ;;
-  staleness)  cmd_staleness ;;
-  structure)  cmd_structure ;;
-  spec-list)  cmd_spec_list "${@:2}" ;;
+  status)       cmd_status ;;
+  next-task)    cmd_next_task ;;
+  next-phase)   cmd_next_phase ;;
+  next-version) cmd_next_version ;;
+  staleness)    cmd_staleness ;;
+  structure)    cmd_structure ;;
+  spec-list)    cmd_spec_list "${@:2}" ;;
   *)
-    echo "Usage: specs-parse.sh <status|next-task|next-phase|staleness|structure|spec-list>"
+    echo "Usage: specs-parse.sh <status|next-task|next-phase|next-version|staleness|structure|spec-list>"
     exit 1
     ;;
 esac

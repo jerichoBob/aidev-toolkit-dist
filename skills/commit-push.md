@@ -39,6 +39,8 @@ Done! Version 1.2.4 pushed.
 
 ## Instructions
 
+**Cache authentication once per run**: this workflow calls `gh auth status` exactly once (step 1a below) and reuses that result for the rest of the run — never re-check it later in the same invocation.
+
 1. **Pre-pull check — detect unstaged changes before pulling:**
 
    ```bash
@@ -48,14 +50,25 @@ Done! Version 1.2.4 pushed.
    - **If the command exits non-zero** (changes exist): skip `git pull` entirely. Log one line: `Skipping pull — unstaged changes present.`
    - **If the command exits zero** (clean tree): proceed with `git pull` normally as part of the commit workflow.
 
-   Then always run a divergence check regardless of whether pull was skipped:
+   **Divergence check — only when needed:**
+
+   - If `git pull` ran and succeeded: the tree is now known-clean relative to remote — **skip** the `git fetch origin` + `git status -sb` divergence check entirely. Log one line: `Skipping divergence check — pull already confirmed up to date.`
+   - If pull was skipped (pre-pull check found changes) or pull failed: run the divergence check:
+
+     ```bash
+     git fetch origin 2>/dev/null
+     git status -sb
+     ```
+
+     If the status shows `behind`, warn: `Warning: remote has new commits — push may require a merge.`
+
+   1a. **Check authentication once, early, and cache the result:**
 
    ```bash
-   git fetch origin 2>/dev/null
-   git status -sb
+   gh auth status 2>&1
    ```
 
-   If the status shows `behind`, warn: `Warning: remote has new commits — push may require a merge.`
+   If `gh` is not authenticated, stop and instruct user to run `gh auth login`. Store the outcome (authenticated / not) — reuse it in step 3, do not call `gh auth status` again this run.
 
 2. **Execute the full `/commit` workflow** (steps 1-6, skipping the pull step if already handled above):
    - Pull latest (skip if pre-pull check detected changes)
@@ -68,13 +81,7 @@ Done! Version 1.2.4 pushed.
 
 3. **Automatically push** (do not ask):
 
-   a. Check authentication:
-
-   ```bash
-   gh auth status 2>&1
-   ```
-
-   If `gh` is not authenticated, stop and instruct user to run `gh auth login`.
+   a. Use the cached authentication result from step 1a — do not re-run `gh auth status`.
 
    b. Check if a remote is configured:
 

@@ -3,7 +3,7 @@ name: aid-feedback
 tier: core
 description: Submit feedback, suggestions, or feature requests for aidev toolkit.
 argument-hint: "[type area description | --ingest]"
-allowed-tools: Read, Bash(gh issue create:*), Bash(gh issue list:*), Bash(gh issue edit:*), Bash(gh label create:*), Bash(gh auth status:*), Bash(gh api user:*), AskUserQuestion
+allowed-tools: Read, Bash(gh issue create:*), Bash(gh issue list:*), Bash(gh issue edit:*), Bash(gh label create:*), Bash(gh auth status:*), Bash(gh api user:*), Bash(find:*), Bash(touch:*), AskUserQuestion
 model: sonnet
 ---
 
@@ -46,21 +46,38 @@ Then retry /aid-feedback.
 
 Stop here.
 
-### Step 0b: Ensure Required Labels Exist
+### Step 0b: Ensure Required Labels Exist (cached — skip if recently verified)
 
-Ensure the `feedback` and `processed` labels exist on both repos (safe to run even if they already exist):
+Labels essentially never change once created, so avoid re-issuing 4 `gh label create` calls on every invocation. Check for a local marker per repo:
+
+```bash
+MARKER_TOOLKIT="$HOME/.claude/aidev-toolkit/.labels-verified-jerichoBob-aidev-toolkit"
+MARKER_DIST="$HOME/.claude/aidev-toolkit/.labels-verified-jerichoBob-aidev-toolkit-dist"
+```
+
+For each repo, check whether its marker file exists AND was modified within the last 30 days:
+
+```bash
+find "$MARKER_TOOLKIT" -mtime -30 2>/dev/null
+find "$MARKER_DIST" -mtime -30 2>/dev/null
+```
+
+- **If a marker is found (fresh, ≤30 days old)**: skip the `gh label create` calls for that repo — labels are assumed to exist.
+- **If a marker is missing, stale (>30 days), or a later `gh issue create`/`gh issue edit` call in this run fails with a label-related error**: run the create calls for that repo (safe to run even if labels already exist) and then write/refresh its marker:
 
 ```bash
 # aidev-toolkit (private): labels retained for ingestion-side labeling of
 # historical/legacy issues only — this repo is no longer a filing target.
 gh label create feedback --repo jerichoBob/aidev-toolkit --description "User feedback submitted via /aid-feedback" --color "0075ca" --force 2>/dev/null || true
 gh label create processed --repo jerichoBob/aidev-toolkit --description "Feedback ingested and specced" --color "e4e669" --force 2>/dev/null || true
+touch "$MARKER_TOOLKIT"
 # aidev-toolkit-dist (public): sole filing target for all new feedback issues.
 gh label create feedback --repo jerichoBob/aidev-toolkit-dist --description "User feedback submitted via /aid-feedback" --color "0075ca" --force 2>/dev/null || true
 gh label create processed --repo jerichoBob/aidev-toolkit-dist --description "Feedback ingested and specced" --color "e4e669" --force 2>/dev/null || true
+touch "$MARKER_DIST"
 ```
 
-These labels are required for ingestion filtering and processing. The `--force` flag updates color/description if the label already exists.
+These labels are required for ingestion filtering and processing. The `--force` flag updates color/description if the label already exists. If a later step in this run hits a label-related failure despite a fresh marker, treat the marker as stale: re-run the create calls for the affected repo and refresh its marker before retrying.
 
 ---
 

@@ -36,13 +36,13 @@ Stop.
 
 ### Step 2: Collect Spec Files
 
-For each complete spec row (version = vN), find its file:
+Run a single glob pass over all spec files, instead of one `ls` per spec:
 
 ```bash
-ls specs/spec-v{N}-*.md 2>/dev/null
+ls specs/spec-v*.md 2>/dev/null
 ```
 
-Build a list of: version, name, file path.
+Match the resulting filenames in-memory against the list of complete version numbers from Step 1 (parse each filename's `v{N}` prefix and compare against the complete-version set). Build a list of: version, name, file path — one `ls` call total, regardless of how many specs are being archived.
 
 ### Step 3: Show Preview
 
@@ -85,13 +85,13 @@ mkdir -p specs/completed
 
 ### Step 6: Move Spec Files
 
-For each spec in the archive list:
+Move all matched files in a single `git mv` invocation instead of one call per spec:
 
 ```bash
-git mv specs/spec-v{N}-*.md specs/completed/
+git mv specs/spec-v1-foo.md specs/spec-v2-bar.md ... specs/completed/
 ```
 
-If a file is not found, print a warning and continue.
+Build the file list from the paths collected in Step 2 and pass them all to one `git mv` call (git mv accepts multiple source paths when the destination is a directory). If any file from the archive list is missing on disk, drop it from the batch, print a warning for it, and continue with the rest in the same call.
 
 ### Step 7: Confirm
 

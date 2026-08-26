@@ -9,6 +9,8 @@ allowed-tools: Read, Grep, Glob, Edit, Bash(~/.claude/aidev-toolkit/modules/sdd/
 
 # Specs Status
 
+**Non-regression invariant**: the default Fast Path (no flags) must never read anything beyond `specs/README.md` — no spec files, no scripts, no Bash calls. This is covered by `tests/test-sdd-specs-fast-path-isolation.sh` (spec-v108); re-verify this invariant whenever this skill file is edited.
+
 ## Step 1: Route by Arguments
 
 Check `$ARGUMENTS` to determine which path to take:
