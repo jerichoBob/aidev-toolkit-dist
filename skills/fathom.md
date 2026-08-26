@@ -97,12 +97,14 @@ API: https://developers.fathom.ai
 
 ### List Meetings (`list`)
 
+Honor `--limit N` (default 10). Fetch pages until either `N` meetings have been collected or the API returns a null `next_cursor`:
+
 ```bash
-~/.claude/aidev-toolkit/scripts/fathom-api.sh "meetings?limit=10" \
-  '.items | map({title, recording_id, recording_start_time, recording_end_time, recorded_by: .recorded_by.name, external: (.calendar_invitees_domains_type == "one_or_more_external")})'
+~/.claude/aidev-toolkit/scripts/fathom-api.sh "meetings?limit=<N>" \
+  '{items: (.items | map({title, recording_id, recording_start_time, recording_end_time, recorded_by: .recorded_by.name, external: (.calendar_invitees_domains_type == "one_or_more_external")})), next_cursor}'
 ```
 
-Honor `--limit N` by substituting `limit=N` in the endpoint.
+If `next_cursor` is not null and fewer than `N` meetings have been collected so far, fetch the next page by appending `&cursor=<next_cursor>` to the endpoint and append its `items`. Stop once `N` meetings are collected or `next_cursor` is null, then truncate to the first `N`.
 
 Display as a formatted table with: Date, Title (truncate to 40 chars), Duration, Recorded By, External? (Yes/No), Recording ID. Include a footer with next commands.
 
@@ -112,10 +114,10 @@ Extract the date from arguments (everything after "date "). Use `created_after`/
 
 ```bash
 ~/.claude/aidev-toolkit/scripts/fathom-api.sh "meetings?created_after=<DATE>T00:00:00Z&created_before=<DATE>T23:59:59Z" \
-  '.items | map({title, recording_id, recording_start_time, recording_end_time, recorded_by: .recorded_by.name, external: (.calendar_invitees_domains_type == "one_or_more_external")})'
+  '{items: (.items | map({title, recording_id, recording_start_time, recording_end_time, recorded_by: .recorded_by.name, external: (.calendar_invitees_domains_type == "one_or_more_external")})), next_cursor}'
 ```
 
-If `next_cursor` is not null in the response, fetch the next page by appending `&cursor=<NEXT_CURSOR>` to the endpoint.
+While `next_cursor` is not null, fetch the next page by appending `&cursor=<next_cursor>` to the endpoint and append its `items` to the accumulated list.
 
 Display same table format as list. If no results, note that no meetings were recorded on that date.
 

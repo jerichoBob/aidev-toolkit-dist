@@ -37,7 +37,10 @@ cmd_snapshot() {
 }
 
 # Calculate token delta between two snapshots
-# Returns: input_tokens output_tokens cache_tokens (space-separated)
+# Returns: input_tokens output_tokens cache_tokens (space-separated) with exit 0,
+#          or "STALE 0 0 0" with exit 2 when the before/after snapshots are
+#          identical (stats-cache.json was not updated between captures, so the
+#          input is stale rather than the delta being a genuine zero).
 cmd_delta() {
   local before_file="${1:-}"
   local after_file="${2:-}"
@@ -47,9 +50,16 @@ cmd_delta() {
   [[ -f "$after_file" ]] || die "delta: after snapshot not found: $after_file"
 
   if ! command -v jq &> /dev/null; then
-    # Fallback if jq not available
-    echo "0 0 0"
-    return 0
+    # No jq: can't verify freshness, so signal unmeasurable rather than a bare 0 0 0
+    echo "STALE 0 0 0"
+    return 2
+  fi
+
+  # Byte-identical snapshots mean stats-cache.json was never flushed between
+  # captures — the delta below would be a fabricated zero, not a real measurement.
+  if cmp -s "$before_file" "$after_file"; then
+    echo "STALE 0 0 0"
+    return 2
   fi
 
   # Calculate differences in token counts

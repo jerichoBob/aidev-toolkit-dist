@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.92.0
+0.92.1
 
 ### Release Notes
+
+#### v0.92.1 (2026-08-26)
+
+- fix(token-tracker): detect byte-identical before/after snapshots in `token-tracker.sh delta` and signal a `STALE` sentinel with nonzero exit instead of a fabricated `0 0 0`; `/sdd-code` now skips `task-meta` insertion on that signal instead of writing false zero metrics (spec-v109)
 
 #### v0.92.0 (2026-08-26)
 

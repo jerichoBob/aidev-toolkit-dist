@@ -58,7 +58,8 @@ Implement all remaining phases and tasks in the current spec without stopping be
      - Implement the task fully
      - If token tracking is enabled:
        - Capture token snapshot after into the *other* alternating file (e.g. task uses `a` as before → snapshot after into `b`; next task will then use `b` as before → snapshot after into `a`): `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/sdd-code-phase-{version}-{phase_num}-{other_letter}.json`
-       - Calculate delta: `delta_output=$(~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh delta /tmp/sdd-code-phase-{version}-{phase_num}-{before_letter}.json /tmp/sdd-code-phase-{version}-{phase_num}-{after_letter}.json)`
+       - Calculate delta: `delta_output=$(~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh delta /tmp/sdd-code-phase-{version}-{phase_num}-{before_letter}.json /tmp/sdd-code-phase-{version}-{phase_num}-{after_letter}.json); delta_exit=$?`
+       - **Check `delta_exit`**: if nonzero (or `delta_output` starts with `STALE`), the snapshot pair was stale/unmeasurable — skip the `task-meta` insertion entirely for this task and move on, per the graceful-degradation clause below. Only parse and insert `task-meta` when `delta_exit` is `0`.
        - Parse delta into: in_tokens, out_tokens, cache_tokens
        - Get current timestamp: `start_time=2026-02-21T$(date +%H:%M:%SZ)` and `end_time=2026-02-21T$(date +%H:%M:%SZ)`
        - Get git commit SHA: `commit_sha=$(git rev-parse --short HEAD)`
@@ -86,7 +87,7 @@ Implement all remaining phases and tasks in the current spec without stopping be
 - **Follow existing code patterns** in the codebase
 - **Test as you go** when practical
 - **If a task is blocked** (missing dependency, requires external config), mark it as blocked, skip it, and continue. Report blocked tasks in the summary.
-- **Token tracking**: If token capture fails (snapshot command errors), skip the metadata insertion and continue normally. Do NOT block the workflow on token tracking issues.
+- **Token tracking**: If token capture fails (snapshot command errors) or `token-tracker.sh delta` signals a stale/unmeasurable snapshot pair (nonzero exit / `STALE` prefix), skip the metadata insertion and continue normally. Do NOT block the workflow on token tracking issues, and never write a `task-meta` comment from a stale delta.
 
 ## Output Format
 

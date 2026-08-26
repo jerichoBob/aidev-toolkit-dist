@@ -149,37 +149,60 @@ else
     pass "delta: no crash without jq"
 fi
 
-# ─── Test 4: delta with identical snapshots → all zeros ────────────────────
+# ─── Test 4: delta with identical snapshots → STALE sentinel, nonzero exit ─
 
 echo ""
-echo "Test: delta with identical snapshots → zeros..."
+echo "Test: delta with identical snapshots → stale sentinel (not a fabricated zero)..."
 
-if command -v jq &>/dev/null; then
-    result=$(bash "$TRACKER" delta "$BEFORE" "$BEFORE")
-    read -r d_in d_out d_cache <<< "$result"
+set +e
+result=$(bash "$TRACKER" delta "$BEFORE" "$BEFORE")
+exit_code=$?
+set -e
 
-    if [ "$d_in" -eq 0 ] && [ "$d_out" -eq 0 ] && [ "$d_cache" -eq 0 ]; then
-        pass "delta identical snapshots → 0 0 0"
-    else
-        fail "delta identical: expected 0 0 0, got $d_in $d_out $d_cache"
-    fi
+if [ "$exit_code" -ne 0 ]; then
+    pass "delta identical snapshots → nonzero exit ($exit_code)"
 else
-    pass "delta identical: jq not available — fallback 0 0 0"
+    fail "delta identical: expected nonzero exit, got 0"
 fi
 
-# ─── Test 5: delta with empty {} snapshots → zeros ─────────────────────────
+if [[ "$result" == STALE* ]]; then
+    pass "delta identical snapshots → STALE sentinel ($result)"
+else
+    fail "delta identical: expected STALE sentinel, got '$result'"
+fi
+
+# ─── Test 5: delta with empty {} snapshots → STALE sentinel, no crash ──────
 
 EMPTY_SNAP="$TEST_HOME/empty-snap.json"
 echo '{}' > "$EMPTY_SNAP"
 
+set +e
 result=$(bash "$TRACKER" delta "$EMPTY_SNAP" "$EMPTY_SNAP")
-read -r d_in d_out d_cache <<< "$result"
+exit_code=$?
+set -e
 
-if [ "$d_in" -eq 0 ] && [ "$d_out" -eq 0 ] && [ "$d_cache" -eq 0 ]; then
-    pass "delta empty {} snapshots → 0 0 0 (no crash)"
+if [[ "$result" == STALE* ]] && [ "$exit_code" -ne 0 ]; then
+    pass "delta empty {} snapshots (identical) → STALE sentinel, no crash"
 else
-    fail "delta empty: expected 0 0 0, got $d_in $d_out $d_cache"
+    fail "delta empty: expected STALE sentinel + nonzero exit, got '$result' exit=$exit_code"
 fi
+
+# ─── Test 6: delta with missing snapshot file → existing error path ───────
+
+echo ""
+echo "Test: delta with missing snapshot file..."
+
+set +e
+bash "$TRACKER" delta "$BEFORE" "$TEST_HOME/does-not-exist.json" >/dev/null 2>/tmp/tt-missing-err
+missing_exit=$?
+set -e
+
+if [ "$missing_exit" -ne 0 ] && grep -q "not found" /tmp/tt-missing-err; then
+    pass "delta missing after-file → error + nonzero exit (unchanged)"
+else
+    fail "delta missing: expected error + nonzero exit, got exit=$missing_exit stderr=$(cat /tmp/tt-missing-err)"
+fi
+rm -f /tmp/tt-missing-err
 
 echo ""
 echo "======================================"
