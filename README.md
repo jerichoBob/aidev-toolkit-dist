@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.92.1
+0.92.2
 
 ### Release Notes
+
+#### v0.92.2 (2026-08-26)
+
+- chore(specs): archive 7 completed specs (v84, v89, v98, v99, v107, v108, v109) to `specs/completed/`
 
 #### v0.92.1 (2026-08-26)
 
