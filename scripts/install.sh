@@ -65,6 +65,7 @@ SKILLS=(
     "status-footer.md"
     "backbone-setup.md"
     "handoff.md"
+    "fathom.md"
 )
 
 # SDD module skills (sourced from modules/sdd/skills/)

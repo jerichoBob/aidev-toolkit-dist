@@ -5,7 +5,7 @@
 Built for developers who use [Claude Code](https://claude.ai/code) and want a consistent, automated SDLC workflow across all their projects.
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
+gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit && ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
 Then open any project in Claude Code and run `/aid` to see what's available.
@@ -72,7 +72,7 @@ Fetch your inbox via the Gmail API and categorize unread emails by urgency — w
 **Requirements:** [Claude Code](https://claude.ai/code), [GitHub CLI](https://cli.github.com/), `git`, `jq`
 
 ```bash
-gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
+gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -81,11 +81,11 @@ gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
 
 ```bash
 # SSH
-git clone git@github.com:jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
+git clone git@github.com:jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 
 # HTTPS
-git clone https://github.com/jerichoBob/aidev-toolkit-dist-dist.git ~/.claude/aidev-toolkit
+git clone https://github.com/jerichoBob/aidev-toolkit-dist.git ~/.claude/aidev-toolkit
 ~/.claude/aidev-toolkit/scripts/install.sh
 ```
 
@@ -115,7 +115,7 @@ WSL2 runs a full Linux kernel and is the recommended path for Windows users.
 3. Then install aidev-toolkit (same one-liner as macOS):
 
    ```bash
-   gh repo clone jerichoBob/aidev-toolkit-dist-dist ~/.claude/aidev-toolkit
+   gh repo clone jerichoBob/aidev-toolkit-dist ~/.claude/aidev-toolkit
    ~/.claude/aidev-toolkit/scripts/install.sh
    ```
 
@@ -296,9 +296,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.90.0
+0.91.0
 
 ### Release Notes
+
+#### v0.91.0 (2026-08-26)
+
+- feat(fathom): package `/fathom` skill into the toolkit [`1b205e6`]
+- fix(publish-dist): stop doubling `-dist` suffix in generated README URLs [`a54930d`]
+- docs: add spec v108 — Command Performance Optimization [`2ca150d`]
 
 #### v0.90.0 (2026-08-15)
 
@@ -309,7 +315,7 @@ Full definitions in `architecture-principles/`.
 
 - feat(sdd-init): scaffold `docs/ONBOARDING.md` from a new generic onboarding runbook template (`modules/sdd/templates/ONBOARDING-TEMPLATE.md`), with skip/`--force` semantics matching `specs/TEMPLATE.md`
 - test: add `tests/test-sdd-init-onboarding.sh`
-- completes spec-v100 (Onboarding Runbook Template); closes jerichoBob/aidev-toolkit-dist-dist#8
+- completes spec-v100 (Onboarding Runbook Template); closes jerichoBob/aidev-toolkit-dist#8
 
 #### v0.88.0 (2026-08-11)
 
@@ -347,7 +353,7 @@ Full definitions in `architecture-principles/`.
 
 #### v0.85.1 (2026-07-23)
 
-- fix: /aid-feedback — new issues now filed to jerichoBob/aidev-toolkit-dist-dist (public) instead of the private jerichoBob/aidev-toolkit-dist repo, so dist-only users can submit feedback (spec v95)
+- fix: /aid-feedback — new issues now filed to jerichoBob/aidev-toolkit-dist (public) instead of the private jerichoBob/aidev-toolkit-dist repo, so dist-only users can submit feedback (spec v95)
 
 #### v0.85.0 (2026-07-22)
 
@@ -358,7 +364,7 @@ Full definitions in `architecture-principles/`.
 
 #### v0.84.3 (2026-07-22)
 
-- feat: /aid-feedback ingest now queries both jerichoBob/aidev-toolkit-dist and jerichoBob/aidev-toolkit-dist-dist (v90)
+- feat: /aid-feedback ingest now queries both jerichoBob/aidev-toolkit-dist and jerichoBob/aidev-toolkit-dist (v90)
 
 #### v0.84.2 (2026-07-15)
 

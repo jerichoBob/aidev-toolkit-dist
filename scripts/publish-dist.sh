@@ -48,7 +48,7 @@ done < "$MANIFEST"
 
 # Generate dist-specific README.md (update repo URLs)
 echo "Generating dist README.md..."
-sed 's|jerichoBob/aidev-toolkit\b|jerichoBob/aidev-toolkit-dist|g' \
+sed -E 's|jerichoBob/aidev-toolkit(-dist)?|jerichoBob/aidev-toolkit-dist|g' \
     "$REPO_ROOT/README.md" > "$DIST_CLONE_DIR/README.md"
 echo "  ✓ README.md"
 

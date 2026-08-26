@@ -118,6 +118,7 @@ and become slash commands in any project. Full architecture writeup:
 - `/test-status` — Display results table from the last test run (no re-run)
 - `/status-footer [on|off] [--show <component>] [--hide <component>]` — Configure the Claude Code status footer
 - `/handoff [--task <scope>] [--save]` — Compress current conversation into an actionable briefing for a new thread
+- `/fathom [list|date|today|external|search|view|transcript|summary|help]` — Browse, search, and read transcripts from Fathom meeting recordings
 
 #### Spec-Driven Development (SDD) — Extended
 
