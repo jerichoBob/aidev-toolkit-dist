@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.91.1
+0.92.0
 
 ### Release Notes
+
+#### v0.92.0 (2026-08-26)
+
+- feat(sdd-spec-prioritize): weight milestone/critical-path progress over raw feasibility — opt-in `## Milestones` section, on-path/off-path ranking, and blocker-detection surfacing (spec-v107)
 
 #### v0.91.1 (2026-08-26)
 

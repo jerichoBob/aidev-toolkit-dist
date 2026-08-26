@@ -8,6 +8,20 @@ depends_on: []
 tags: []
 ---
 
+<!--
+Optional project-wide milestone tracking (not part of this spec's own frontmatter):
+specs/README.md may declare a `## Milestones` section mapping a milestone name to the
+list of spec versions that gate it, e.g.:
+
+## Milestones
+
+- **M2**: v6, v7, v8, v9.1, v9.3
+
+This is user-authored, not auto-generated. When present, /sdd-spec-prioritize uses it
+to rank specs on a milestone's critical path above off-path specs. Projects that don't
+define a `## Milestones` section see unchanged (legacy) feasibility-only ranking.
+-->
+
 # {Display Name}
 
 ## Why (Problem Statement)
