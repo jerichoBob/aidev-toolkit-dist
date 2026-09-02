@@ -128,10 +128,16 @@ Update the Quick Status table in `specs/README.md`:
 - Find the row for v{N}
 - Replace the Owner column value from `—` to `$USER_EMAIL`
 
+Also update the spec file's frontmatter (`specs/spec-v{N}-*.md`):
+
+- Set `developer: $USER_EMAIL`
+- Leave `creator` and `owner` unchanged
+
 Report:
 
 - "Claimed v{N}: {Name}"
 - "Owner set to: {USER_EMAIL}"
+- "Developer set to: {USER_EMAIL}"
 - Suggest: "Run `/sdd-next` to see the next task"
 
 ### Step C7: Handle No Available Specs
@@ -169,9 +175,11 @@ Run this command to get the next version number directly (lighter-weight than pa
 4. **Draft the spec**:
    - Parse `$ARGUMENTS` to identify the WHY (problem/goal), WHAT (requirements), and HOW (approach)
    - Fill in the template with reasonable defaults
-   - **Use YAML frontmatter** for metadata (version, name, display_name, status, created, depends_on, tags)
+   - **Use YAML frontmatter** for metadata (version, name, display_name, status, created, creator, owner, developer, depends_on, tags)
    - Set `status: draft` in frontmatter
    - Set `created:` to today's date
+   - Get user email: `USER_EMAIL=$(~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh get)`
+   - Set `creator: $USER_EMAIL` and `owner: $USER_EMAIL` — leave `developer: ""` empty
    - **Do NOT use checkboxes** (`- [ ]` / `- [x]`) anywhere in the spec file — use plain bullets instead
    - The spec file is a **design document**, not a progress tracker
 
@@ -368,6 +376,7 @@ Fill in:
   - `display_name: "{Display Name}"`
   - `status: draft`
   - `created: {today's date in YYYY-MM-DD format}`
+  - `creator: $USER_EMAIL` and `owner: $USER_EMAIL` (reuse `$USER_EMAIL` from Step 6) — leave `developer: ""` empty
 
 - **Why section:** Use user's description as the primary content
 - **What/How sections:** Leave as boilerplate placeholders from template

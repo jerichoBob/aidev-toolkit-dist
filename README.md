@@ -296,9 +296,17 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.92.2
+0.94.0
 
 ### Release Notes
+
+#### v0.94.0 (2026-09-02) — author: robert.w.seaton.jr@gmail.com
+
+- feat(version-bump): attribute CHANGELOG release headers with the triggering author's email — resolves via `user-email.sh get`, falls back to `git config user.email`, omits the suffix when neither is available; older entries left untouched (spec-v112)
+
+#### v0.93.0 (2026-09-02)
+
+- feat(sdd): add `creator`/`owner`/`developer` frontmatter fields to spec files — `creator`/`owner` set at creation, `developer` set at claim time via `/sdd-spec` checkout; new `specs-parse.sh spec-roles <version>` subcommand; `/sdd-specs --deep` surfaces role divergence (spec-v111)
 
 #### v0.92.2 (2026-08-26)
 

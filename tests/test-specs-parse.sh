@@ -352,6 +352,66 @@ test_next_version_empty() {
     fi
 }
 
+# Test: spec-roles with all three fields populated
+test_spec_roles_full() {
+    echo ""
+    echo "Test: spec-roles with all fields populated"
+
+    local output=$(cd "$FIXTURES_DIR/specs-roles-full" && "$PARSE_SCRIPT" spec-roles 1 2>&1)
+
+    if echo "$output" | grep -q "creator: alice@example.com"; then
+        pass "spec-roles prints creator"
+    else
+        fail "spec-roles creator incorrect: $output"
+    fi
+
+    if echo "$output" | grep -q "owner: bob@example.com"; then
+        pass "spec-roles prints owner"
+    else
+        fail "spec-roles owner incorrect: $output"
+    fi
+
+    if echo "$output" | grep -q "developer: carol@example.com"; then
+        pass "spec-roles prints developer"
+    else
+        fail "spec-roles developer incorrect: $output"
+    fi
+}
+
+# Test: spec-roles with developer missing/empty
+test_spec_roles_missing_developer() {
+    echo ""
+    echo "Test: spec-roles with developer empty"
+
+    local output=$(cd "$FIXTURES_DIR/specs-roles-missing-developer" && "$PARSE_SCRIPT" spec-roles 1 2>&1)
+
+    if echo "$output" | grep -q "creator: alice@example.com"; then
+        pass "spec-roles prints creator when developer empty"
+    else
+        fail "spec-roles creator incorrect: $output"
+    fi
+
+    if echo "$output" | grep -q "developer: —"; then
+        pass "spec-roles prints — for empty developer"
+    else
+        fail "spec-roles empty developer incorrect: $output"
+    fi
+}
+
+# Test: spec-roles with no role fields at all (pre-existing spec format)
+test_spec_roles_none() {
+    echo ""
+    echo "Test: spec-roles with no role fields (legacy spec)"
+
+    local output=$(cd "$FIXTURES_DIR/specs-roles-none" && "$PARSE_SCRIPT" spec-roles 1 2>&1)
+
+    if echo "$output" | grep -q "creator: —" && echo "$output" | grep -q "owner: —" && echo "$output" | grep -q "developer: —"; then
+        pass "spec-roles prints — for all missing fields without erroring"
+    else
+        fail "spec-roles legacy spec incorrect: $output"
+    fi
+}
+
 # Main test execution
 echo ""
 echo "aidev toolkit specs-parse.sh Test Suite"
@@ -377,6 +437,9 @@ test_spec_list
 test_whitespace
 test_next_version
 test_next_version_empty
+test_spec_roles_full
+test_spec_roles_missing_developer
+test_spec_roles_none
 
 # Summary
 echo ""

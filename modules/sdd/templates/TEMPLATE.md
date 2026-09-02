@@ -4,6 +4,9 @@ name: short-name
 display_name: "Human Readable Name"
 status: draft  # draft | in-progress | validation-needed | complete
 created: YYYY-MM-DD
+creator: email@example.com   # spec author — set once at creation, never overwritten
+owner: email@example.com    # accountable/prioritization party — set at creation, may change hands
+developer: ""                # active implementer — set at claim/checkout time, empty until claimed
 depends_on: []
 tags: []
 ---

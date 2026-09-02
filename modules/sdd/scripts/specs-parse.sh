@@ -4,7 +4,7 @@ set -euo pipefail
 # specs-parse.sh — Shared parsing infrastructure for SDD module
 # Reads specs/README.md and outputs structured data for skill consumption.
 # Usage: specs-parse.sh <subcommand>
-# Subcommands: status, next-task, next-phase, next-version, staleness, structure, spec-list
+# Subcommands: status, next-task, next-phase, next-version, staleness, structure, spec-list, spec-roles
 
 README="specs/README.md"
 
@@ -284,6 +284,42 @@ cmd_spec_list() {
   rm -f "$temp_output"
 }
 
+# Print creator/owner/developer from a spec file's YAML frontmatter.
+# Usage: cmd_spec_roles <version>
+# Prints "—" for any field missing from frontmatter (backward compatibility
+# with specs written before the role-fields feature).
+cmd_spec_roles() {
+  local version="${1:-}"
+  [[ -n "$version" ]] || die "Usage: specs-parse.sh spec-roles <version>"
+  version="${version#v}"
+
+  local spec_file
+  spec_file=$(ls specs/spec-v"${version}"-*.md specs/completed/spec-v"${version}"-*.md 2>/dev/null | head -1 || true)
+  [[ -n "$spec_file" ]] || die "No spec file found for version v${version}"
+
+  local frontmatter
+  frontmatter=$(awk '/^---$/{c++; next} c==1' "$spec_file")
+
+  local creator owner developer
+  creator=$(echo "$frontmatter" | sed -n 's/^creator:[[:space:]]*//p' | head -1)
+  owner=$(echo "$frontmatter" | sed -n 's/^owner:[[:space:]]*//p' | head -1)
+  developer=$(echo "$frontmatter" | sed -n 's/^developer:[[:space:]]*//p' | head -1)
+
+  # Strip inline comments (e.g. "email@x.com   # rationale"), surrounding quotes, and whitespace
+  for var in creator owner developer; do
+    local val="${!var}"
+    val="${val%%#*}"
+    val="${val%"${val##*[![:space:]]}"}"
+    val="${val#\"}"; val="${val%\"}"
+    val="${val#\'}"; val="${val%\'}"
+    printf -v "$var" '%s' "$val"
+  done
+
+  echo "creator: ${creator:-—}"
+  echo "owner: ${owner:-—}"
+  echo "developer: ${developer:-—}"
+}
+
 # Return just the next integer version number (highest existing + 1).
 # Lighter-weight than spec-list: no per-file basename regex table, just the max.
 cmd_next_version() {
@@ -312,8 +348,9 @@ case "${1:-}" in
   staleness)    cmd_staleness ;;
   structure)    cmd_structure ;;
   spec-list)    cmd_spec_list "${@:2}" ;;
+  spec-roles)   cmd_spec_roles "${2:-}" ;;
   *)
-    echo "Usage: specs-parse.sh <status|next-task|next-phase|next-version|staleness|structure|spec-list>"
+    echo "Usage: specs-parse.sh <status|next-task|next-phase|next-version|staleness|structure|spec-list|spec-roles>"
     exit 1
     ;;
 esac

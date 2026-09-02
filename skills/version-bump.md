@@ -193,7 +193,29 @@ Changelog entries are **mandatory**. Determine the changelog location:
 1. If `CHANGELOG.md` exists -> use it
 2. Otherwise -> use `README.md` (create `## Changelog` section at end if missing)
 
+#### Resolve Author Identity
+
+Before writing the release header, resolve the triggering author's email, in this order:
+
+1. `~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh get` — the same identity mechanism SDD specs use for ownership tracking
+2. If that returns empty, fall back to `git config user.email`
+3. If neither returns a value, leave the author unset — the header omits the `— author:` suffix entirely (never write a blank/placeholder value)
+
+```bash
+author_email=$(~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh get 2>/dev/null)
+[ -z "$author_email" ] && author_email=$(git config user.email 2>/dev/null)
+```
+
 Prepend new release section after `### Release Notes` (or `## Release Notes`):
+
+```markdown
+#### vX.Y.Z (YYYY-MM-DD) — author: {email}
+
+- type: Summary [`hash`]
+- type: Summary [`hash`]
+```
+
+If `author_email` is empty, omit the suffix and write the original header format instead:
 
 ```markdown
 #### vX.Y.Z (YYYY-MM-DD)
@@ -201,6 +223,8 @@ Prepend new release section after `### Release Notes` (or `## Release Notes`):
 - type: Summary [`hash`]
 - type: Summary [`hash`]
 ```
+
+Existing older entries in the changelog that have no author suffix are left untouched — never retroactively rewrite historical entries.
 
 **Format each commit as:**
 
@@ -219,7 +243,7 @@ Example in README.md:
 
 ### Release Notes
 
-#### v0.7.0 (2026-01-22)
+#### v0.7.0 (2026-01-22) — author: dev@example.com
 
 - feat: Add user dashboard [`abc1234`]
 - docs: Update API documentation [`def5678`]

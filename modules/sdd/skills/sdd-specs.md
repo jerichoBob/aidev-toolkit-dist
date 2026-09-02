@@ -290,6 +290,21 @@ Using the staleness output, report:
 - If STALE_FILES shows `(none)`: README is current
 - Otherwise: list which spec files are newer than README — potential drift
 
+### Step D3.5: Role Attribution
+
+For each spec listed in the status table, run:
+
+```bash
+~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh spec-roles {version}
+```
+
+- If `creator`, `owner`, and `developer` are all identical (or all `—`), show no extra output for that spec — the common single-person case stays uncluttered.
+- If any of the three differ from one another, surface a line under that spec's entry, e.g.:
+
+  ```text
+  v111: creator=alice@x.com  owner=alice@x.com  developer=bob@x.com
+  ```
+
 ### Step D4: Auto-Update README (if needed)
 
 If the Quick Status table in `specs/README.md` has incorrect progress numbers or wrong status:
