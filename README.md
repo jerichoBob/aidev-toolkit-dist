@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.94.0
+0.94.1
 
 ### Release Notes
+
+#### v0.94.1 (2026-09-17) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): draft spec-v114 — spec-guard remote-arbitrated numbering for `/sdd-spec` in multi-dev repos, opt-in via `.aid/config.yaml`
 
 #### v0.94.0 (2026-09-02) — author: robert.w.seaton.jr@gmail.com
 
