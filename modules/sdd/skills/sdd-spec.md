@@ -2,7 +2,7 @@
 name: sdd-spec
 tier: core
 description: "Create a new specification document from a user prompt"
-argument-hint: "[-p|--prioritize] <description>"
+argument-hint: "[-p|--prioritize] <description> | --config [key=value]"
 allowed-tools: Read, Write, Edit, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git push:*), Bash(git ls-remote:*), AskUserQuestion
 ---
 
@@ -12,7 +12,11 @@ Create a new specification document based on the user's prompt: $ARGUMENTS
 
 ## Step 0: Routing
 
-First check if `$ARGUMENTS` is empty or only contains flags (no description):
+First check for the config flag:
+
+- **If `--config` is present anywhere in `$ARGUMENTS`**: Follow **Config Flow**. This takes priority over every other flag/routing check below.
+
+Otherwise, check if `$ARGUMENTS` is empty or only contains flags (no description):
 
 - **If empty or no description**: Follow **Checkout Flow** (resume or claim a spec)
 - **If description provided**: Check for prioritize flag:
@@ -43,6 +47,80 @@ fi
 - If not found: proceed with no rules (no change in behavior)
 
 The format is plain markdown — each rule is a bullet or numbered item. No special syntax required.
+
+---
+
+## Config Flow
+
+Use this flow when `--config` is present anywhere in `$ARGUMENTS`.
+
+This project's SDD config lives in `.aid/config.yaml` (per-project, not global). Right now the only documented key is `spec-guard` (see `.aid/config.yaml.example` for the full comment). This flow is the switch for viewing and changing it — no need to hand-edit YAML.
+
+### Step G1: Parse the Config Arguments
+
+Take `$ARGUMENTS`, remove the `--config` token, and look at what's left:
+
+- **Nothing left (or only whitespace)**: this is a **status request** — go to Step G2.
+- **A `key=value` or `key value` pair** (e.g., `spec-guard=true`, `spec-guard true`): this is a **set request** — go to Step G3.
+- **Anything else** (unrecognized key, malformed pair): report the problem and show usage:
+
+  ```text
+  Usage:
+    /sdd-spec --config                  Show current config
+    /sdd-spec --config spec-guard=true  Enable spec-guard
+    /sdd-spec --config spec-guard=false Disable spec-guard
+  ```
+
+  Exit the skill.
+
+### Step G2: Show Current Config (status request)
+
+Run:
+
+```bash
+~/.claude/aidev-toolkit/modules/sdd/scripts/aid-config.sh spec-guard-enabled
+```
+
+Report to the user:
+
+```text
+SDD project config (.aid/config.yaml)
+
+  spec-guard: {true|false}   {— using default, no .aid/config.yaml yet | — from .aid/config.yaml}
+
+spec-guard reserves spec numbers via the git remote instead of local
+state, so two contributors running /sdd-spec at the same time can't
+claim the same number. Requires push access to the remote.
+
+To change it:
+  /sdd-spec --config spec-guard=true
+  /sdd-spec --config spec-guard=false
+```
+
+Determine the "using default" vs "from .aid/config.yaml" note by checking whether `.aid/config.yaml` exists (`[ -f .aid/config.yaml ]`). Exit the skill after reporting.
+
+### Step G3: Set a Config Value (set request)
+
+Currently the only supported key is `spec-guard`, with value `true` or `false`.
+
+- If the key is not `spec-guard`, or the value is not `true`/`false`: report "Unknown key or invalid value" plus the usage block from Step G1, and exit without writing anything.
+- Otherwise, run:
+
+  ```bash
+  ~/.claude/aidev-toolkit/modules/sdd/scripts/aid-config.sh set spec-guard <true|false>
+  ```
+
+  This creates `.aid/config.yaml` (seeded from `.aid/config.yaml.example` if present) if it doesn't exist yet, and updates the `spec-guard:` line in place.
+
+Report:
+
+```text
+spec-guard set to {true|false} in .aid/config.yaml
+```
+
+If enabling (`true`), add a one-line reminder: "Requires push access to the configured git remote (default: origin) — /sdd-spec will stop with an error rather than fall back if the remote is unreachable."
+
+Exit the skill.
 
 ---
 
@@ -242,6 +320,7 @@ After filling in the Security section, confirm it was populated in the report (S
    - **Template source**: `Using template: {path} (local | global)` — from the resolution in Step 2
    - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
    - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
+   - **spec-guard**: One line noting whether it's enabled or disabled for this project (from Step 1's check), e.g. `spec-guard: disabled (default) — /sdd-spec --config to view/change`
    - Next steps: Edit the spec file to flesh out details, then run `/sdd-code v{N}`
 
 ## Two-File Model
@@ -433,4 +512,5 @@ Tell user:
 - **Template source**: `Using template: {path} (local | global)` — from the resolution in Step 7
 - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
 - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
+- **spec-guard**: One line noting whether it's enabled or disabled for this project (from Step 3's check), e.g. `spec-guard: disabled (default) — /sdd-spec --config to view/change`
 - Next steps: Edit the spec file to flesh out What/How sections, then run `/sdd-code v{N.M}`

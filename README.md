@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.95.0
+0.96.0
 
 ### Release Notes
+
+#### v0.96.0 (2026-09-18) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): add `--config` switch to `/sdd-spec` for spec-guard visibility — `/sdd-spec --config` shows current status (default vs. set), `/sdd-spec --config spec-guard=true|false` sets it via new `aid-config.sh set` command (creates `.aid/config.yaml` seeded from the `.example` if needed); spec-creation reports now surface current spec-guard state
 
 #### v0.95.0 (2026-09-18) — author: robert.w.seaton.jr@gmail.com
 
