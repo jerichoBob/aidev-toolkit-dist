@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.96.0
+0.97.0
 
 ### Release Notes
+
+#### v0.97.0 (2026-09-18) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): wire architecture principles into `/sdd-spec` and `/sdd-code` — both load `architecture-principles/*.md` (local project dir, falling back to the globally-installed toolkit) alongside `coding-rules.md`; `/sdd-spec` checks drafted tasks against required principles and patches gaps before writing the spec, ties the Security section explicitly to AP-005; `/sdd-code` applies principles per-task during implementation and points to `/arch-review` for a full audit after the spec completes
 
 #### v0.96.0 (2026-09-18) — author: robert.w.seaton.jr@gmail.com
 

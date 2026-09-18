@@ -48,6 +48,19 @@ fi
 
 The format is plain markdown — each rule is a bullet or numbered item. No special syntax required.
 
+## Step 0.7: Load Architecture Principles
+
+Every spec must be drafted with the aidev-toolkit architecture principles in mind — this is not optional. Resolve the principles directory in this order:
+
+1. **Local project**: `architecture-principles/*.md` — if present, use it.
+2. **Global fallback**: `~/.claude/aidev-toolkit/architecture-principles/*.md` — used if the local directory doesn't exist (this is the normal case for consuming projects; the toolkit ships its principles here).
+
+Read each file's frontmatter (`id`, `title`, `severity`, `category`, `applies_to`) — the file bodies are only needed later, in Step 4.7, when checking specific tasks. Also check for **custom project-level principles** in `.aid/principles/` (same frontmatter format) and load those too — they're additive, not a replacement for core principles.
+
+If neither the local nor global directory exists, proceed without principles and note in the final report: "Architecture principles not found — install aidev-toolkit for AP-001..AP-007 coverage."
+
+Store the loaded principle list (id + title) for reference in Step 4.5, Step 4.7, and the final report. Of particular relevance to spec creation is **AP-005 (Runtime Security Patterns)**, which is scoped specifically to `[specs, sdd-workflow]` and requires every spec's `## Security` section to contain explicit, non-placeholder decisions for Authentication, Authorization, and Audit Logging — this is exactly what Step 4.5 below produces.
+
 ---
 
 ## Config Flow
@@ -277,7 +290,7 @@ Check whether spec-guard mode is enabled for this project:
    - **Do NOT use checkboxes** (`- [ ]` / `- [x]`) anywhere in the spec file — use plain bullets instead
    - The spec file is a **design document**, not a progress tracker
 
-4.5. **Populate the Security section** (always required):
+4.5. **Populate the Security section** (always required — this satisfies **AP-005: Runtime Security Patterns**, loaded in Step 0.7):
 
 After drafting the spec content, fill in the `## Security` section based on the description context. Do not leave it as template boilerplate. Apply this logic:
 
@@ -302,6 +315,18 @@ After filling in the Security section, confirm it was populated in the report (S
 - Add a note in the spec's Technical Notes section: "Coding rules applied: [list of rules that triggered rewrites]"
 - If no violations found: continue silently
 
+4.7. **Check the draft against architecture principles** (only if principles were loaded in Step 0.7):
+
+For each **required**-severity principle other than AP-005 (already handled in Step 4.5), check whether the drafted spec addresses it, and patch the gap directly rather than flagging it for later:
+
+- **AP-001 Secure Development Practices**: if the feature touches external input, database access, or auth boundaries, ensure at least one task covers input validation/parameterized queries — add one if missing.
+- **AP-002 Observable Systems / AP-007 Runtime-Adjustable Observability**: if the feature has a runtime component (service, job, long-running process), ensure a task covers structured logging with correlation IDs — add one if missing.
+- **AP-003 Intentional Error Handling**: check that tasks describing new logic also account for failure modes (not just the happy path) — rewrite a task's description if it only covers success.
+- **AP-004 Test Critical Paths**: every phase must end with (or include) a task that adds tests for that phase's critical path — add one if a phase has none.
+- **AP-006 Supply Chain Integrity**: if the How section proposes a new external dependency, add a task/note to vet it (license, maintenance status, known CVEs) before adoption.
+
+For each gap patched, note it: original state → what was added/changed → principle ID. Add a line to the spec's Technical Notes section: "Architecture principles applied: [list of principle IDs that triggered additions/rewrites]". If no gaps found, continue silently — do not pad the spec with restatements of principles that already hold.
+
 1. **Write the file**: Save to `specs/spec-v{N}-{short-name}.md`
 
    **If spec-guard is enabled and this write (or the README update in the next step) fails**: report to the user that v{N} was reserved on the remote but never used, and that they should run `spec-guard.sh release {N}` if the number should be freed for reuse. Do NOT automatically release it — a failed write could still be retried by the same caller, and auto-releasing would reopen the race spec-guard exists to close.
@@ -319,7 +344,8 @@ After filling in the Security section, confirm it was populated in the report (S
    - Filename: `spec-v{N}-{short-name}.md`
    - **Template source**: `Using template: {path} (local | global)` — from the resolution in Step 2
    - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
-   - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
+   - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging (AP-005).
+   - **Architecture principles**: If principles were loaded (Step 0.7), list which ones triggered a task addition/rewrite in Step 4.7 (or "no gaps found" if none did). If principles weren't found, say so.
    - **spec-guard**: One line noting whether it's enabled or disabled for this project (from Step 1's check), e.g. `spec-guard: disabled (default) — /sdd-spec --config to view/change`
    - Next steps: Edit the spec file to flesh out details, then run `/sdd-code v{N}`
 
@@ -476,6 +502,10 @@ Before creating the spec file, check the tasks defined in Step 5 against any loa
 - Add a note in the spec's Technical Notes section: "Coding rules applied: [list of rules that triggered rewrites]"
 - If no violations: continue silently
 
+## Step 6.6: Check Tasks Against Architecture Principles (only if principles loaded in Step 0.7)
+
+Apply the same check as Step 4.7 in the Normal Append Flow to the tasks defined in Step 5: for each required-severity principle (AP-001, AP-002/AP-007, AP-003, AP-004, AP-006), check the drafted tasks for gaps and patch them directly (add a missing test task, add input-validation/logging tasks, rewrite happy-path-only task descriptions, etc.). Add a note in the spec's Technical Notes section: "Architecture principles applied: [list of principle IDs that triggered additions/rewrites]". If no gaps found, continue silently.
+
 ## Step 7: Create Spec File
 
 **Find the template**: Resolve the template path in this order:
@@ -497,6 +527,7 @@ Fill in:
 
 - **Why section:** Use user's description as the primary content
 - **What/How sections:** Leave as boilerplate placeholders from template
+- **Security section:** Populate it now using the same logic as Step 4.5 in the Normal Append Flow (always required — satisfies AP-005). Do not leave it as template boilerplate; apply the boilerplate-detection warning from Step 4.5 if placeholder text remains.
 
 Save to: `specs/spec-v{N.M}-{short-name}.md`
 
@@ -511,6 +542,7 @@ Tell user:
 - Filename: `spec-v{N.M}-{short-name}.md`
 - **Template source**: `Using template: {path} (local | global)` — from the resolution in Step 7
 - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
-- **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging.
+- **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging (AP-005).
+- **Architecture principles**: If principles were loaded (Step 0.7), list which ones triggered a task addition/rewrite in Step 6.6 (or "no gaps found" if none did). If principles weren't found, say so.
 - **spec-guard**: One line noting whether it's enabled or disabled for this project (from Step 3's check), e.g. `spec-guard: disabled (default) — /sdd-spec --config to view/change`
 - Next steps: Edit the spec file to flesh out What/How sections, then run `/sdd-code v{N.M}`

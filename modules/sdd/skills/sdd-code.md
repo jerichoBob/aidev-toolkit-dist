@@ -25,6 +25,12 @@ Implement all remaining phases and tasks in the current spec without stopping be
 
 1. **Load coding rules** (if present): Check for `coding-rules.md` in project root, then `.claude/`. If found, read it. These rules govern what code is acceptable to write.
 
+2. **Load architecture principles**: Implementation must follow the aidev-toolkit architecture principles — this is not optional. Resolve the principles directory in this order:
+   - **Local project**: `architecture-principles/*.md` — if present, use it.
+   - **Global fallback**: `~/.claude/aidev-toolkit/architecture-principles/*.md` — used if the local directory doesn't exist (the normal case; the toolkit ships its principles here).
+
+   Read each file's frontmatter (`id`, `title`, `severity`, `category`) and body. Also load custom project-level principles from `.aid/principles/` if present (additive). If neither directory exists, proceed without principles and note it in the final summary.
+
 ## Step 2: Implement
 
 1. **Find the target spec**:
@@ -44,13 +50,18 @@ Implement all remaining phases and tasks in the current spec without stopping be
    - **Never silently proceed if a violation is detected**
    - If user selects rewrite: update the task descriptions in README before coding begins
 
-4. **Create a todo list**: Use TodoWrite to create tasks for ALL unchecked items across ALL phases, organized by phase.
+4. **Check the spec against architecture principles** (only if principles were loaded in Step 1):
+   - Scan the target spec file's `## Security` section for AP-005 compliance (explicit, non-placeholder Authentication/Authorization/Audit Logging decisions). If it's still boilerplate, patch it now using the same logic `/sdd-spec` Step 4.5 uses — don't start implementation with an unresolved security decision.
+   - For the remaining required principles (AP-001 security, AP-002/AP-007 observability, AP-003 error handling, AP-004 testing, AP-006 supply chain), keep them in mind for every task in Step 5 below — see the per-task guidance there. No need to front-load a full audit; that's what `/arch-review` is for.
 
-5. **Implement phase by phase, task by task**:
+5. **Create a todo list**: Use TodoWrite to create tasks for ALL unchecked items across ALL phases, organized by phase.
+
+6. **Implement phase by phase, task by task**:
    - Work through phases in order (Phase 1, then Phase 2, etc.)
    - Within each phase, implement each task sequentially
    - **Token-tracking file reuse (per-phase, not per-task)**: use two fixed, alternating snapshot files for the whole phase — `/tmp/sdd-code-phase-{version}-{phase_num}-a.json` and `/tmp/sdd-code-phase-{version}-{phase_num}-b.json`. A task's "after" snapshot IS the next task's "before" snapshot — no copy, no re-snapshot, just point the `delta` call at whichever file already holds that state. This drops the redundant "before" snapshot Bash call for every task after the first in a phase (only one `snapshot` call per task instead of two).
    - For each task:
+     - **If architecture principles were loaded (Step 1)**: apply the relevant required principles while writing the code, not as an afterthought — AP-001 (validate external input, parameterize queries, no hardcoded secrets), AP-002/AP-007 (structured logging for new runtime paths), AP-003 (handle failure modes explicitly, no empty catch blocks), AP-004 (add/extend tests for the critical path this task introduces), AP-006 (vet any new dependency before adding it). Only apply the ones relevant to what the task actually touches — don't pad unrelated tasks with unrelated principle busywork.
      - If token tracking is enabled (no `--no-stats` flag):
        - **First task in the phase**: capture a real before-snapshot into file `a`: `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/sdd-code-phase-{version}-{phase_num}-a.json`
        - **Subsequent tasks in the phase**: no snapshot call needed — the previous task's "after" file already holds this task's "before" state; just track which of `a`/`b` currently holds it.
@@ -69,13 +80,14 @@ Implement all remaining phases and tasks in the current spec without stopping be
      - Move immediately to the next task
    - When a phase is complete, move immediately to the next phase. Delete that phase's snapshot files (`rm -f /tmp/sdd-code-phase-{version}-{phase_num}-a.json /tmp/sdd-code-phase-{version}-{phase_num}-b.json`) and start a fresh before-snapshot for the first task of the next phase.
 
-6. **Do NOT stop between tasks or phases**: Continue implementing until ALL phases in the spec are complete.
+7. **Do NOT stop between tasks or phases**: Continue implementing until ALL phases in the spec are complete.
 
-7. **After completing the entire spec**:
+8. **After completing the entire spec**:
    - Update the Quick Status table row in `specs/README.md` to show completion
    - Update the spec file's YAML frontmatter `status` field to `complete`
    - Run any relevant tests if they exist
    - Bump the version (patch for fixes, minor for features)
+   - If architecture principles were loaded, suggest `/arch-review` in the summary as the formal compliance check — the inline principle-awareness in Step 6 is not a substitute for a full audit
    - Report a summary of what was implemented
 
 ## Important
