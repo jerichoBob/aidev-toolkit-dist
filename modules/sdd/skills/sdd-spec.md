@@ -3,7 +3,7 @@ name: sdd-spec
 tier: core
 description: "Create a new specification document from a user prompt"
 argument-hint: "[-p|--prioritize] <description>"
-allowed-tools: Read, Write, Edit, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), AskUserQuestion
+allowed-tools: Read, Write, Edit, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git push:*), Bash(git ls-remote:*), AskUserQuestion
 ---
 
 # Create a New Spec
@@ -154,15 +154,31 @@ If no unfinished specs exist (all complete or empty):
 
 ## Step 1: Gather Data
 
-Run this command to get the next version number directly (lighter-weight than parsing the full spec list):
+Check whether spec-guard mode is enabled for this project:
 
 ```bash
-~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh next-version
+~/.claude/aidev-toolkit/modules/sdd/scripts/aid-config.sh spec-guard-enabled
 ```
+
+- **If `false` (default)**: get the next version number directly from local state (lighter-weight than parsing the full spec list):
+
+  ```bash
+  ~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh next-version
+  ```
+
+- **If `true`**: use the GitHub remote as the arbiter instead of local state, so two contributors running `/sdd-spec` at nearly the same time can't claim the same number:
+
+  ```bash
+  ~/.claude/aidev-toolkit/modules/sdd/scripts/spec-guard.sh claim
+  ```
+
+  `claim` atomically reserves a number on the remote (retrying on collision, bounded to 10 attempts) and prints the reserved integer on success.
+
+  **If `claim` fails or exits nonzero** (unreachable remote, no push access, retries exhausted): **stop immediately**. Report the error to the user verbatim and do NOT fall back to `specs-parse.sh next-version` — a fallback here would defeat the purpose of spec-guard by reintroducing the exact collision it exists to prevent. Do not create a spec file.
 
 ## Step 2: Create the Spec
 
-1. **Determine the version number**: Use the integer returned by `next-version` directly. If no specs exist, it returns `1`.
+1. **Determine the version number**: Use the integer returned by `next-version` (spec-guard off) or `spec-guard.sh claim` (spec-guard on) directly. If no specs exist and spec-guard is off, `next-version` returns `1`.
 
 2. **Find the template**: Resolve the template path in this order:
    1. **Local project**: `specs/TEMPLATE.md` — if present, use it. If it exists but fails to read or is empty/malformed, stop and report an error (do NOT silently fall back to the global template).
@@ -209,6 +225,8 @@ After filling in the Security section, confirm it was populated in the report (S
 - If no violations found: continue silently
 
 1. **Write the file**: Save to `specs/spec-v{N}-{short-name}.md`
+
+   **If spec-guard is enabled and this write (or the README update in the next step) fails**: report to the user that v{N} was reserved on the remote but never used, and that they should run `spec-guard.sh release {N}` if the number should be freed for reuse. Do NOT automatically release it — a failed write could still be retried by the same caller, and auto-releasing would reopen the race spec-guard exists to close.
 
 2. **Update README**: Add the new spec to `specs/README.md`:
    - Add a new `## v{N}: {Name}` section with Phase/Task **checklists** (`- [ ]` items)
@@ -274,7 +292,7 @@ Use **AskUserQuestion** to present this menu and get the user's selection.
 
 ## Step 3: Calculate Decimal Version
 
-Based on user selection:
+Based on user selection, compute the candidate decimal version from **local** state first (this determines *where* it slots in; spec-guard, when enabled, only arbitrates whether that exact number is free to claim):
 
 **If "At the end" selected:**
 
@@ -300,6 +318,26 @@ Based on user selection:
 **Edge case warning:**
 
 - If 9 decimals already exist in a gap (v8.1 through v8.9), warn user and suggest using deeper decimal (v8.15, v8.25, etc.)
+
+**Spec-guard reservation (only if enabled):**
+
+Check spec-guard mode the same way as the Normal Append Flow:
+
+```bash
+~/.claude/aidev-toolkit/modules/sdd/scripts/aid-config.sh spec-guard-enabled
+```
+
+- **If `false` (default)**: use the candidate decimal version computed above as-is — no change from existing behavior.
+- **If `true`**: reserve that exact decimal number on the remote before writing anything:
+
+  ```bash
+  ~/.claude/aidev-toolkit/modules/sdd/scripts/spec-guard.sh reserve <N.M>
+  ```
+
+  - Exit `0` (`RESERVED`): proceed with `<N.M>` as computed.
+  - Exit `2` (`COLLISION`): another contributor already claimed exactly this decimal slot. Recompute the next decimal in the same gap (per the algorithm above, e.g. v8.9 taken → try v8.91 or the next open `.N` slot) and retry `reserve`, bounded to 10 attempts total.
+  - Exit `1` (hard failure — unreachable remote, no push access): **stop immediately**, report the error verbatim, and do NOT fall back to using the unreserved decimal version. Do not create a spec file.
+  - Retries exhausted: stop and report the error; do not fall back.
 
 ## Step 4: Extract Description
 
@@ -382,6 +420,8 @@ Fill in:
 - **What/How sections:** Leave as boilerplate placeholders from template
 
 Save to: `specs/spec-v{N.M}-{short-name}.md`
+
+**If spec-guard is enabled and this write (or the Step 5/6 README updates) fails**: report that v{N.M} was reserved on the remote but never used, and that the user should run `spec-guard.sh release {N.M}` if it should be freed. Do not auto-release (same rationale as the Normal Append Flow).
 
 ## Step 8: Report Back
 

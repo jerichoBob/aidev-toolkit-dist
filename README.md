@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.94.1
+0.95.0
 
 ### Release Notes
+
+#### v0.95.0 (2026-09-18) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): add spec-guard mode — opt-in via `.aid/config.yaml` (`spec-guard: true`), `/sdd-spec` reserves spec numbers (including decimal `-p`/`--prioritize` versions) through an atomic git-ref reservation on the remote so concurrent contributors never collide; new `modules/sdd/scripts/aid-config.sh` and `modules/sdd/scripts/spec-guard.sh` (`next-number`/`reserve`/`release`/`claim`), fails loudly with no local-numbering fallback if the remote is unreachable (spec-v114)
 
 #### v0.94.1 (2026-09-17) — author: robert.w.seaton.jr@gmail.com
 
