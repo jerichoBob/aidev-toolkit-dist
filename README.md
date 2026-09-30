@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.97.0
+0.98.0
 
 ### Release Notes
+
+#### v0.98.0 (2026-09-30) — author: robert.w.seaton.jr@gmail.com
+
+- feat(skills): add `/continue` skill (spec v115) — resumes work from the most recent (or explicitly named) `/handoff --save` briefing in `.claude/handoffs/` or `~/.claude/handoffs/`, validating any filename argument against real candidates to reject path traversal; wired into `install.sh`, `docs/aid-help.md`, and `skills/handoff.md`; covered by `tests/test-continue.sh`
 
 #### v0.97.0 (2026-09-18) — author: robert.w.seaton.jr@gmail.com
 

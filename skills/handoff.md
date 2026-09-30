@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Compress the current conversation into an actionable briefing for a new thread. Use this when starting a new Claude session to continue unfinished work, when context is running low and work must continue, or when the user says "hand this off", "new thread", "context handoff", or "create a handoff". Produces a launch-pad document, not a summary — everything a cold reader needs to pick up and act immediately.
+description: Compress the current conversation into an actionable briefing for a new thread. Use this when starting a new Claude session to continue unfinished work, when context is running low and work must continue, or when the user says "hand this off", "new thread", "context handoff", or "create a handoff". Produces a launch-pad document, not a summary — everything a cold reader needs to pick up and act immediately. See also: `/continue`, its companion, which resumes a session from the briefing this skill saves.
 argument-hint: "[--task <scope>] [--save]"
 allowed-tools: Read, Write, Glob, Bash(git:*), Bash(date:*), Bash(mkdir:*)
 model: inherit

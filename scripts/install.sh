@@ -65,6 +65,7 @@ SKILLS=(
     "status-footer.md"
     "backbone-setup.md"
     "handoff.md"
+    "continue.md"
     "fathom.md"
 )
 
