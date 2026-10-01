@@ -1,6 +1,6 @@
 ---
 name: continue
-description: Pick up work after a /clear by reading the most recent /handoff briefing and resuming from "What to do next". Use when the user says "continue", "pick up where we left off", or right after a /clear that followed a /handoff --save.
+description: Pick up work after a /clear by reading the most recent /handoff briefing and resuming from "What to do next". Use when the user says "continue", "pick up where we left off", or right after a /clear that followed a /handoff.
 argument-hint: "[handoff filename or partial match]"
 allowed-tools: Read, Glob, Bash(ls:*)
 model: inherit
@@ -8,7 +8,7 @@ model: inherit
 
 # Continue
 
-Resume work from the most recent `/handoff --save` briefing without the user having to paste or re-explain anything.
+Resume work from the most recent `/handoff` briefing without the user having to paste or re-explain anything.
 
 This is the companion to `/handoff`. It is intentionally **not** named `/resume` — that name is already taken by the Claude Code CLI's built-in session-resume command, and shadowing it would be confusing.
 

@@ -296,9 +296,17 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.98.0
+0.98.1
 
 ### Release Notes
+
+#### v0.98.1 (2026-10-01) — author: robert.w.seaton.jr@gmail.com
+
+- docs: v30 fathom — mark deploy and validation tasks complete [`32086f5`]
+- docs: archive v114 and v115 to specs/completed/ [`cc90fe3`]
+- docs: mark v115 complete — issue #23 auto-closed on push [`696767c`]
+- feat: make /handoff --save the default, invert to --no-save [`f77c8ad`]
+- fix: remove colon from handoff.md frontmatter description [`195347d`]
 
 #### v0.98.0 (2026-09-30) — author: robert.w.seaton.jr@gmail.com
 

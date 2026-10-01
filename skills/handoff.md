@@ -1,7 +1,7 @@
 ---
 name: handoff
-description: Compress the current conversation into an actionable briefing for a new thread. Use this when starting a new Claude session to continue unfinished work, when context is running low and work must continue, or when the user says "hand this off", "new thread", "context handoff", or "create a handoff". Produces a launch-pad document, not a summary — everything a cold reader needs to pick up and act immediately. See also: `/continue`, its companion, which resumes a session from the briefing this skill saves.
-argument-hint: "[--task <scope>] [--save]"
+description: Compress the current conversation into an actionable briefing for a new thread. Use this when starting a new Claude session to continue unfinished work, when context is running low and work must continue, or when the user says "hand this off", "new thread", "context handoff", or "create a handoff". Produces a launch-pad document, not a summary — everything a cold reader needs to pick up and act immediately. See also `/continue`, its companion, which resumes a session from the briefing this skill saves.
+argument-hint: "[--task <scope>] [--no-save]"
 allowed-tools: Read, Write, Glob, Bash(git:*), Bash(date:*), Bash(mkdir:*)
 model: inherit
 ---
@@ -18,7 +18,7 @@ The difference between a summary and a handoff:
 ## Arguments
 
 - **--task `<description>`**: Narrow scope to a specific task or feature. Without this, cover all open work in the conversation.
-- **--save**: Write the output to `.claude/handoffs/handoff-<YYYY-MM-DD-HHMMSS>.md` in the project root (or `~/.claude/handoffs/` if no project detected). Always confirm the file path at the end.
+- **--no-save**: Skip writing the output to disk — print the handoff in the response only. Without this flag, the handoff is always saved to `.claude/handoffs/handoff-<YYYY-MM-DD-HHMMSS>.md` in the project root, and the file path is confirmed at the end.
 
 ## Instructions
 
@@ -101,9 +101,9 @@ Explicitly unresolved. A new thread should surface these to the user, not guess.
 
 **Length:** Aim for one screen of content per major work stream. If the handoff is longer than ~150 lines, you are summarizing, not focusing — apply `--task` scope or cut ruthlessly.
 
-### Step 4: Handle --save
+### Step 4: Save to disk (default)
 
-If `--save` was passed:
+Saving is the default behavior. Skip this step entirely only if `--no-save` was passed.
 
 1. Get the current timestamp:
 
@@ -111,9 +111,7 @@ If `--save` was passed:
    date +%Y-%m-%d-%H%M%S
    ```
 
-2. Determine the output directory:
-   - If a `specs/` or `.claude/` directory exists (project context): write to `.claude/handoffs/`
-   - Otherwise: write to `~/.claude/handoffs/`
+2. The output directory is always `.claude/handoffs/` in the current project root — never the user-level `~/.claude/handoffs/`.
 3. Create the directory if it doesn't exist:
 
    ```bash
@@ -136,6 +134,6 @@ If `--save` was passed:
 
 ## Output
 
-Print the full handoff document directly in the response. If `--save` was passed, also write it to disk and report the path.
+Print the full handoff document directly in the response. Unless `--no-save` was passed, also write it to disk and report the path.
 
 Do not add any preamble like "Here is the handoff:" — start directly with the `# Handoff` heading.

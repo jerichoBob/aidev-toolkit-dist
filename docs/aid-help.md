@@ -117,8 +117,8 @@ and become slash commands in any project. Full architecture writeup:
 - `/test-run` — Run the full test suite and save a timestamped report to `tests/results/`
 - `/test-status` — Display results table from the last test run (no re-run)
 - `/status-footer [on|off] [--show <component>] [--hide <component>]` — Configure the Claude Code status footer
-- `/handoff [--task <scope>] [--save]` — Compress current conversation into an actionable briefing for a new thread
-- `/continue [handoff filename or partial match]` — Resume work from the most recent `/handoff --save` briefing
+- `/handoff [--task <scope>] [--no-save]` — Compress current conversation into an actionable briefing for a new thread (saved to disk by default)
+- `/continue [handoff filename or partial match]` — Resume work from the most recent `/handoff` briefing
 - `/fathom [list|date|today|external|search|view|transcript|summary|help]` — Browse, search, and read transcripts from Fathom meeting recordings
 
 #### Spec-Driven Development (SDD) — Extended
