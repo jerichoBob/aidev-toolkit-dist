@@ -296,9 +296,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.98.1
+0.98.2
 
 ### Release Notes
+
+#### v0.98.2 (2026-10-01) — author: robert.w.seaton.jr@gmail.com
+
+- docs: v30 fathom — close out last task, mark complete [`150b51a`]
 
 #### v0.98.1 (2026-10-01) — author: robert.w.seaton.jr@gmail.com
 
