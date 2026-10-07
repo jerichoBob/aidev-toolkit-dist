@@ -2,7 +2,7 @@
 name: sdd-spec-prioritize
 tier: extended
 description: "Recommend the top N specs to focus on next, with reasoning"
-argument-hint: "[N]"
+argument-hint: "[N] [--milestone]"
 disable-model-invocation: false
 allowed-tools: Read, Grep, AskUserQuestion
 ---
@@ -24,11 +24,9 @@ Before scoring, check whether `specs/README.md` has a `## Milestones` section �
 ```
 
 - If the section **is present**, parse it into `{milestone_name: [gating_spec_versions]}` and proceed to Step 1 with milestone-aware ranking active (see Steps 3–4).
-- If the section is **absent**, use `AskUserQuestion` to ask: "No milestones defined. Define one for this run, or use standard feasibility-only ranking?"
-  - If the user chooses to define one: collect a milestone name and the list of gating spec versions inline. This is ad-hoc for the current run only — do **not** write it back to `specs/README.md` unless the user explicitly asks you to persist it.
-  - If the user declines: proceed with the unchanged legacy feasibility-only rubric (skip Steps 3's Milestone Path factor and Step 3.5 entirely).
+- If the section is **absent**, do **not** prompt. Proceed with the default ROI ranking (Step 3), skipping the Milestone Path factor and Step 3.5 entirely. If the user passes `--milestone`, collect a milestone name and gating spec versions inline via `AskUserQuestion` for this run only — do **not** write it back to `specs/README.md` unless the user explicitly asks you to persist it.
 
-This feature is fully opt-in — projects that never define a milestone see identical behavior to before this change.
+This feature is fully opt-in — projects that never define a milestone are ranked purely by ROI.
 
 ## Step 1: Load Active Specs
 
@@ -67,19 +65,21 @@ If no milestone is defined, skip this step — every candidate is treated as off
 
 ## Step 3: Score and Rank
 
-Apply this rubric to rank candidates:
+**Default ranking is ROI — highest bang for the buck.** Judge each candidate as roughly *value delivered ÷ effort to ship*, where effort is task count and value is how much pain it removes and how widely (leverage). Apply this rubric:
 
 | Factor              | Weight                        | Notes                                                                             |
 | ------------------- | ------------------------------ | ---------------------------------------------------------------------------------- |
 | **Milestone Path**  | Critical — overrides all else | Only applies when a milestone is defined (Step 0/2.5). On-path candidates rank above every off-path candidate, full stop — the factors below never override this. |
-| **Type**            | High                           | Bug fixes > new features > enhancements > living specs                            |
-| **Scope**           | High                           | Fewer tasks = faster to ship = higher rank                                        |
-| **Value**           | High                           | Direct user-facing pain > internal tooling > nice-to-have                         |
 | **Blockers**        | Critical                       | Skip or deprioritize any spec with unresolved `depends_on`                        |
+| **Value / Leverage**| Very high                      | Direct user-facing pain, evidence of real incidents or feedback, and breadth of benefit (a fix to a core workflow that every future spec uses beats a niche feature) |
+| **Scope**           | Very high                      | Fewer tasks = lower cost. Value per task is the core of ROI                       |
+| **Type**            | Medium                         | Tie-breaker: bug fixes > enhancements to core workflows > new features > living specs |
 | **Status**          | Medium                         | In Progress > Draft > Deferred                                                    |
 | **Independence**    | Medium                         | Standalone work preferred over work that requires other specs first               |
 
-When a milestone is active, Type/Scope/Value/Blockers/Status/Independence are used **only to break ties within the same path group** (on-path vs. on-path, or off-path vs. off-path) — they never move an off-path candidate above an on-path one. When no milestone is defined, ranking is unchanged from before this feature: Type/Scope/Value/Blockers/Status/Independence alone.
+Call out low-ROI specs (large scope, narrow or speculative value) in a brief "skipped" note.
+
+**When a milestone is active**, the work to rank is the *remaining* work inside it: restrict the primary list to on-path specs (Step 2.5) and use each spec's remaining task count (total minus done, from the Progress column) as its Scope. Rank those on-path specs by ROI using the factors above. Off-path candidates only fill leftover slots, also ranked by ROI, and never move above an on-path one.
 
 ## Step 3.5: Blocker Detection (only if a milestone is defined and on-path candidates exist)
 
@@ -102,9 +102,11 @@ Determine N from `$ARGUMENTS` (default: 5 if empty or not a positive integer).
 
 If Step 3.5 produced any `⚠ Real priority:` lines, print them first, above everything else.
 
-When a milestone is active (Step 0/2.5), order the list on-path candidates first (each annotated `(on milestone path)`), then off-path candidates filling any remaining N slots (AC-7 — the list doesn't shrink just because the on-path set is small). When no milestone is defined, order is unchanged from before this feature (Type/Scope/Value/Blockers/Status/Independence only).
+If no milestone is defined, print one line above the list: `No milestones defined in specs/README.md — ranked by ROI only (add a "## Milestones" section to weight milestone progress).`
 
-Present the top N ranked specs with a one-paragraph reasoning for each. When a milestone is active, the reasoning must state *why* the candidate ranks where it does **relative to the milestone** — e.g. "gates M2 directly" or "off milestone path; ranked on feasibility only" — not just feasibility language.
+When a milestone is active (Step 0/2.5), order the list on-path candidates first (each annotated `(on milestone path)`), then off-path candidates filling any remaining N slots (AC-7 — the list doesn't shrink just because the on-path set is small). When no milestone is defined, order is by ROI alone (Step 3).
+
+Present the top N ranked specs with a one-paragraph reasoning for each. When a milestone is active, the reasoning must state *why* the candidate ranks where it does **relative to the milestone** — e.g. "gates M2 directly" or "off milestone path; ranked on ROI only" — not just ROI language.
 
 ```text
 {⚠ Real priority: resolve "{open question text}" (blocks v{N}, v{M}, ...)}
@@ -113,7 +115,7 @@ Present the top N ranked specs with a one-paragraph reasoning for each. When a m
 Top {N} Specs to Focus On
 
 #1 v{N} — {Name} ({task_count} tasks, {type}) {(on milestone path) if applicable}
-   {1-2 sentence reasoning: why this ranks here relative to the milestone (or feasibility, if no milestone), what value it delivers, why now}
+   {1-2 sentence reasoning: why this ranks here relative to the milestone (or ROI, if no milestone), what value it delivers, why now}
 
 #2 v{N} — {Name} ({task_count} tasks, {type}) {(on milestone path) if applicable}
    {reasoning}

@@ -296,9 +296,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.98.3
+0.99.0
 
 ### Release Notes
+
+#### v0.99.0 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
+
+- feat: /sdd-spec-prioritize ranks by ROI by default [`b62206f`]
+- feat: /browser-harness reuses a matching open tab before opening a new one [`c2bfc95`]
+- docs: v119 progress 10/12; archive completed v30 and v102 [`db1fd8f`]
 
 #### v0.98.3 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
 

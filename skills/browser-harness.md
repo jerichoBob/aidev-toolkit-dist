@@ -3,7 +3,7 @@ name: browser-harness
 tier: extended
 description: Install and use browser-harness for direct Chrome CDP control via LLM.
 argument-hint: "[task description]"
-allowed-tools: Read, Bash(git:*), Bash(uv:*), Bash(command:*), Bash(osascript:*), Bash(open:*), Bash(pkill:*), Bash(rm:*), Bash(mkdir:*), Bash(ln:*), Bash(rg:*)
+allowed-tools: Read, Bash(git:*), Bash(uv:*), Bash(command:*), Bash(osascript:*), Bash(open:*), Bash(pkill:*), Bash(rm:*), Bash(mkdir:*), Bash(ln:*), Bash(rg:*), AskUserQuestion
 model: inherit
 ---
 
@@ -124,9 +124,31 @@ browser-harness <<'PY'
 PY
 ```
 
-- First navigation: `new_tab(url)`, not `goto(url)` — `goto` runs in the user's active tab
+**Before opening anything, look for a tab that already matches the task.** Derive a short target from the task (a hostname like `github.com`, or a distinctive title word) and run:
+
+```python
+# find_matching_tabs
+def find_matching_tabs(query):
+    q = query.lower()
+    return [t for t in list_tabs(include_chrome=False)
+            if q in t["url"].lower() or q in t["title"].lower()]
+
+matches = find_matching_tabs("github.com")
+for t in matches:  # print ONLY matches, never the full tab list
+    print(t["targetId"], t["title"], t["url"])
+```
+
+Matching is a plain lowercase substring check — never build a regex from task text. Then decide:
+
+- **Exactly one match**: `switch_tab(targetId)` (no `activate_tab` — don't hijack the user's visible tab). If `switch_tab` raises (tab closed since listing), fall back to `new_tab(url)` and say so.
+- **No match**: `new_tab(url)`, not `goto_url(url)` — `goto_url` runs in the user's active tab.
+- **Two or more matches**: show only the matching tabs (title and URL) and ask the user which to use with `AskUserQuestion` before acting. Never choose silently.
+- Always state which happened: reused tab or created tab, with target id and URL.
+
+Then:
+
 - After every navigation: `wait_for_load()`
-- After every action: `screenshot()` to verify
+- After every action: `capture_screenshot(path)` to verify
 - Auth wall: stop and ask the user — never type credentials from screenshots
 
 ### Step 7: Contribute back
@@ -143,6 +165,7 @@ Then open a PR to `browser-use/browser-harness`.
 ## Notes
 
 - The remote-debugging checkbox is per-profile sticky in Chrome — once ticked, every future Chrome launch auto-enables CDP on that profile
+- Tab reuse: report whether a tab was reused or created (target id + URL), never close a tab the harness did not create, and never print non-matching tabs — `list_tabs()` exposes the user's whole browsing session
 - Parallel sub-agents should use distinct `BU_NAME` env vars so they don't share the same socket
 - For remote/cloud browsers: grab a free API key at `cloud.browser-use.com/new-api-key` and use `start_remote_daemon()` from `admin.py`
 - Full runtime guidance lives in `~/Developer/browser-harness/SKILL.md` — read it for advanced usage

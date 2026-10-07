@@ -108,7 +108,7 @@ and become slash commands in any project. Full architecture writeup:
 
 - `/analyze-changes` — Analyze git changes and determine version bump type (support skill)
 - `/version-bump` — Bump version and update changelog (support skill)
-- `/browser-harness` — Direct Chrome CDP control — install, connect, and run browser tasks
+- `/browser-harness` — Direct Chrome CDP control — install, connect, and run browser tasks (reuses a matching open tab before opening a new one)
 - `/code-stats [path]` — Count lines of code
 - `/screenshots [N]` — Load recent macOS screenshots into context
 - `/should-i-trust-it` — Verify skill safety before installation
