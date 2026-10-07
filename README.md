@@ -296,9 +296,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.99.0
+0.99.1
 
 ### Release Notes
+
+#### v0.99.1 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
+
+- docs: mark v119 complete (12/12) [`6bfe521`]
+- chore: add chrome-history-search script [`e4a2806`]
 
 #### v0.99.0 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
 
