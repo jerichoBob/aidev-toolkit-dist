@@ -312,6 +312,37 @@ test_whitespace() {
     fi
 }
 
+# Test: nested (indented) checkboxes are not counted (v102)
+test_status_nested_checkbox() {
+    echo ""
+    echo "Test: status ignores indented checkboxes"
+
+    local tmp
+    tmp=$(mktemp -d)
+    mkdir -p "$tmp/specs"
+    cat > "$tmp/specs/README.md" << 'FIXTURE'
+# Specs
+
+## v1: Nested Test
+
+### Phase 1
+
+- [ ] Parent task
+  - [x] child-a
+  - [ ] child-b
+- [x] Top-level done
+FIXTURE
+    local output
+    output=$(cd "$tmp" && "$PARSE_SCRIPT" status 2>&1)
+    rm -rf "$tmp"
+
+    if echo "$output" | awk -F'\t' '$1=="v1" && $3==1 && $4==2 {found=1} END{exit !found}'; then
+        pass "Indented checkboxes excluded (done=1 total=2)"
+    else
+        fail "Nested checkbox counting wrong: $output"
+    fi
+}
+
 # Test: next-version returns highest+1
 test_next_version() {
     echo ""
@@ -435,6 +466,7 @@ test_staleness
 test_structure_missing_readme
 test_spec_list
 test_whitespace
+test_status_nested_checkbox
 test_next_version
 test_next_version_empty
 test_spec_roles_full

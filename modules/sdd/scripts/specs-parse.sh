@@ -58,10 +58,10 @@ cmd_status() {
       total=0
     fi
     # Count checkboxes
-    if [[ "$line" =~ ^[[:space:]]*-[[:space:]]\[x\] ]]; then
+    if [[ "$line" =~ ^-[[:space:]]\[x\] ]]; then
       (( done++ )) || true
       (( total++ )) || true
-    elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]\[[[:space:]]\] ]]; then
+    elif [[ "$line" =~ ^-[[:space:]]\[[[:space:]]\] ]]; then
       (( total++ )) || true
     fi
   done < "$README"
@@ -107,7 +107,7 @@ cmd_next_task() {
       phase="${phase%"${phase##*[![:space:]]}"}"
     fi
     # First unchecked task
-    if [[ "$line" =~ ^[[:space:]]*-[[:space:]]\[[[:space:]]\][[:space:]]*(.*) ]]; then
+    if [[ "$line" =~ ^-[[:space:]]\[[[:space:]]\][[:space:]]*(.*) ]]; then
       local task="${BASH_REMATCH[1]}"
       echo "spec_version: $version"
       echo "spec_name: $name"
@@ -143,7 +143,7 @@ cmd_next_phase() {
       phase="${BASH_REMATCH[1]}"
       phase="${phase%"${phase##*[![:space:]]}"}"
     fi
-    if [[ "$line" =~ ^[[:space:]]*-[[:space:]]\[[[:space:]]\] ]]; then
+    if [[ "$line" =~ ^-[[:space:]]\[[[:space:]]\] ]]; then
       target_version="$version"
       target_phase="$phase"
       found_phase=1
@@ -194,9 +194,9 @@ cmd_next_phase() {
       phase="$new_phase"
     fi
     if (( printing )); then
-      if [[ "$line" =~ ^[[:space:]]*-[[:space:]]\[x\][[:space:]]*(.*) ]]; then
+      if [[ "$line" =~ ^-[[:space:]]\[x\][[:space:]]*(.*) ]]; then
         echo "[x] ${BASH_REMATCH[1]}"
-      elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]\[[[:space:]]\][[:space:]]*(.*) ]]; then
+      elif [[ "$line" =~ ^-[[:space:]]\[[[:space:]]\][[:space:]]*(.*) ]]; then
         echo "[ ] ${BASH_REMATCH[1]}"
       fi
     fi

@@ -296,9 +296,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.98.2
+0.98.3
 
 ### Release Notes
+
+#### v0.98.3 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
+
+- fix: specs-parse.sh counts only top-level checkboxes [`489678c`]
+- docs: mark v102 complete, add v119 browser-harness tab reuse [`99abe57`]
 
 #### v0.98.2 (2026-10-01) — author: robert.w.seaton.jr@gmail.com
 

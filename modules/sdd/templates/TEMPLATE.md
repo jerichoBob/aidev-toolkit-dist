@@ -60,6 +60,8 @@ define a `## Milestones` section see unchanged (legacy) feasibility-only ranking
 ## How (Approach)
 
 > **Two-file model — no checkboxes here.** Tasks below are plain bullets. Checkboxes (`- [ ]` / `- [x]`) belong only in `specs/README.md`, which is the single source of truth for progress tracking. `specs-parse.sh` counts from README only.
+>
+> **Never nest checkboxes.** Indented checkboxes in `specs/README.md` are not counted by `specs-parse.sh`. Flatten split sub-parts into sibling top-level items with a suffix (e.g. `ITEM-a` / `ITEM-b`) instead.
 
 ### Phase 1: {Phase Name}
 
