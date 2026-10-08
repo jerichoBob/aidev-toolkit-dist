@@ -63,7 +63,6 @@ SKILLS=(
     "test-run.md"
     "test-status.md"
     "status-footer.md"
-    "backbone-setup.md"
     "handoff.md"
     "continue.md"
     "fathom.md"
@@ -83,6 +82,15 @@ SDD_SKILLS=(
     "sdd-specs-archive.md"
     "sdd-init.md"
     "sdd-spec-status.md"
+)
+
+# Backbone module skills (sourced from modules/backbone/skills/)
+BACKBONE_SKILLS=(
+    "backbone.md"
+    "backbone-send.md"
+    "backbone-inbox.md"
+    "backbone-done.md"
+    "backbone-setup.md"
 )
 
 echo ""
@@ -172,7 +180,7 @@ for dir in "$COMMANDS_DIR" "$SKILLS_DIR"; do
         [ -e "$file" ] || continue
         filename=$(basename "$file")
         # Check if this file is a known core skill or SDD skill; if not, remove it
-        if [[ ! " ${SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${SDD_SKILLS[*]} " =~ " ${filename} " ]]; then
+        if [[ ! " ${SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${SDD_SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${BACKBONE_SKILLS[*]} " =~ " ${filename} " ]]; then
             # Only remove files that look like they were installed by us (plain .md or former symlink)
             if [ -L "$file" ] || [ -f "$file" ]; then
                 rm "$file"
@@ -505,6 +513,31 @@ for skill in "${SDD_SKILLS[@]}"; do
     else
         echo -e "  - $skill ${RED}✗ (not found)${NC}"
     fi
+done
+
+# Copy backbone module skills
+echo -e "Copying backbone module skills..."
+for skill in "${BACKBONE_SKILLS[@]}"; do
+    SOURCE="$TOOLKIT_DIR/modules/backbone/skills/$skill"
+
+    for TARGET_DIR in "$COMMANDS_DIR" "$SKILLS_DIR"; do
+        TARGET="$TARGET_DIR/$skill"
+        if [ -f "$SOURCE" ]; then
+            rm -f "$TARGET"
+            cp "$SOURCE" "$TARGET"
+        fi
+    done
+
+    if [ -f "$SOURCE" ]; then
+        echo -e "  - $skill ${GREEN}✓${NC}"
+    else
+        echo -e "  - $skill ${RED}✗ (not found)${NC}"
+    fi
+done
+
+# Ensure backbone scripts are executable
+for script in "$TOOLKIT_DIR"/modules/backbone/scripts/*.sh; do
+    chmod +x "$script" 2>/dev/null || true
 done
 
 # Ensure SDD scripts are executable

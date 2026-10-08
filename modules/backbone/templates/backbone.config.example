@@ -1,0 +1,16 @@
+# backbone.config — per machine, never committed. Copy to <backbone dir>/backbone.config.
+# See docs/git-transport.md and docs/notify.md in agent-backbone.
+
+# local (default): files on this disk. git: messages and presence travel through the repo's remote.
+transport=git
+
+# Your address on the backbone. Default when unset: <repo>:<git user.name slug>.
+# agent=stak-app:bob
+
+# Ping command run after 5 minutes with no ack. Gets BACKBONE_NOTIFY_TARGET/TEXT/FROM/TITLE/ID in the
+# environment; message text is never interpolated into a shell string.
+# notify_command=/path/to/your/wrapper.sh
+
+# ask (default): show the target and text and wait for approval. auto: send without asking.
+# notify_confirm=ask
+# notify_confirm.radeas-analyst-amplifier=ask

@@ -211,9 +211,13 @@ Run `/aid --all` to see these in the terminal.
 
 | Command             | What it does                                                                 |
 | ------------------- | ---------------------------------------------------------------------------- |
-| `/backbone-setup`   | Clone agent-backbone as a sibling repo and install backbone commands here    |
+| `/backbone-setup`   | Clone agent-backbone as a sibling repo, check the module, offer the session hooks |
+| `/backbone-send`    | Send a message to another agent or a topic (secret check and no-ack ping included) |
+| `/backbone-inbox`   | See and claim messages addressed to you                                      |
+| `/backbone-done`    | Finish a claimed message and archive it                                      |
+| `/backbone`         | `status`, `join`, `leave`, `subscribe`, `unsubscribe`, `name`, `update`      |
 
-After setup, the full backbone command set (`/backbone-join`, `/backbone-publish`, `/backbone-inbox`, etc.) is available in the project. See [agent-backbone](https://github.com/jerichoBob/agent-backbone) for the full coordination workflow.
+The commands come with the toolkit (`modules/backbone/`) and are installed globally by `/aid-update`; no files are copied into your project. See [agent-backbone](https://github.com/jerichoBob/agent-backbone) for the full coordination workflow.
 
 #### Analysis & Planning
 
@@ -260,7 +264,8 @@ Skills are markdown files. Each file contains frontmatter (name, description, al
 │   └── ...
 └── aidev-toolkit/          ← git clone of this repo
     ├── skills/             ← core skill files
-    └── modules/sdd/        ← Spec-Driven Development module
+    ├── modules/sdd/        ← Spec-Driven Development module
+    └── modules/backbone/   ← agent-backbone tooling (scripts, skills, templates)
 ```
 
 Because skills are just text files, they're readable, forkable, and customizable. You can modify any skill to change how it behaves, or create new ones. The `install.sh` script symlinks them so updates via `/aid-update` propagate instantly.
@@ -296,9 +301,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.100.0
+0.101.0
 
 ### Release Notes
+
+#### v0.101.0 (2026-10-08) — author: robert.w.seaton.jr@gmail.com
+
+- feat(backbone): add `modules/backbone/` — the agent-backbone tooling (13 scripts, 5 skills, config/roster/hooks templates) installed once by `install.sh` and called by absolute path under `~/.claude/aidev-toolkit/modules/backbone/`; nothing is copied into projects any more. Commands are now `/backbone-setup`, `/backbone-send`, `/backbone-inbox`, `/backbone-done` and `/backbone` (status, join, leave, subscribe, unsubscribe, name, update); the old per-project command names (`/backbone-publish`, `-complete`, `-join`, `-leave`, `-roster`, `-subscribe`, `-unsubscribe`, `-update`) are not ported. `backbone-setup` moved from `skills/` into the module and no longer copies files. Session hooks are added per project with `backbone-install-hooks.sh` (asks first). State (messages, presence, roster) stays in the agent-backbone repo.
+- test(backbone): add `tests/test-backbone-{git-transport,presence,commands}.sh` (real git, no mocks), including a scratch-`HOME` install check
 
 #### v0.100.0 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
 

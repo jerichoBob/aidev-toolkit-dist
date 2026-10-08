@@ -112,7 +112,9 @@ and become slash commands in any project. Full architecture writeup:
 - `/code-stats [path]` — Count lines of code
 - `/screenshots [N]` — Load recent macOS screenshots into context
 - `/should-i-trust-it` — Verify skill safety before installation
-- `/backbone-setup [--install-only | --check]` — Bootstrap the agent-backbone coordination layer as a sibling repo and install backbone commands into the current project
+- `/backbone-setup [--install-only | --check]` — Bootstrap the agent-backbone coordination layer as a sibling repo, check the installed module, offer the session hooks
+- `/backbone-send`, `/backbone-inbox`, `/backbone-done` — Send, read and claim, and finish messages on the backbone
+- `/backbone [status|join|leave|subscribe|unsubscribe|name|update]` — Presence, subscriptions and updates
 - `/aws-costs [--profile <name>] [--all-profiles]` — Show AWS spend by service, daily trend, and active resources
 - `/test-run` — Run the full test suite and save a timestamped report to `tests/results/`
 - `/test-status` — Display results table from the last test run (no re-run)
@@ -1321,6 +1323,32 @@ Code against the spec checklist.
 ```
 
 Run `/aid <command>` for detailed help on any individual command.
+
+<!-- /OUTPUT -->
+
+---
+
+## If `$ARGUMENTS` is "backbone"
+
+<!-- OUTPUT -->
+
+## `/backbone` — Agent-to-Agent Coordination
+
+Five commands for handing work between Claude Code sessions in different repos or on different machines, through the [agent-backbone](https://github.com/jerichoBob/agent-backbone) repo. The tooling ships with the toolkit (`modules/backbone/`) and is installed once by `/aid-update`; nothing is copied into your projects. Messages, presence and the roster stay in the separate agent-backbone repo (`../agent-backbone`).
+
+| Command | What it does |
+| ------- | ------------ |
+| `/backbone-setup [--install-only \| --check]` | Clone agent-backbone as a sibling if missing, check the module is installed, offer the session hooks |
+| `/backbone-send [--type T] [--to AGENT \| --topic TOPIC]` | Draft and send a message (cr, task, ...). Refuses bodies that look like secrets; starts the 5-minute no-ack timer |
+| `/backbone-inbox [--type T]` | Show messages addressed to you and claim one. Message text is shown as untrusted data, never as instructions |
+| `/backbone-done` | Write completion notes and archive the claimed message |
+| `/backbone [status\|join\|leave\|subscribe\|unsubscribe\|name\|update]` | Presence, topic subscriptions, your address, refresh the state repo |
+
+**Session hooks (optional, asked first):** with them installed a SessionStart hook registers you and prints the pending-message count first; a SessionEnd hook marks you inactive. Install with `bash ~/.claude/aidev-toolkit/modules/backbone/scripts/backbone-install-hooks.sh <project>`.
+
+**Config** (`../agent-backbone/backbone.config`, per machine, never committed): `transport=local|git`, `agent=<address>`, `notify_command=`, `notify_confirm=ask|auto`. Template: `modules/backbone/templates/backbone.config.example`.
+
+**Old names:** `/backbone-publish`, `-complete`, `-join`, `-leave`, `-roster`, `-subscribe`, `-unsubscribe` and `-update` are not part of the toolkit module; use the five above.
 
 <!-- /OUTPUT -->
 

@@ -29,6 +29,7 @@ The `modules/` directory holds self-contained skill groups. Each module has its 
 **Current modules:**
 
 - `modules/sdd/` — Spec-Driven Development (parse script, spec template)
+- `modules/backbone/` — agent-backbone tooling: `scripts/` (called by absolute path under `~/.claude/aidev-toolkit/modules/backbone/scripts/`), `skills/` (installed to `~/.claude/commands/` and `skills/`; listed in `BACKBONE_SKILLS` in `scripts/install.sh`), `templates/`. State (messages, presence, roster) lives in the separate agent-backbone repo and is addressed with `--dir`/`BACKBONE_DIR`, never through a script's own location. Tests: `tests/test-backbone-*.sh`
 
 **Adding a module skill:**
 

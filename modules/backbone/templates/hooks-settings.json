@@ -1,0 +1,6 @@
+{
+  "hooks": {
+    "SessionStart": [ { "hooks": [ { "type": "command", "command": "bash ~/.claude/aidev-toolkit/modules/backbone/scripts/backbone-session-start.sh --dir ../agent-backbone" } ] } ],
+    "SessionEnd":   [ { "hooks": [ { "type": "command", "command": "bash ~/.claude/aidev-toolkit/modules/backbone/scripts/backbone-session-end.sh --dir ../agent-backbone" } ] } ]
+  }
+}
