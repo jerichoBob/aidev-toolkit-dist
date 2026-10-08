@@ -176,7 +176,7 @@ A full workflow for writing specs before code, tracking implementation phase by 
 | ---------------- | ------------------------------------------------------- |
 | `/sdd-spec`      | Create a new specification document from a description  |
 | `/sdd-specs`     | Show all specs — status, staleness, progress summary    |
-| `/sdd-code`      | Implement all remaining tasks in a spec end-to-end      |
+| `/sdd-code`      | Walk through the spec's open questions, then implement all remaining tasks end-to-end (`--skip-questions` to skip the walkthrough) |
 | `/sdd-init`      | Scaffold a `specs/` directory for a new project         |
 
 ### Toolkit Management
@@ -218,6 +218,14 @@ Run `/aid --all` to see these in the terminal.
 | `/backbone`         | `status`, `join`, `leave`, `subscribe`, `unsubscribe`, `name`, `update`      |
 
 The commands come with the toolkit (`modules/backbone/`) and are installed globally by `/aid-update`; no files are copied into your project. See [agent-backbone](https://github.com/jerichoBob/agent-backbone) for the full coordination workflow.
+
+#### Chat
+
+| Command | What it does |
+| ------- | ------------ |
+| `/gchat` | Google Chat: `list` spaces, `read` history, `send` a message (asks first by default; `confirm auto` opts out), `setup` |
+
+One-time setup per person: enable the Google Chat API in a Cloud project, save a Desktop OAuth client as `~/.config/aidev/gchat/credentials.json`, then run `! ~/.claude/aidev-toolkit/modules/gchat/scripts/gchat.sh auth`. Run `/aid gchat` for details, including using Chat as the backbone notifier.
 
 #### Analysis & Planning
 
@@ -301,9 +309,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.102.0
+0.102.1
 
 ### Release Notes
+
+#### v0.102.1 (2026-10-08) — author: robert.w.seaton.jr@gmail.com
+
+- docs: add `/aid gchat` help with one-time setup, the `confirm` setting and backbone notifier wiring; document `--skip-questions`, `--no-stats` and the Open Questions walkthrough under `/aid sdd-code`; add `/gchat` and `/sdd-code` rows to the README; add `modules/gchat/README.md`
 
 #### v0.102.0 (2026-10-08) — author: robert.w.seaton.jr@gmail.com
 

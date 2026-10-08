@@ -40,7 +40,7 @@ Skills marked as core — your daily drivers. Run `/aid --all` to see everything
 - `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
 - `/sdd-spec <description>` — Create a new specification document
 - `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
-- `/sdd-code [version]` — Implement all remaining tasks in a spec (formerly `/sdd-code-spec`)
+- `/sdd-code [version] [--skip-questions]` — Walk through open questions, then implement all remaining tasks in a spec (formerly `/sdd-code-spec`)
 
 Run `/aid <command>` for detailed help on any command. For Bedrock/model config: `/aid bedrock`
 
@@ -88,7 +88,7 @@ and become slash commands in any project. Full architecture writeup:
 - `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
 - `/sdd-spec <description>` — Create a new specification document
 - `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
-- `/sdd-code [version]` — Implement all remaining tasks in a spec (formerly `/sdd-code-spec`)
+- `/sdd-code [version] [--skip-questions]` — Walk through open questions, then implement all remaining tasks in a spec (formerly `/sdd-code-spec`)
 
 ---
 
@@ -1109,31 +1109,37 @@ Analyze all active (incomplete) specs and recommend the top N to focus on next (
 
 _(formerly `/sdd-code-spec`)_
 
-**Usage:** `/sdd-code [version]`
+**Usage:** `/sdd-code [version] [--no-stats] [--skip-questions]`
 
 Implement all remaining phases and tasks in a spec without stopping.
 
 **Arguments:**
 
-| Argument  | Description                                                                  |
-| --------- | ---------------------------------------------------------------------------- |
-| `version` | Optional spec version (e.g., `v3`). Defaults to first In Progress/Draft spec |
+| Argument           | Description                                                                  |
+| ------------------ | ---------------------------------------------------------------------------- |
+| `version`          | Optional spec version (e.g., `v3`). Defaults to first In Progress/Draft spec |
+| `--no-stats`       | Skip per-task token tracking                                                 |
+| `--skip-questions` | Skip the up-front Open Questions walkthrough                                 |
 
 **Workflow:**
 
 1. Identifies target spec and all remaining work
-2. Implements phase-by-phase, task-by-task
-3. Updates README after each task
-4. Marks blocked tasks and continues
-5. Reports full completion summary
+2. Walks you through the spec's **Open Questions**, one at a time, before any code is written
+3. Implements phase-by-phase, task-by-task
+4. Updates README after each task
+5. Marks blocked tasks and continues
+6. Reports full completion summary
 
-**Important:** Does not stop between tasks or phases — implements end-to-end.
+**Open Questions walkthrough:** each unanswered question in the spec's `## Open Questions` gets its own prompt, with concrete options (a recommendation first), how each would change the implementation, and "Skip — decide during implementation". Skipping is always allowed; skipped questions stay open and the assumption is listed in the final summary. Answers are written back to the spec as `Resolved (date): ...`, and if they change the scope, the pending tasks are updated before coding starts.
+
+**Important:** Does not stop between tasks or phases once coding starts — implements end-to-end.
 
 **Examples:**
 
 ```text
 /sdd-code           Implement first active spec
 /sdd-code v3        Implement spec v3 specifically
+/sdd-code --skip-questions   Go straight to coding, no questions
 ```
 
 <!-- /OUTPUT -->
@@ -1350,6 +1356,41 @@ Five commands for handing work between Claude Code sessions in different repos o
 **Config** (`../agent-backbone/backbone.config`, per machine, never committed): `transport=local|git`, `agent=<address>`, `notify_command=`, `notify_confirm=ask|auto`. Template: `modules/backbone/templates/backbone.config.example`.
 
 **Old names:** `/backbone-publish`, `-complete`, `-join`, `-leave`, `-roster`, `-subscribe`, `-unsubscribe` and `-update` are not part of the toolkit module; use the five above.
+
+<!-- /OUTPUT -->
+
+---
+
+## If `$ARGUMENTS` is "gchat"
+
+<!-- OUTPUT -->
+
+## `/gchat` — Google Chat
+
+**Usage:** `/gchat [list | read | send <space> / <text> | confirm [ask|auto] | setup]`
+
+List your Chat spaces, read message history, and post messages as yourself. Tooling ships with the toolkit (`modules/gchat/`) and is installed by `/aid-update`. Credentials are per person in `~/.config/aidev/gchat/` (override with `GCHAT_CONFIG_DIR`); nothing is stored in a project.
+
+| Command | What it does |
+| ------- | ------------ |
+| `/gchat setup` | Walks through the one-time setup below |
+| `/gchat list` | List spaces, group chats and DMs (`spaces/AAAA...` names) |
+| `/gchat read --space S --days N` / `--scan --grep RE` | Read one space, or scan all and filter (read-only; attachments downloadable) |
+| `/gchat send <space> / <text>` | Post a message. Chat has no drafts, so it is live the moment it sends |
+| `/gchat confirm [ask\|auto]` | Show or set whether sends ask first. Default `ask` |
+
+**One-time setup (each person, once):**
+
+1. In a Google Cloud project, enable the **Google Chat API** (APIs & Services → Library).
+2. Create a **Desktop app** OAuth client and save its JSON as `~/.config/aidev/gchat/credentials.json`.
+3. Authenticate (opens a browser, so run it yourself): `! ~/.claude/aidev-toolkit/modules/gchat/scripts/gchat.sh auth`
+4. Sign in with your own Google account and grant consent. The token is cached in the same folder and refreshes itself.
+
+Needs `uv` (dependencies fetched on demand) or `python3` with `google-api-python-client` and `google-auth-oauthlib`. If consent fails with an admin-policy error, a Workspace administrator has to allowlist the client and the Chat scopes; it is not a code bug.
+
+**Send confirmation:** by default every send shows the space and exact text and waits for approval. `gchat.sh confirm auto` turns the prompt off for you; `confirm ask` turns it back on.
+
+**Backbone pings in Chat:** in `backbone.config` (machine-local) set `notify_command=~/.claude/aidev-toolkit/modules/gchat/scripts/gchat-notify.sh` and use `spaces/AAAA...` as the roster notify target. Approval is governed by backbone's `notify_confirm`, separate from `confirm` above.
 
 <!-- /OUTPUT -->
 
