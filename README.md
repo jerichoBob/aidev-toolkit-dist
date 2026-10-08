@@ -296,9 +296,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.99.1
+0.100.0
 
 ### Release Notes
+
+#### v0.100.0 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd-code): walk through spec open questions one at a time before coding [`73b0882`]
+- docs(specs): archive completed v119 [`4f6eb6e`]
 
 #### v0.99.1 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
 

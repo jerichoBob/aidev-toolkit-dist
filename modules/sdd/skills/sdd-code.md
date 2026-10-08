@@ -3,7 +3,7 @@ name: sdd-code
 display-name: "/sdd-code"
 tier: core
 description: "Implement ALL remaining phases and tasks in a spec without stopping"
-argument-hint: "[spec-version] [--no-stats]"
+argument-hint: "[spec-version] [--no-stats] [--skip-questions]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git:*), Bash(date:*), AskUserQuestion
 ---
 
@@ -52,11 +52,22 @@ Implement all remaining phases and tasks in the current spec without stopping be
 
 4. **Check the spec against architecture principles** (only if principles were loaded in Step 1):
    - Scan the target spec file's `## Security` section for AP-005 compliance (explicit, non-placeholder Authentication/Authorization/Audit Logging decisions). If it's still boilerplate, patch it now using the same logic `/sdd-spec` Step 4.5 uses — don't start implementation with an unresolved security decision.
-   - For the remaining required principles (AP-001 security, AP-002/AP-007 observability, AP-003 error handling, AP-004 testing, AP-006 supply chain), keep them in mind for every task in Step 5 below — see the per-task guidance there. No need to front-load a full audit; that's what `/arch-review` is for.
+   - For the remaining required principles (AP-001 security, AP-002/AP-007 observability, AP-003 error handling, AP-004 testing, AP-006 supply chain), keep them in mind for every task in item 7 below — see the per-task guidance there. No need to front-load a full audit; that's what `/arch-review` is for.
 
-5. **Create a todo list**: Use TodoWrite to create tasks for ALL unchecked items across ALL phases, organized by phase.
+5. **Walk through the spec's Open Questions, one at a time** (before any code is written):
+   - Read the spec file's `## Open Questions` section. If it is missing, empty, or contains only template placeholders (`Question 1?`), or `$ARGUMENTS` contains `--skip-questions`, skip this step.
+   - Skip questions that are already answered (e.g. marked `~~struck~~`, `Resolved:`, or `Answer:`).
+   - For each remaining question, **in order and one per `AskUserQuestion` call** (never batch them — later questions often depend on earlier answers):
+     - Show the question text, plus any context from the spec that bears on it.
+     - Offer 2-4 concrete answer options inferred from the spec and codebase (put your recommendation first, labelled "(Recommended)"), plus a "Skip — decide during implementation" option. The built-in "Other" lets the user type a free-form answer.
+     - Say briefly how each option would change the implementation, so the user can see why the question matters.
+   - Skipping or not answering is always allowed — never block on it. Skipped questions stay open; use your best judgment while coding and flag the assumption in the final summary.
+   - After each answer, record it in the spec file under `## Open Questions` as `Resolved ({date}): {answer}` beneath the question, so the decision is durable.
+   - After the last question, if any answer changes the scope of the pending tasks (adds, removes, or reshapes them), update the task descriptions in `specs/README.md` and the spec file **before** coding begins, and tell the user what changed.
 
-6. **Implement phase by phase, task by task**:
+6. **Create a todo list**: Use TodoWrite to create tasks for ALL unchecked items across ALL phases, organized by phase.
+
+7. **Implement phase by phase, task by task**:
    - Work through phases in order (Phase 1, then Phase 2, etc.)
    - Within each phase, implement each task sequentially
    - **Token-tracking file reuse (per-phase, not per-task)**: use two fixed, alternating snapshot files for the whole phase — `/tmp/sdd-code-phase-{version}-{phase_num}-a.json` and `/tmp/sdd-code-phase-{version}-{phase_num}-b.json`. A task's "after" snapshot IS the next task's "before" snapshot — no copy, no re-snapshot, just point the `delta` call at whichever file already holds that state. This drops the redundant "before" snapshot Bash call for every task after the first in a phase (only one `snapshot` call per task instead of two).
@@ -80,19 +91,19 @@ Implement all remaining phases and tasks in the current spec without stopping be
      - Move immediately to the next task
    - When a phase is complete, move immediately to the next phase. Delete that phase's snapshot files (`rm -f /tmp/sdd-code-phase-{version}-{phase_num}-a.json /tmp/sdd-code-phase-{version}-{phase_num}-b.json`) and start a fresh before-snapshot for the first task of the next phase.
 
-7. **Do NOT stop between tasks or phases**: Continue implementing until ALL phases in the spec are complete.
+8. **Do NOT stop between tasks or phases**: Continue implementing until ALL phases in the spec are complete.
 
-8. **After completing the entire spec**:
+9. **After completing the entire spec**:
    - Update the Quick Status table row in `specs/README.md` to show completion
    - Update the spec file's YAML frontmatter `status` field to `complete`
    - Run any relevant tests if they exist
    - Bump the version (patch for fixes, minor for features)
-   - If architecture principles were loaded, suggest `/arch-review` in the summary as the formal compliance check — the inline principle-awareness in Step 6 is not a substitute for a full audit
+   - If architecture principles were loaded, suggest `/arch-review` in the summary as the formal compliance check — the inline principle-awareness in item 7 is not a substitute for a full audit
    - Report a summary of what was implemented
 
 ## Important
 
-- **Do not ask for confirmation between tasks or phases** — implement the entire spec end-to-end
+- **Do not ask for confirmation between tasks or phases** — implement the entire spec end-to-end. The one exception is the up-front Open Questions walkthrough (Step 2, item 5), which happens before coding starts.
 - **Update specs/README.md after each task** — keep the checklist in sync
 - **Update spec file YAML frontmatter** when completing a spec (`status: complete`)
 - **Read the full spec file** for additional context on implementation details
@@ -109,6 +120,7 @@ When starting:
 Implementing Spec: v{N} - {Name}
 Phases to complete: {count}
 Total tasks remaining: {count}
+Open questions: {answered} answered, {skipped} skipped
 
 Starting Phase 1: {Phase Name}...
 ```
@@ -124,6 +136,8 @@ Phase 1: {Phase Name}
 
 {Blocked (if any):}
 {- {Task} — {reason}}
+
+{Open questions skipped (assumptions made): (if any)}
 
 Version bumped: {old} -> {new}
 ```
