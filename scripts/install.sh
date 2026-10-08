@@ -84,6 +84,11 @@ SDD_SKILLS=(
     "sdd-spec-status.md"
 )
 
+# gchat module skills (sourced from modules/gchat/skills/)
+GCHAT_SKILLS=(
+    "gchat.md"
+)
+
 # Backbone module skills (sourced from modules/backbone/skills/)
 BACKBONE_SKILLS=(
     "backbone.md"
@@ -180,7 +185,7 @@ for dir in "$COMMANDS_DIR" "$SKILLS_DIR"; do
         [ -e "$file" ] || continue
         filename=$(basename "$file")
         # Check if this file is a known core skill or SDD skill; if not, remove it
-        if [[ ! " ${SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${SDD_SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${BACKBONE_SKILLS[*]} " =~ " ${filename} " ]]; then
+        if [[ ! " ${SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${SDD_SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${BACKBONE_SKILLS[*]} " =~ " ${filename} " ]] && [[ ! " ${GCHAT_SKILLS[*]} " =~ " ${filename} " ]]; then
             # Only remove files that look like they were installed by us (plain .md or former symlink)
             if [ -L "$file" ] || [ -f "$file" ]; then
                 rm "$file"
@@ -537,6 +542,31 @@ done
 
 # Ensure backbone scripts are executable
 for script in "$TOOLKIT_DIR"/modules/backbone/scripts/*.sh; do
+    chmod +x "$script" 2>/dev/null || true
+done
+
+# Copy gchat module skills
+echo -e "Copying gchat module skills..."
+for skill in "${GCHAT_SKILLS[@]}"; do
+    SOURCE="$TOOLKIT_DIR/modules/gchat/skills/$skill"
+
+    for TARGET_DIR in "$COMMANDS_DIR" "$SKILLS_DIR"; do
+        TARGET="$TARGET_DIR/$skill"
+        if [ -f "$SOURCE" ]; then
+            rm -f "$TARGET"
+            cp "$SOURCE" "$TARGET"
+        fi
+    done
+
+    if [ -f "$SOURCE" ]; then
+        echo -e "  - $skill ${GREEN}✓${NC}"
+    else
+        echo -e "  - $skill ${RED}✗ (not found)${NC}"
+    fi
+done
+
+# Ensure gchat scripts are executable
+for script in "$TOOLKIT_DIR"/modules/gchat/scripts/*.sh; do
     chmod +x "$script" 2>/dev/null || true
 done
 

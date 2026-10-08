@@ -115,6 +115,7 @@ and become slash commands in any project. Full architecture writeup:
 - `/backbone-setup [--install-only | --check]` — Bootstrap the agent-backbone coordination layer as a sibling repo, check the installed module, offer the session hooks
 - `/backbone-send`, `/backbone-inbox`, `/backbone-done` — Send, read and claim, and finish messages on the backbone
 - `/backbone [status|join|leave|subscribe|unsubscribe|name|update]` — Presence, subscriptions and updates
+- `/gchat [list|read|send|setup]` — Google Chat: list spaces, read history, send a message (confirms every send); also a backbone notifier
 - `/aws-costs [--profile <name>] [--all-profiles]` — Show AWS spend by service, daily trend, and active resources
 - `/test-run` — Run the full test suite and save a timestamped report to `tests/results/`
 - `/test-status` — Display results table from the last test run (no re-run)

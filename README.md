@@ -301,9 +301,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.101.0
+0.102.0
 
 ### Release Notes
+
+#### v0.102.0 (2026-10-08) — author: robert.w.seaton.jr@gmail.com
+
+- feat(gchat): add `modules/gchat/` — `/gchat` skill (list, read, send, setup) ported from a project-local skill and made generic: per-user OAuth credentials/token in `~/.config/aidev/gchat/` (`GCHAT_CONFIG_DIR` overrides), run through `gchat.sh` (uv or python3), no project or org wording. Sends ask for confirmation by default; `gchat.sh confirm auto` opts out (per user, `confirm=` in `~/.config/aidev/gchat/config`).
+- feat(gchat): `gchat-notify.sh` is a backbone notifier — set `notify_command=` in the machine-local `backbone.config` and use `spaces/...` roster notify targets (target validated before sending)
+- test(gchat): add `tests/test-gchat.sh` (wrapper, notifier validation, backbone-notify integration; live Chat calls blocked without OAuth)
 
 #### v0.101.0 (2026-10-08) — author: robert.w.seaton.jr@gmail.com
 
