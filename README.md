@@ -309,9 +309,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.103.0
+0.103.1
 
 ### Release Notes
+
+#### v0.103.1 (2026-10-12) — author: robert.w.seaton.jr@gmail.com
+
+- fix(statusline): the ctx percentage now takes the hue of the last lit bar cell, so the bar and the number always agree (previously the number used the old green/yellow/red bands)
 
 #### v0.103.0 (2026-10-12) — author: robert.w.seaton.jr@gmail.com
 

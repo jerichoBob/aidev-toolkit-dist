@@ -36,6 +36,11 @@ out=$(run 250 | strip)
 run 100 | grep -q $'\033\\[38;5;196m'; check "last cell is red (196)" $?
 run 100 | grep -q $'\033\\[38;5;46m'; check "first cell is green (46)" $?
 
+# percentage color matches the last lit cell's hue (14% -> 2 cells -> 82; 100% -> 196)
+run 14 | grep -q $'\033\\[38;5;82m14%'; check "14% number matches 2nd cell hue (82)" $?
+run 100 | grep -q $'\033\\[38;5;196m100%'; check "100% number matches last cell hue (196)" $?
+run 0 | grep -q $'\033\\[38;5;46m0%'; check "0% number is green (46)" $?
+
 # --- no cache file and no git clone: silent, no marker ---
 err=$(run 4 2>&1 >/dev/null)
 [[ -z "$err" ]]; check "missing cache produces no stderr" $?
