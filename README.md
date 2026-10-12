@@ -309,9 +309,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.102.1
+0.103.0
 
 ### Release Notes
+
+#### v0.103.0 (2026-10-12) — author: robert.w.seaton.jr@gmail.com
+
+- feat(statusline): ctx shows a 10-cell green→yellow→red bar plus the percentage; `aid:` pulses gold with a `⬆<latest>` marker when a newer toolkit version is upstream (hourly background `git fetch`, cached in `~/.claude/.aid-latest-version`, never blocks a redraw)
+- feat(statusline): add `scripts/preview-statusline.sh` (previews the bar and the pulse without touching `~/.claude`) and `tests/test-statusline-bar-and-update.sh`
 
 #### v0.102.1 (2026-10-08) — author: robert.w.seaton.jr@gmail.com
 

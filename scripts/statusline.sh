@@ -59,11 +59,23 @@ if [[ "$(jq -r '.components.ctx // true' "$CONFIG" 2>/dev/null)" == "true" ]]; t
   ctx_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty' 2>/dev/null)
   if [[ -n "$ctx_pct" ]]; then
     ctx_int=${ctx_pct%.*}
+    [[ -z "$ctx_int" ]] && ctx_int=0
+    (( ctx_int > 100 )) && ctx_int=100
     if   (( ctx_int > 30 )); then color="\033[31m"
     elif (( ctx_int >= 10 )); then color="\033[33m"
     else                           color="\033[32m"
     fi
-    parts+=("${color}ctx:${ctx_int}%\033[0m")
+    # 10-cell bar; each cell keeps its own green→yellow→red hue (thermometer
+    # style), empty cells are dim. Any non-zero usage lights at least one cell.
+    bar_hues=(46 82 118 154 190 226 214 208 202 196)
+    filled=$(( (ctx_int + 9) / 10 ))
+    bar=""
+    for (( i = 0; i < 10; i++ )); do
+      if (( i < filled )); then bar+="\033[38;5;${bar_hues[i]}m▰"
+      else                      bar+="\033[38;5;238m▱"
+      fi
+    done
+    parts+=("\033[90mctx\033[0m ${bar}\033[0m ${color}${ctx_int}%\033[0m")
 
     # Persist usage for the context-thermostat hook (UserPromptSubmit can't
     # read context_window itself — this file is the only channel it has).
@@ -118,12 +130,33 @@ if [[ "$(jq -r '.components.aid_version // false' "$CONFIG" 2>/dev/null)" == "tr
   if [[ -f "$AID_VERSION_FILE" ]]; then
     aid_version=$(cat "$AID_VERSION_FILE" 2>/dev/null | tr -d '[:space:]')
     if [[ -n "$aid_version" ]]; then
-      if (( ($(date +%s) / 10) % 2 == 0 )); then
-        pulse_color="\033[97m"
-      else
-        pulse_color="\033[90m"
+      # Update check: the cache file holds the latest upstream VERSION. It is
+      # refreshed in the background (at most hourly) — the footer redraws far
+      # too often to ever block on the network.
+      AID_DIR="${HOME}/.claude/aidev-toolkit"
+      UPDATE_CACHE="${HOME}/.claude/.aid-latest-version"
+      now=$(date +%s)
+      cache_mtime=$(stat -f %m "$UPDATE_CACHE" 2>/dev/null || stat -c %Y "$UPDATE_CACHE" 2>/dev/null || echo 0)
+      if (( now - cache_mtime > 3600 )) && [[ -d "$AID_DIR/.git" ]]; then
+        touch "$UPDATE_CACHE"  # claim the slot so concurrent redraws don't stampede
+        (
+          git -C "$AID_DIR" fetch -q origin 2>/dev/null &&
+            git -C "$AID_DIR" show origin/HEAD:VERSION 2>/dev/null | tr -d '[:space:]' > "${UPDATE_CACHE}.tmp" &&
+            mv "${UPDATE_CACHE}.tmp" "$UPDATE_CACHE"
+        ) >/dev/null 2>&1 &
+        disown 2>/dev/null
       fi
-      parts+=("${pulse_color}aid:${aid_version}\033[0m")
+      latest=""
+      [[ -f "$UPDATE_CACHE" ]] && latest=$(tr -d '[:space:]' < "$UPDATE_CACHE")
+
+      if [[ -n "$latest" && "$latest" != "$aid_version" ]] &&
+         [[ "$(printf '%s\n%s\n' "$aid_version" "$latest" | sort -V | tail -1)" == "$latest" ]]; then
+        # Update available: pulse gold (bright <-> deep gold each second)
+        if (( now % 2 == 0 )); then glow="\033[1;38;5;220m"; else glow="\033[38;5;136m"; fi
+        parts+=("${glow}aid:${aid_version} ⬆${latest}\033[0m")
+      else
+        parts+=("\033[90maid:${aid_version}\033[0m")
+      fi
     fi
   fi
 fi
