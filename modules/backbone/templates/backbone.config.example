@@ -1,5 +1,5 @@
 # backbone.config — per machine, never committed. Copy to <backbone dir>/backbone.config.
-# See docs/git-transport.md and docs/notify.md in agent-backbone.
+# See docs/git-transport.md and docs/notify.md in this module (~/.claude/aidev-toolkit/modules/backbone/docs/).
 
 # local (default): files on this disk. git: messages and presence travel through the repo's remote.
 transport=git

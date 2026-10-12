@@ -82,6 +82,12 @@ for s in "$MOD"/scripts/*.sh; do
   [[ -x "$s" ]] && pass "$(basename "$s") is executable in the repo" || fail "$(basename "$s") is not executable"
 done
 grep -q 'modules/backbone/scripts/\*.sh' "$INSTALL_SH" && pass "install.sh chmods the module scripts" || fail "install.sh does not chmod the module scripts"
+for t in cr.md task.md feedback.md story-status-update.md README.md; do
+  [[ -f "$MOD/types/$t" ]] && pass "bundled type schema $t exists" || fail "bundled type schema $t is missing"
+done
+for sk in backbone-send backbone-done; do
+  grep -q 'modules/backbone/types' "$SKILLS/$sk.md" && pass "$sk falls back to the bundled types" || fail "$sk has no bundled-types fallback"
+done
 for t in backbone.config.example roster.md hooks-settings.json; do
   [[ -f "$MOD/templates/$t" ]] && pass "template $t exists" || fail "template $t is missing"
 done

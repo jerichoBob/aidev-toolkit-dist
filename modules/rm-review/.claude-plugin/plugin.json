@@ -1,0 +1,7 @@
+{
+  "name": "rm-review",
+  "version": "0.1.0",
+  "author": { "name": "aidev-toolkit" },
+  "description": "When Claude tries an rm, show the files it would remove in a side panel; you move them to the Trash yourself.",
+  "types": "./types/index.d.ts"
+}

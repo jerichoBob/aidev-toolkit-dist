@@ -63,6 +63,8 @@ define a `## Milestones` section see unchanged (legacy) feasibility-only ranking
 >
 > **Never nest checkboxes.** Indented checkboxes in `specs/README.md` are not counted by `specs-parse.sh`. Flatten split sub-parts into sibling top-level items with a suffix (e.g. `ITEM-a` / `ITEM-b`) instead.
 
+> **Prefer vertical slicing.** Prefer vertical (outcome-based) phase slicing over horizontal (architecture-layer) slicing — a spec should be closeable when its own layer is independently verifiable. A UI/consumer phase that depends on infra owned by a different (or not-yet-existing) spec belongs to that other spec, not to this one.
+
 ### Phase 1: {Phase Name}
 
 - Task 1

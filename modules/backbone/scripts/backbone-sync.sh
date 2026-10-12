@@ -7,7 +7,7 @@
 #   push <action> <id>    commit messages/ and presence/ as "backbone: <action> <id>", then push
 #                         (no-op when transport=local). On a lost race the local commit is dropped.
 #
-# DIR defaults to $BACKBONE_DIR, else ../agent-backbone from the cwd. Scripts live in the toolkit module and
+# DIR defaults to $BACKBONE_DIR, else the machine default (see backbone-dir.sh). Scripts live in the toolkit module and
 # never find state through their own location.
 # Exit codes: 0 ok · 2 remote unreachable or git failure · 3 lost a race (someone else changed it first)
 #             · 4 usage or config error

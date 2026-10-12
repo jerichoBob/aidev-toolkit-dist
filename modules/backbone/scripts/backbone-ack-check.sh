@@ -72,7 +72,7 @@ done
 
 # Nothing is attempted without a notifier, so say so before looking anyone up.
 if [[ -z "$(bb_config_get "$DIR" notify_command)" ]]; then
-  echo "NONOTIFIER no notify_command configured (set it in $DIR/backbone.config; see docs/notify.md)"
+  echo "NONOTIFIER no notify_command configured (set it in $DIR/backbone.config; see ~/.claude/aidev-toolkit/modules/backbone/docs/notify.md)"
   exit 14
 fi
 

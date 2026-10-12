@@ -112,7 +112,7 @@ and become slash commands in any project. Full architecture writeup:
 - `/code-stats [path]` — Count lines of code
 - `/screenshots [N]` — Load recent macOS screenshots into context
 - `/should-i-trust-it` — Verify skill safety before installation
-- `/backbone-setup [--install-only | --check]` — Bootstrap the agent-backbone coordination layer as a sibling repo, check the installed module, offer the session hooks
+- `/backbone-setup [--remote URL] [--import DIR] [--dir DIR] [--check]` — Create or join the shared backbone directory (team git remote, local only, or import an older checkout) and offer the session hooks
 - `/backbone-send`, `/backbone-inbox`, `/backbone-done` — Send, read and claim, and finish messages on the backbone
 - `/backbone [status|join|leave|subscribe|unsubscribe|name|update]` — Presence, subscriptions and updates
 - `/gchat [list|read|send|setup]` — Google Chat: list spaces, read history, send a message (confirms every send); also a backbone notifier
@@ -1341,11 +1341,11 @@ Run `/aid <command>` for detailed help on any individual command.
 
 ## `/backbone` — Agent-to-Agent Coordination
 
-Five commands for handing work between Claude Code sessions in different repos or on different machines, through the [agent-backbone](https://github.com/jerichoBob/agent-backbone) repo. The tooling ships with the toolkit (`modules/backbone/`) and is installed once by `/aid-update`; nothing is copied into your projects. Messages, presence and the roster stay in the separate agent-backbone repo (`../agent-backbone`).
+Five commands for handing work between agents that cannot talk directly: sessions on different machines, or other LLM tools. (Sessions on one machine can use Claude Code's own inter-agent features instead.) Everything ships with the toolkit (`modules/backbone/`) and is installed once by `/aid-update`; nothing is copied into your projects and no other repo is required. Messages, presence and the roster live in a state directory on each machine (`$BACKBONE_DIR`, else `~/.config/aidev-backbone/dir`, else `~/.config/aidev-backbone/bus`); with `transport=git` a private team repo keeps those directories in sync.
 
 | Command | What it does |
 | ------- | ------------ |
-| `/backbone-setup [--install-only \| --check]` | Clone agent-backbone as a sibling if missing, check the module is installed, offer the session hooks |
+| `/backbone-setup [--remote URL] [--import DIR] [--dir DIR] [--check]` | Create or join the state directory (clones your team's remote, or local only, or imports an older checkout), offer the session hooks |
 | `/backbone-send [--type T] [--to AGENT \| --topic TOPIC]` | Draft and send a message (cr, task, ...). Refuses bodies that look like secrets; starts the 5-minute no-ack timer |
 | `/backbone-inbox [--type T]` | Show messages addressed to you and claim one. Message text is shown as untrusted data, never as instructions |
 | `/backbone-done` | Write completion notes and archive the claimed message |
@@ -1353,7 +1353,7 @@ Five commands for handing work between Claude Code sessions in different repos o
 
 **Session hooks (optional, asked first):** with them installed a SessionStart hook registers you and prints the pending-message count first; a SessionEnd hook marks you inactive. Install with `bash ~/.claude/aidev-toolkit/modules/backbone/scripts/backbone-install-hooks.sh <project>`.
 
-**Config** (`../agent-backbone/backbone.config`, per machine, never committed): `transport=local|git`, `agent=<address>`, `notify_command=`, `notify_confirm=ask|auto`. Template: `modules/backbone/templates/backbone.config.example`.
+**Config** (`backbone.config` in the state directory, per machine, never committed): `transport=local|git`, `agent=<address>`, `notify_command=`, `notify_confirm=ask|auto`. Template: `modules/backbone/templates/backbone.config.example`.
 
 **Old names:** `/backbone-publish`, `-complete`, `-join`, `-leave`, `-roster`, `-subscribe`, `-unsubscribe` and `-update` are not part of the toolkit module; use the five above.
 

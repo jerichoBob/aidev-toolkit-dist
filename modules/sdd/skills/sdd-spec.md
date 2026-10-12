@@ -290,6 +290,29 @@ Check whether spec-guard mode is enabled for this project:
    - **Do NOT use checkboxes** (`- [ ]` / `- [x]`) anywhere in the spec file — use plain bullets instead
    - The spec file is a **design document**, not a progress tracker
 
+4.4. **Step 2.45 — Check for horizontal layer slicing**:
+
+Specs should close on their own layer. A spec that bundles a core logic/API phase with a UI/frontend phase that leans on shared infra nobody has built gets stuck at "N-1/N" indefinitely. Run the heuristic helper over the drafted phases (write the draft's phase headings and tasks to a temp file, or pipe them via stdin):
+
+```bash
+~/.claude/aidev-toolkit/modules/sdd/scripts/slicing-check.sh -
+```
+
+- **No output**: no warning — continue silently, exactly as before. The helper is deliberately conservative (AC-5): a phase it cannot confidently classify as logic/API or UI/frontend never triggers anything.
+- **`WARN<TAB>phase<TAB>infra` lines**: for each, confirm the named infra (e.g. an authenticated-fetch layer, shared component library, shared API client) is not covered by an existing completed or in-progress spec (`~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh spec-list`). If it is covered, drop the warning. If it is not, print:
+
+  ```text
+  ⚠️  Horizontal slicing risk: "{phase}" depends on {infra}, which no existing spec provides.
+      This spec may stall at N-1/N because that phase cannot close. Recommended:
+      (a) split the UI phase into its own spec, or
+      (b) add the UI need as an acceptance item on the spec that owns {infra}.
+  ```
+
+  Then use `AskUserQuestion` with three options — **Split UI phase into its own spec**, **Add as acceptance item on the infra-owning spec**, **Proceed anyway (bundled)** — and route:
+  - **Split**: remove that phase from the current draft and create it as a separate new spec by running this Normal Append Flow again with the UI-only content (new version number).
+  - **Acceptance item**: if a spec owning the infra exists, `Edit` it to add an acceptance item noting the new consumer. If none exists, **always ask first** whether to create one — never auto-create a spec without confirmation.
+  - **Proceed anyway**: continue unchanged. Mention the override in the report in Step 3.
+
 4.5. **Populate the Security section** (always required — this satisfies **AP-005: Runtime Security Patterns**, loaded in Step 0.7):
 
 After drafting the spec content, fill in the `## Security` section based on the description context. Do not leave it as template boilerplate. Apply this logic:

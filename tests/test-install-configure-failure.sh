@@ -47,7 +47,7 @@ CURATED_PATH="$FAKE_BIN:/bin"
 # Extract each configure_* function body from install.sh and test it in isolation
 # with the failing python3 stub on PATH, real jq/python3 removed from PATH.
 for fn in configure_permissions configure_hooks configure_telemetry_hook \
-          configure_context_thermostat_hook configure_statusline; do
+          configure_context_thermostat_hook configure_destructive_guard_hook configure_statusline; do
     echo ""
     echo "Test: $fn propagates python3 failure..."
 

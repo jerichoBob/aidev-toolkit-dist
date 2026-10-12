@@ -37,7 +37,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 [[ -n "$DIR" ]] || DIR="$(bb_default_dir "$SELF_DIR")"
-[[ -d "$DIR" ]] || { echo "backbone: $DIR not found — skipping"; exit 0; }
+[[ -d "$DIR" ]] || { echo "backbone: not set up ($DIR not found) — run /backbone-setup; skipping"; exit 0; }
 DIR="$(cd "$DIR" && pwd)"
 [[ -n "$PROJECT" ]] || PROJECT="${CLAUDE_PROJECT_DIR:-$PWD}"
 

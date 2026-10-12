@@ -444,6 +444,50 @@ else
     echo -e "${YELLOW}skipped${NC} (python3 required)"
 fi
 
+# Configure PreToolUse hook that blocks destructive shell commands (rm, find -delete, git clean -f, ...)
+configure_destructive_guard_hook() {
+    if command -v python3 &> /dev/null; then
+        python3 << 'PYTHON_SCRIPT'
+import json, os
+
+settings_file = os.path.expanduser("~/.claude/settings.json")
+hook_cmd = "python3 -I ~/.claude/aidev-toolkit/scripts/guard-destructive-commands.py"
+
+settings = {}
+if os.path.exists(settings_file):
+    with open(settings_file) as f:
+        settings = json.load(f)
+
+hooks = settings.setdefault("hooks", {})
+ptus = hooks.setdefault("PreToolUse", [])
+
+already_present = any("guard-destructive-commands.py" in h.get("command", "") for e in ptus for h in e.get("hooks", []))
+if not already_present:
+    entry = next((e for e in ptus if e.get("matcher") == "Bash"), None)
+    if entry is None:
+        entry = {"matcher": "Bash", "hooks": []}
+        ptus.append(entry)
+    entry.setdefault("hooks", []).append({
+        "type": "command",
+        "command": hook_cmd,
+        "statusMessage": "Checking for destructive commands...",
+    })
+    with open(settings_file, "w") as f:
+        json.dump(settings, f, indent=2)
+PYTHON_SCRIPT
+        local rc=$?
+        return $rc
+    fi
+    return 1
+}
+
+echo -n "Configuring destructive-command guard hook... "
+if configure_destructive_guard_hook; then
+    echo -e "${GREEN}✓${NC}"
+else
+    echo -e "${YELLOW}skipped${NC} (python3 required)"
+fi
+
 # Configure statusLine to point at statusline.sh
 configure_statusline() {
     if command -v python3 &> /dev/null; then
@@ -575,6 +619,7 @@ chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/specs-parse.sh" 2>/dev/null || true
 chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" 2>/dev/null || true
 chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/token-tracker.sh" 2>/dev/null || true
 chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/stats-parse.sh" 2>/dev/null || true
+chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/slicing-check.sh" 2>/dev/null || true
 
 # /aid-feedback uses GitHub Issues via gh CLI — no webhook or secrets needed
 

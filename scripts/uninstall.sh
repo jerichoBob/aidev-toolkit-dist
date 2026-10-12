@@ -82,6 +82,45 @@ PYTHON_SCRIPT
     [ "$QUIET" = false ] && echo -e "${GREEN}✓${NC}"
 fi
 
+# Remove destructive-command guard hook from settings.json
+if command -v python3 &> /dev/null; then
+    [ "$QUIET" = false ] && echo -n "Removing destructive-command guard hook... "
+    python3 << 'PYTHON_SCRIPT'
+import json, os
+
+settings_file = os.path.expanduser("~/.claude/settings.json")
+if not os.path.exists(settings_file):
+    import sys; sys.exit(0)
+
+with open(settings_file) as f:
+    settings = json.load(f)
+
+hooks = settings.get("hooks", {})
+ptus = hooks.get("PreToolUse", [])
+changed = False
+cleaned = []
+for e in ptus:
+    if "hooks" not in e:
+        cleaned.append(e)
+        continue
+    kept = [h for h in e["hooks"] if "guard-destructive-commands.py" not in h.get("command", "")]
+    if len(kept) != len(e["hooks"]):
+        changed = True
+    if kept:
+        cleaned.append({**e, "hooks": kept})
+
+if changed:
+    if cleaned:
+        hooks["PreToolUse"] = cleaned
+    else:
+        hooks.pop("PreToolUse", None)
+    settings["hooks"] = hooks
+    with open(settings_file, "w") as f:
+        json.dump(settings, f, indent=2)
+PYTHON_SCRIPT
+    [ "$QUIET" = false ] && echo -e "${GREEN}✓${NC}"
+fi
+
 # Remove toolkit directory
 if [ -d "$TOOLKIT_DIR" ]; then
     [ "$QUIET" = false ] && echo -n "Removing toolkit directory... "

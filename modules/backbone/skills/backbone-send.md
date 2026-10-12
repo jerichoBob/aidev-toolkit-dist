@@ -14,12 +14,14 @@ Replaces `/backbone-publish`. Drafts a typed message, refuses it if it holds a s
 
 ```bash
 SCRIPTS=~/.claude/aidev-toolkit/modules/backbone/scripts
+BB="$(bash "$SCRIPTS/backbone-dir.sh")"      # the backbone state directory on this machine
 SYNC="$SCRIPTS/backbone-sync.sh"; PRES="$SCRIPTS/backbone-presence.sh"
-ls ../agent-backbone/messages/types/ 2>/dev/null || echo "MISSING"
-bash "$SYNC" --dir ../agent-backbone mode      # prints: local | git
+ls "$BB"/messages/ 2>/dev/null || echo "MISSING"
+TYPES="$BB/messages/types"; [ -d "$TYPES" ] || TYPES=~/.claude/aidev-toolkit/modules/backbone/types   # the repo's schemas win; the bundled copy is the fallback
+bash "$SYNC" --dir "$BB" mode      # prints: local | git
 ```
 
-If `MISSING`: stop; `../agent-backbone/` is not accessible. In `local` mode skip every `$SYNC` step. In `git` mode run `bash "$SYNC" --dir ../agent-backbone pull` now. Exit codes: `2` remote unreachable (stop and tell the developer; do NOT fall back to local), `3` lost a race, `4` config error.
+If `MISSING`: stop; the backbone is not set up on this machine: run /backbone-setup. In `local` mode skip every `$SYNC` step. In `git` mode run `bash "$SYNC" --dir "$BB" pull` now. Exit codes: `2` remote unreachable (stop and tell the developer; do NOT fall back to local), `3` lost a race, `4` config error.
 
 ## Step 0: Clarify intent
 
@@ -37,7 +39,7 @@ Informational: a lightweight prose message with no acceptance criteria or to-do 
 
 ## Step 1: Type
 
-Use `--type <type>` if given. Otherwise list `../agent-backbone/messages/types/*.md` (excluding `README.md`) and ask. Read the chosen `messages/types/{type}.md` before drafting.
+Use `--type <type>` if given. Otherwise list `$TYPES/*.md` (excluding `README.md`) and ask. Read the chosen `$TYPES/{type}.md` before drafting.
 
 ## Step 2: Routing
 
@@ -48,7 +50,7 @@ Use `--to <agent>` or `--topic <topic>` if given; otherwise ask: a specific agen
 
 ## Step 3: Sender
 
-Use this session's name (printed by the SessionStart hook, or `bash "$PRES" --dir ../agent-backbone me`). If neither gives one: "No session registered. Run /backbone join first." and stop.
+Use this session's name (printed by the SessionStart hook, or `bash "$PRES" --dir "$BB" me`). If neither gives one: "No session registered. Run /backbone join first." and stop.
 
 ## Step 4: Draft
 
@@ -66,7 +68,7 @@ Exit `1` means a possible secret (credentials in a connection string, bearer tok
 
 ## Step 6: Write
 
-Id: `YYYYMMDD-HHMMSS`. Write `../agent-backbone/messages/{type}-{id}-pending.md`:
+Id: `YYYYMMDD-HHMMSS`. Write `$BB/messages/{type}-{id}-pending.md`:
 
 ```markdown
 ---
@@ -85,7 +87,7 @@ updated: YYYY-MM-DD
 {prose sections from the type schema}
 ```
 
-git mode: `bash "$SYNC" --dir ../agent-backbone push publish {type}-{id}`. If it fails, report the error: the message is on disk but the recipient will not see it until a push succeeds.
+git mode: `bash "$SYNC" --dir "$BB" push publish {type}-{id}`. If it fails, report the error: the message is on disk but the recipient will not see it until a push succeeds.
 
 ## Step 7: No-ack ping (git mode, direct messages to a named agent)
 
@@ -94,23 +96,23 @@ Skip for `local` transport, topic routing and `to: any`: there is no single reci
 After a successful push, start the sender-side timer with the **Monitor** tool:
 
 ```bash
-bash "$SCRIPTS/backbone-ack-check.sh" --dir ../agent-backbone --id {type}-{id} --to {to} --from {from} --title "{title}"
+bash "$SCRIPTS/backbone-ack-check.sh" --dir "$BB" --id {type}-{id} --to {to} --from {from} --title "{title}"
 ```
 
 Defaults: 5-minute timeout, 15-second interval. It stays silent if the receiver claims the message or writes a `seen` marker in time. What it prints on timeout depends on `notify_confirm` (project override, machine default, then `ask`, read only from the machine-local `backbone.config`):
 
-- `PING <human>|<notify> :: <text>` (`ask`): show the developer the exact target (`<notify>`) and text, and run the notifier only if they approve: `bash "$SCRIPTS/backbone-notify.sh" --dir ../agent-backbone --target "<notify>" --from {from} --title "{title}" --id {type}-{id}`. Pass the title as one quoted argument and never build a shell string from message text. Sender and title only, never the body.
+- `PING <human>|<notify> :: <text>` (`ask`): show the developer the exact target (`<notify>`) and text, and run the notifier only if they approve: `bash "$SCRIPTS/backbone-notify.sh" --dir "$BB" --target "<notify>" --from {from} --title "{title}" --id {type}-{id}`. Pass the title as one quoted argument and never build a shell string from message text. Sender and title only, never the body.
 - `SENT ...` (`auto`): the notifier already ran. Tell the developer who was pinged.
 - `NOTIFYFAILED ...` (`auto`): it ran and failed. Tell the developer and show the ping text instead.
-- `NONOTIFIER ...`: no `notify_command` is configured; nothing was attempted. See `docs/notify.md`.
-- `NOPING`: there is no `roster.md` entry for the recipient (see `docs/git-transport.md`).
+- `NONOTIFIER ...`: no `notify_command` is configured; nothing was attempted. See `~/.claude/aidev-toolkit/modules/backbone/docs/notify.md`.
+- `NOPING`: there is no `roster.md` entry for the recipient (see `~/.claude/aidev-toolkit/modules/backbone/docs/git-transport.md`).
 
 The timer lives in this session. If the session closes before the 5 minutes pass, no ping is sent.
 
 ## Step 8: Confirm
 
 ```
-Sent: ../agent-backbone/messages/{type}-{id}-pending.md
+Sent: $BB/messages/{type}-{id}-pending.md
 Type: {type}    From: {from}    {To: {to} | Topic: {topic}}
 
 direct:  Switch to the {to} session and run /backbone-inbox to pick this up.

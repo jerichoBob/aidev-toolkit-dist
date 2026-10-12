@@ -211,13 +211,13 @@ Run `/aid --all` to see these in the terminal.
 
 | Command             | What it does                                                                 |
 | ------------------- | ---------------------------------------------------------------------------- |
-| `/backbone-setup`   | Clone agent-backbone as a sibling repo, check the module, offer the session hooks |
+| `/backbone-setup`   | Create or join the shared backbone directory (team git remote, local, or import), offer the session hooks |
 | `/backbone-send`    | Send a message to another agent or a topic (secret check and no-ack ping included) |
 | `/backbone-inbox`   | See and claim messages addressed to you                                      |
 | `/backbone-done`    | Finish a claimed message and archive it                                      |
 | `/backbone`         | `status`, `join`, `leave`, `subscribe`, `unsubscribe`, `name`, `update`      |
 
-The commands come with the toolkit (`modules/backbone/`) and are installed globally by `/aid-update`; no files are copied into your project. See [agent-backbone](https://github.com/jerichoBob/agent-backbone) for the full coordination workflow.
+The backbone is for agents on **different machines** (or other LLM tools); sessions on one machine can use Claude Code's own inter-agent features. The commands come with the toolkit (`modules/backbone/`) and are installed globally by `/aid-update`; no files are copied into your project and no other repo is required. See `modules/backbone/README.md` and `modules/backbone/docs/` for the workflow, git transport and notifier.
 
 #### Chat
 
@@ -273,7 +273,7 @@ Skills are markdown files. Each file contains frontmatter (name, description, al
 └── aidev-toolkit/          ← git clone of this repo
     ├── skills/             ← core skill files
     ├── modules/sdd/        ← Spec-Driven Development module
-    └── modules/backbone/   ← agent-backbone tooling (scripts, skills, templates)
+    └── modules/backbone/   ← agent message bus (scripts, skills, types, docs, templates)
 ```
 
 Because skills are just text files, they're readable, forkable, and customizable. You can modify any skill to change how it behaves, or create new ones. The `install.sh` script symlinks them so updates via `/aid-update` propagate instantly.
@@ -309,9 +309,16 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.103.1
+0.104.0
 
 ### Release Notes
+
+#### v0.104.0 (2026-10-12) — author: robert.w.seaton.jr@gmail.com
+
+- feat(guard): `scripts/guard-destructive-commands.py` is installed as a `PreToolUse` Bash hook and blocks `rm` (every spelling), `find -delete`, `shred`, `git clean -f`, `git reset --hard`, `git push --force`, `dd of=`, and scripted deletes. A blocked `rm` lists the files it would have removed. `AIDEV_DESTRUCTIVE_GUARD=off` in the environment Claude Code starts with turns it off. See [docs/destructive-command-guard.md](docs/destructive-command-guard.md)
+- feat(rm-review): optional `modules/rm-review/` mod shows the files from a blocked `rm` in a side panel with Move to Trash buttons (macOS)
+- feat(backbone): standalone agent message bus with no sibling repo (`modules/backbone/`)
+- feat(sdd): vertical-slicing check for `/sdd-spec` (`modules/sdd/scripts/slicing-check.sh`)
 
 #### v0.103.1 (2026-10-12) — author: robert.w.seaton.jr@gmail.com
 
@@ -334,8 +341,8 @@ Full definitions in `architecture-principles/`.
 
 #### v0.101.0 (2026-10-08) — author: robert.w.seaton.jr@gmail.com
 
-- feat(backbone): add `modules/backbone/` — the agent-backbone tooling (13 scripts, 5 skills, config/roster/hooks templates) installed once by `install.sh` and called by absolute path under `~/.claude/aidev-toolkit/modules/backbone/`; nothing is copied into projects any more. Commands are now `/backbone-setup`, `/backbone-send`, `/backbone-inbox`, `/backbone-done` and `/backbone` (status, join, leave, subscribe, unsubscribe, name, update); the old per-project command names (`/backbone-publish`, `-complete`, `-join`, `-leave`, `-roster`, `-subscribe`, `-unsubscribe`, `-update`) are not ported. `backbone-setup` moved from `skills/` into the module and no longer copies files. Session hooks are added per project with `backbone-install-hooks.sh` (asks first). State (messages, presence, roster) stays in the agent-backbone repo.
-- test(backbone): add `tests/test-backbone-{git-transport,presence,commands}.sh` (real git, no mocks), including a scratch-`HOME` install check
+- feat(backbone): add `modules/backbone/` — a standalone message bus for agents on different machines (or other LLM tools): 15 scripts, 5 skills, message types, docs and templates, installed once by `install.sh` and called by absolute path under `~/.claude/aidev-toolkit/modules/backbone/`; nothing is copied into projects and no sibling repo is needed. The state directory (messages, presence, roster) is found via `$BACKBONE_DIR`, `~/.config/aidev-backbone/dir`, or `~/.config/aidev-backbone/bus`; `/backbone-setup` creates it, clones a team remote into it, or imports an older checkout. Commands are now `/backbone-setup`, `/backbone-send`, `/backbone-inbox`, `/backbone-done` and `/backbone` (status, join, leave, subscribe, unsubscribe, name, update); the old per-project command names (`/backbone-publish`, `-complete`, `-join`, `-leave`, `-roster`, `-subscribe`, `-unsubscribe`, `-update`) are not ported. `backbone-setup` moved from `skills/` into the module and no longer copies files. Session hooks are added per project with `backbone-install-hooks.sh` (asks first). State (messages, presence, roster) stays in the agent-backbone repo.
+- test(backbone): add `tests/test-backbone-{git-transport,presence,commands,standalone}.sh` (real git, no mocks), including a scratch-`HOME` install check and two machines exchanging a message through a shared remote
 
 #### v0.100.0 (2026-10-07) — author: robert.w.seaton.jr@gmail.com
 

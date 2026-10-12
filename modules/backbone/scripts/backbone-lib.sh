@@ -150,12 +150,23 @@ bb_mark_seen() {
   echo 1
 }
 
-# bb_default_dir <script-dir> — $BACKBONE_DIR, else ../agent-backbone from the cwd. The scripts live in the
-# aidev-toolkit module, so there is no "the script's repo" to fall back to: with neither, print nothing and
-# let the caller report the directory as not found.
+# bb_config_home — where the module keeps its machine-level files. Never inside ~/.claude.
+bb_config_home() { echo "${XDG_CONFIG_HOME:-$HOME/.config}/aidev-backbone"; }
+
+# bb_default_dir <script-dir> — where the backbone state lives (messages/, presence/, roster.md, backbone.config).
+# Order: $BACKBONE_DIR, then the first line of <config home>/dir (a pointer you set once per machine),
+# then <config home>/bus. There is no sibling-repo fallback: the module stands alone, and
+# backbone-init.sh creates the directory. The first argument is accepted for old callers and unused.
 bb_default_dir() {
-  if [[ -n "${BACKBONE_DIR:-}" ]]; then echo "$BACKBONE_DIR"
-  else echo ../agent-backbone; fi
+  local home ptr
+  if [[ -n "${BACKBONE_DIR:-}" ]]; then echo "$BACKBONE_DIR"; return 0; fi
+  home="$(bb_config_home)"
+  if [[ -f "$home/dir" ]]; then
+    ptr="$(head -1 "$home/dir" | tr -d '\r')"
+    ptr="${ptr/#\~/$HOME}"
+    [[ -n "$ptr" ]] && { echo "$ptr"; return 0; }
+  fi
+  echo "$home/bus"
 }
 
 # bb_notify_confirm <dir> <agent> — print ask|auto for pings sent as <agent>.

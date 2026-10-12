@@ -13,36 +13,37 @@ Replaces `/backbone-complete`. Writes the completion notes, marks the message co
 
 ```bash
 SCRIPTS=~/.claude/aidev-toolkit/modules/backbone/scripts
+BB="$(bash "$SCRIPTS/backbone-dir.sh")"      # the backbone state directory on this machine
 SYNC="$SCRIPTS/backbone-sync.sh"; PRES="$SCRIPTS/backbone-presence.sh"
-bash "$SYNC" --dir ../agent-backbone mode      # prints: local | git
+bash "$SYNC" --dir "$BB" mode      # prints: local | git
 ```
 
-In `local` mode skip every `$SYNC` step. In `git` mode run `bash "$SYNC" --dir ../agent-backbone pull` first. Exit codes: `2` remote unreachable (stop; do NOT fall back to local), `3` lost a race, `4` config error.
+In `local` mode skip every `$SYNC` step. In `git` mode run `bash "$SYNC" --dir "$BB" pull` first. Exit codes: `2` remote unreachable (stop; do NOT fall back to local), `3` lost a race, `4` config error.
 
 ## Find the message
 
-This session's name is the one the SessionStart hook printed, or `bash "$PRES" --dir ../agent-backbone me`.
+This session's name is the one the SessionStart hook printed, or `bash "$PRES" --dir "$BB" me`.
 
 ```bash
-ls ../agent-backbone/messages/*-claimed.md 2>/dev/null
+ls $BB/messages/*-claimed.md 2>/dev/null
 ```
 
 Read each frontmatter and keep the ones whose `claimed_by` is this session's name or its address. If none: "No claimed messages for this session. Run /backbone-inbox to claim one first." If several, list them and ask which.
 
 ## Write the completion notes
 
-Read `../agent-backbone/messages/types/{type}.md` for the completion section: `cr` has **Implementation Notes** (endpoints added, schema changes, migration path, breaking changes); `task` has **Completion Notes** (what was done, acceptance criteria met or unmet, follow-on work). Be specific enough that the sender can act without a follow-up question. Do not put secrets in them; the same rule as `/backbone-send` applies, so run `backbone-secret-check.sh` on the notes first.
+Read `{type}.md` from `$BB/messages/types/` (or, if that directory is absent, the bundled `~/.claude/aidev-toolkit/modules/backbone/types/`) for the completion section: `cr` has **Implementation Notes** (endpoints added, schema changes, migration path, breaking changes); `task` has **Completion Notes** (what was done, acceptance criteria met or unmet, follow-on work). Be specific enough that the sender can act without a follow-up question. Do not put secrets in them; the same rule as `/backbone-send` applies, so run `backbone-secret-check.sh` on the notes first.
 
 ## Archive
 
 1. In the message file, fill in the completion section, set `status: complete` and `updated: {today}`.
-2. `mkdir -p ../agent-backbone/messages/archive`, then move `{type}-{id}-claimed.md` to `archive/{type}-{id}-complete.md`. Never delete it: the archive is the audit trail.
-3. git mode: `bash "$SYNC" --dir ../agent-backbone push complete {type}-{id}`.
+2. `mkdir -p $BB/messages/archive`, then move `{type}-{id}-claimed.md` to `archive/{type}-{id}-complete.md`. Never delete it: the archive is the audit trail.
+3. git mode: `bash "$SYNC" --dir "$BB" push complete {type}-{id}`.
 
 ## Confirm
 
 ```
-Done: ../agent-backbone/messages/archive/{type}-{id}-complete.md
+Done: $BB/messages/archive/{type}-{id}-complete.md
 Type: {type}    From: {from}
 
 Completion notes written:

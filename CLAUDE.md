@@ -29,7 +29,7 @@ The `modules/` directory holds self-contained skill groups. Each module has its 
 **Current modules:**
 
 - `modules/sdd/` — Spec-Driven Development (parse script, spec template)
-- `modules/backbone/` — agent-backbone tooling: `scripts/` (called by absolute path under `~/.claude/aidev-toolkit/modules/backbone/scripts/`), `skills/` (installed to `~/.claude/commands/` and `skills/`; listed in `BACKBONE_SKILLS` in `scripts/install.sh`), `templates/`. State (messages, presence, roster) lives in the separate agent-backbone repo and is addressed with `--dir`/`BACKBONE_DIR`, never through a script's own location. Tests: `tests/test-backbone-*.sh`
+- `modules/backbone/` — standalone agent-to-agent message bus for agents on different machines: `scripts/` (called by absolute path under `~/.claude/aidev-toolkit/modules/backbone/scripts/`), `skills/` (installed to `~/.claude/commands/` and `skills/`; listed in `BACKBONE_SKILLS` in `scripts/install.sh`), `types/`, `docs/`, `templates/`. Needs no other repo. Runtime state (messages, presence, roster) lives in a per-machine state directory resolved by `scripts/backbone-dir.sh` (`$BACKBONE_DIR`, `~/.config/aidev-backbone/dir`, or `~/.config/aidev-backbone/bus`), never in the toolkit and never under `~/.claude`. Tests: `tests/test-backbone-*.sh`
 - `modules/gchat/` — Google Chat: `scripts/` (Python via `gchat.sh`, plus `gchat-notify.sh` backbone notifier), `skills/` (`GCHAT_SKILLS` in `scripts/install.sh`). Per-user OAuth credentials/token in `~/.config/aidev/gchat/`. Tests: `tests/test-gchat.sh`
 
 **Adding a module skill:**

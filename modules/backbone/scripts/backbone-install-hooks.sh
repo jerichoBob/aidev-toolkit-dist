@@ -7,7 +7,8 @@
 # Settings that are not valid JSON are never touched.
 #
 # Usage: backbone-install-hooks.sh <project-dir> [--backbone-dir REL] [--scripts-dir PATH] [--yes] [--dry-run]
-#   --backbone-dir  where the backbone is, relative to the project (default ../agent-backbone)
+#   --backbone-dir  pin the hooks to one backbone directory (default: none, so the hooks use backbone-dir.sh and
+#                   every machine finds its own: $BACKBONE_DIR, ~/.config/aidev-backbone/dir, or the default)
 #   --scripts-dir   where the hook scripts are (default ~/.claude/aidev-toolkit/modules/backbone/scripts, the
 #                   installed module; written as ~ so the same settings.json works on every machine)
 #   --dry-run       show the hooks that would be added and change nothing
@@ -16,7 +17,7 @@
 #       invalid settings · 5 consent not given
 set -uo pipefail
 
-PROJECT=""; BB="../agent-backbone"; YES=0; DRY=0
+PROJECT=""; BB=""; YES=0; DRY=0
 SCRIPTS_REF="~/.claude/aidev-toolkit/modules/backbone/scripts"
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -32,8 +33,8 @@ done
 PROJECT="$(cd "$PROJECT" && pwd)"
 SETTINGS="$PROJECT/.claude/settings.json"
 
-START="bash $SCRIPTS_REF/backbone-session-start.sh --dir $BB"
-END="bash $SCRIPTS_REF/backbone-session-end.sh --dir $BB"
+START="bash $SCRIPTS_REF/backbone-session-start.sh${BB:+ --dir $BB}"
+END="bash $SCRIPTS_REF/backbone-session-end.sh${BB:+ --dir $BB}"
 
 snippet() {
   cat <<JSON
