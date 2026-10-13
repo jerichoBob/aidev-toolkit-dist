@@ -149,9 +149,10 @@ if [[ "$(jq -r '.components.aid_version // false' "$CONFIG" 2>/dev/null)" == "tr
 
       if [[ -n "$latest" && "$latest" != "$aid_version" ]] &&
          [[ "$(printf '%s\n%s\n' "$aid_version" "$latest" | sort -V | tail -1)" == "$latest" ]]; then
-        # Update available: pulse gold (bright <-> deep gold each second)
+        # Update available: current version stays white, the arrow is bright
+        # cyan, and the new version pulses gold (bright <-> deep gold each second)
         if (( now % 2 == 0 )); then glow="\033[1;38;5;220m"; else glow="\033[38;5;136m"; fi
-        parts+=("${glow}aid:${aid_version} ⬆${latest}\033[0m")
+        parts+=("\033[97maid:${aid_version}\033[0m \033[1;38;5;45m⬆\033[0m${glow}${latest}\033[0m")
       else
         parts+=("\033[90maid:${aid_version}\033[0m")
       fi

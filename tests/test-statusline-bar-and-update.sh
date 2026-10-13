@@ -51,7 +51,7 @@ CACHE="$TMP_HOME/.claude/.aid-latest-version"
 echo "0.102.1" > "$CACHE"
 out=$(run 4 | strip)
 [[ "$out" == *"aid:0.101.0 ⬆0.102.1"* ]]; check "newer upstream shows marker" $?
-run 4 | grep -Eq $'\033\\[(1;)?38;5;(220|136)maid'; check "newer upstream pulses gold" $?
+run 4 | grep -Eq $'\033\\[(1;)?38;5;(220|136)m0\.102\.1'; check "newer upstream pulses gold" $?
 
 echo "0.101.0" > "$CACHE"
 out=$(run 4 | strip)

@@ -309,9 +309,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.104.0
+0.104.1
 
 ### Release Notes
+
+#### v0.104.1 (2026-10-13) — author: robert.w.seaton.jr@gmail.com
+
+- feat(statusline): when an update is available, the current `aid:` version stays white, `⬆` is cyan, and the new version pulses gold
 
 #### v0.104.0 (2026-10-12) — author: robert.w.seaton.jr@gmail.com
 
