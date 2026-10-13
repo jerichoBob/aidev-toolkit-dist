@@ -309,9 +309,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.104.2
+0.105.0
 
 ### Release Notes
+
+#### v0.105.0 (2026-10-13) — author: robert.w.seaton.jr@gmail.com
+
+- feat(statusline): ctx bar and percentage blend smoothly from green (0%) through yellow (20%) to red (40%+) instead of stepping; the percentage is colored from actual usage
 
 #### v0.104.2 (2026-10-13) — author: robert.w.seaton.jr@gmail.com
 

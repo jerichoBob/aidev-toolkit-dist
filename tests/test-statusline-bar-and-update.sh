@@ -36,8 +36,11 @@ out=$(run 250 | strip)
 run 100 | grep -q $'\033\\[38;5;196m'; check "last cell is red (196)" $?
 run 100 | grep -q $'\033\\[38;5;46m'; check "first cell is green (46)" $?
 
-# percentage color matches the last lit cell's hue (14% -> 2 cells -> 82; 100% -> 196)
-run 14 | grep -q $'\033\\[38;5;82m14%'; check "14% number matches 2nd cell hue (82)" $?
+# percentage color blends smoothly: green 0, yellow 20, red 40+ (14% -> 190; 20% -> 226; 30% -> 214; 40%+ -> 196)
+run 14 | grep -q $'\033\\[38;5;190m14%'; check "14% number is blended yellow-green (190)" $?
+run 20 | grep -q $'\033\\[38;5;226m20%'; check "20% number is yellow (226)" $?
+run 30 | grep -q $'\033\\[38;5;214m30%'; check "30% number is orange blend (214)" $?
+run 42 | grep -q $'\033\\[38;5;196m42%'; check "40%+ number is red (196)" $?
 run 100 | grep -q $'\033\\[38;5;196m100%'; check "100% number matches last cell hue (196)" $?
 run 0 | grep -q $'\033\\[38;5;46m0%'; check "0% number is green (46)" $?
 

@@ -61,18 +61,26 @@ if [[ "$(jq -r '.components.ctx // true' "$CONFIG" 2>/dev/null)" == "true" ]]; t
     ctx_int=${ctx_pct%.*}
     [[ -z "$ctx_int" ]] && ctx_int=0
     (( ctx_int > 100 )) && ctx_int=100
-    # 10-cell bar; each cell keeps its own green→yellow→red hue (thermometer
-    # style), empty cells are dim. Any non-zero usage lights at least one cell.
-    bar_hues=(46 82 118 154 190 226 214 208 202 196)
+    # 10-cell bar, thermometer style. Colors blend smoothly: green at 0%,
+    # yellow at 20%, red at 40% and above (green 0-20, yellow 20-40, red 40+).
+    # Each cell takes the hue of the usage level where it begins; empty cells
+    # are dim. Any non-zero usage lights at least one cell.
+    ctx_hue() {  # $1 = usage %, prints a 256-color index along green→yellow→red
+      local t=$(( $1 > 40 ? 40 : $1 )) r g
+      if (( t <= 20 )); then r=$(( (5 * t + 10) / 20 )); g=5
+      else                   r=5; g=$(( (5 * (40 - t) + 10) / 20 ))
+      fi
+      echo $(( 16 + 36 * r + 6 * g ))
+    }
     filled=$(( (ctx_int + 9) / 10 ))
     bar=""
     for (( i = 0; i < 10; i++ )); do
-      if (( i < filled )); then bar+="\033[38;5;${bar_hues[i]}m▰"
+      if (( i < filled )); then bar+="\033[38;5;$(ctx_hue $(( i * 10 )))m▰"
       else                      bar+="\033[38;5;238m▱"
       fi
     done
-    # Percentage takes the hue of the last lit cell so bar and number agree.
-    if (( filled > 0 )); then color="\033[38;5;${bar_hues[filled-1]}m"; else color="\033[38;5;${bar_hues[0]}m"; fi
+    # Percentage is blended from the actual usage level.
+    color="\033[38;5;$(ctx_hue "$ctx_int")m"
     parts+=("\033[90mctx\033[0m ${bar}\033[0m ${color}${ctx_int}%\033[0m")
 
     # Persist usage for the context-thermostat hook (UserPromptSubmit can't
