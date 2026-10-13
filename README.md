@@ -309,9 +309,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.104.1
+0.104.2
 
 ### Release Notes
+
+#### v0.104.2 (2026-10-13) — author: robert.w.seaton.jr@gmail.com
+
+- test(statusline): `test-statusline-aid-version.sh` drops the stale 10s pulse checks (the up-to-date state is plain gray) and checks the color directly before `aid:`
 
 #### v0.104.1 (2026-10-13) — author: robert.w.seaton.jr@gmail.com
 

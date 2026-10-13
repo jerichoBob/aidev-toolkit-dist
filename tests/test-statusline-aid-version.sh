@@ -71,28 +71,16 @@ else
     fail "Missing VERSION file: expected no aid: segment, got: $output"
 fi
 
-# Test 4: color pulses between dim gray (90m) and bright white (97m) on a 10s cadence
+# Test 4: up to date (no newer upstream cached) renders aid: in plain gray (90m)
+# Match the color code directly before "aid:" — other components also use 90m.
 echo "1.2.3" > "$VERSION_FILE"
-color_a=$(HOME="$TMPDIR_HOME" bash "$STATUSLINE" <<< "$INPUT_JSON" 2>&1 | grep -o $'\033\[9[07]m' || true)
-if [[ "$color_a" == $'\033[90m' || "$color_a" == $'\033[97m' ]]; then
-    pass "Pulse: renders in dim-gray or bright-white"
+rm -f "$TMPDIR_HOME/.claude/.aid-latest-version"
+printf '1.2.3\n' > "$TMPDIR_HOME/.claude/.aid-latest-version"
+output=$(HOME="$TMPDIR_HOME" bash "$STATUSLINE" <<< "$INPUT_JSON" 2>&1)
+if [[ "$output" == *$'\033[90maid:1.2.3'* ]]; then
+    pass "Up to date: aid: renders in plain gray"
 else
-    fail "Pulse: expected 90m or 97m color code, got: $(printf '%q' "$color_a")"
-fi
-
-# Test 5: pulse phase is a pure function of wall-clock time (deterministic given epoch)
-# Avoid flaking near a 10s boundary by nudging past it before sampling.
-now=$(date +%s)
-if (( now % 10 >= 8 )); then
-    sleep $(( 10 - (now % 10) ))
-fi
-epoch=$(date +%s)
-color_b=$(HOME="$TMPDIR_HOME" bash "$STATUSLINE" <<< "$INPUT_JSON" 2>&1 | grep -o $'\033\[9[07]m' || true)
-epoch_bucket=$(( (epoch / 10) % 2 ))
-if [[ "$epoch_bucket" -eq 0 && "$color_b" == $'\033[97m' ]] || [[ "$epoch_bucket" -eq 1 && "$color_b" == $'\033[90m' ]]; then
-    pass "Pulse: color matches expected 10s time bucket"
-else
-    fail "Pulse: color/time bucket mismatch (bucket=$epoch_bucket, color=$(printf '%q' "$color_b"))"
+    fail "Up to date: expected gray aid:1.2.3, got: $(printf '%q' "$output")"
 fi
 
 echo ""
