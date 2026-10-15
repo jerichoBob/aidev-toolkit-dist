@@ -61,7 +61,7 @@ All skills reinstalled.
 To show recent changes, run:
 
 ```bash
-git -C ~/.claude/aidev-toolkit log --oneline -5
+git -C ~/.claude/aidev-toolkit log --oneline --invert-grep --grep='^chore: bump version' -5
 ```
 
 ### If already up to date

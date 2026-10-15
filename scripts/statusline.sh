@@ -137,13 +137,13 @@ if [[ "$(jq -r '.components.aid_version // false' "$CONFIG" 2>/dev/null)" == "tr
     aid_version=$(cat "$AID_VERSION_FILE" 2>/dev/null | tr -d '[:space:]')
     if [[ -n "$aid_version" ]]; then
       # Update check: the cache file holds the latest upstream VERSION. It is
-      # refreshed in the background (at most hourly) — the footer redraws far
+      # refreshed in the background (at most every 5 minutes) — the footer redraws far
       # too often to ever block on the network.
       AID_DIR="${HOME}/.claude/aidev-toolkit"
       UPDATE_CACHE="${HOME}/.claude/.aid-latest-version"
       now=$(date +%s)
       cache_mtime=$(stat -f %m "$UPDATE_CACHE" 2>/dev/null || stat -c %Y "$UPDATE_CACHE" 2>/dev/null || echo 0)
-      if (( now - cache_mtime > 3600 )) && [[ -d "$AID_DIR/.git" ]]; then
+      if (( now - cache_mtime > 300 )) && [[ -d "$AID_DIR/.git" ]]; then
         touch "$UPDATE_CACHE"  # claim the slot so concurrent redraws don't stampede
         (
           git -C "$AID_DIR" fetch -q origin 2>/dev/null &&

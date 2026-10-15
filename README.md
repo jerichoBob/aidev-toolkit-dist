@@ -309,9 +309,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.105.0
+0.105.1
 
 ### Release Notes
+
+#### v0.105.1 (2026-10-15) — author: robert.w.seaton.jr@gmail.com
+
+- feat(statusline): upstream update check refreshes every 5 minutes instead of hourly
+- docs(aid-update): recent-changes log hides `chore: bump version` commits
 
 #### v0.105.0 (2026-10-13) — author: robert.w.seaton.jr@gmail.com
 
