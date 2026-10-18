@@ -26,6 +26,9 @@ echo ""
 if ! $DRY_RUN; then
     echo "Cloning $DIST_REPO..."
     gh repo clone "$DIST_REPO" "$DIST_CLONE_DIR" -- --depth=1
+    # Dist must mirror the manifest exactly; clear old content (keep .git) so
+    # stale files from earlier publishes don't linger
+    find "$DIST_CLONE_DIR" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 else
     mkdir -p "$DIST_CLONE_DIR"
 fi

@@ -309,9 +309,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.105.1
+0.105.2
 
 ### Release Notes
+
+#### v0.105.2 (2026-10-18) — author: robert.w.seaton.jr@gmail.com
+
+- fix(publish-dist): clear stale files from the dist clone before copying, so leftovers from old publishes (e.g. nested `architecture-principles/architecture-principles/`) no longer persist
+- chore: ignore `.claude/settings.local.json`
 
 #### v0.105.1 (2026-10-15) — author: robert.w.seaton.jr@gmail.com
 
