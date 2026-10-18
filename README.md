@@ -309,9 +309,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.105.2
+0.105.3
 
 ### Release Notes
+
+#### v0.105.3 (2026-10-18) — author: robert.w.seaton.jr@gmail.com
+
+- chore: untrack gchat `__pycache__` bytecode (already gitignored)
 
 #### v0.105.2 (2026-10-18) — author: robert.w.seaton.jr@gmail.com
 
