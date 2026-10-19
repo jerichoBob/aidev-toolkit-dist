@@ -309,9 +309,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.106.0
+0.106.1
 
 ### Release Notes
+
+#### v0.106.1 (2026-10-19) — author: robert.w.seaton.jr@gmail.com
+
+- docs: mark spec v103 (sdd-spec vertical slicing) complete, 13/13 [`9962ad6`]
+- test: add v103 slicing-check verification fixtures [`80db646`]
 
 #### v0.106.0 (2026-10-19) — author: robert.w.seaton.jr@gmail.com
 
