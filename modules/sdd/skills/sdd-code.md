@@ -78,6 +78,7 @@ Implement all remaining phases and tasks in the current spec without stopping be
        - **Subsequent tasks in the phase**: no snapshot call needed — the previous task's "after" file already holds this task's "before" state; just track which of `a`/`b` currently holds it.
      - Mark each task as `in_progress` when starting
      - Implement the task fully
+     - **Check the box NOW**: update `specs/README.md` to mark the task complete (`- [x]`) immediately — before token tracking, before any commit, before starting the next task. The README checklist is the only progress record that survives a session restart or `/clear`; never batch checkbox updates to the end of a phase.
      - If token tracking is enabled:
        - Capture token snapshot after into the *other* alternating file (e.g. task uses `a` as before → snapshot after into `b`; next task will then use `b` as before → snapshot after into `a`): `~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh snapshot /tmp/sdd-code-phase-{version}-{phase_num}-{other_letter}.json`
        - Calculate delta: `delta_output=$(~/.claude/aidev-toolkit/modules/sdd/scripts/token-tracker.sh delta /tmp/sdd-code-phase-{version}-{phase_num}-{before_letter}.json /tmp/sdd-code-phase-{version}-{phase_num}-{after_letter}.json); delta_exit=$?`
@@ -86,7 +87,6 @@ Implement all remaining phases and tasks in the current spec without stopping be
        - Get current timestamp: `start_time=2026-02-21T$(date +%H:%M:%SZ)` and `end_time=2026-02-21T$(date +%H:%M:%SZ)`
        - Get git commit SHA: `commit_sha=$(git rev-parse --short HEAD)`
        - Insert HTML comment after task checkbox in `specs/README.md`: `<!-- task-meta: v={version},t={task_num},in={in_tokens},out={out_tokens},cache={cache_tokens},start={start_time},end={end_time},commit={commit_sha} -->` — per-task attribution is preserved even though the snapshot files are shared/alternated across the phase
-     - Update `specs/README.md` to mark the task as complete (`- [x]`)
      - Mark the todo as `completed`
      - Move immediately to the next task
    - When a phase is complete, move immediately to the next phase. Delete that phase's snapshot files (`rm -f /tmp/sdd-code-phase-{version}-{phase_num}-a.json /tmp/sdd-code-phase-{version}-{phase_num}-b.json`) and start a fresh before-snapshot for the first task of the next phase.
@@ -104,12 +104,12 @@ Implement all remaining phases and tasks in the current spec without stopping be
 ## Important
 
 - **Do not ask for confirmation between tasks or phases** — implement the entire spec end-to-end. The one exception is the up-front Open Questions walkthrough (Step 2, item 5), which happens before coding starts.
-- **Update specs/README.md after each task** — keep the checklist in sync
+- **ALWAYS check the box in specs/README.md the moment each task is finished** — incremental, never batched. The README is the durable record of progress: if the session dies or is cleared, the next `/sdd-code` run resumes from the first unchecked item. An unchecked finished task means redone work; a checked unfinished task means lost work. Token-tracking failures must never prevent or delay the checkbox update.
 - **Update spec file YAML frontmatter** when completing a spec (`status: complete`)
 - **Read the full spec file** for additional context on implementation details
 - **Follow existing code patterns** in the codebase
 - **Test as you go** when practical
-- **If a task is blocked** (missing dependency, requires external config), mark it as blocked, skip it, and continue. Report blocked tasks in the summary.
+- **If a task is blocked** (missing dependency, requires external config), mark it as blocked, skip it, and continue. Record the block in `specs/README.md` right away (leave the box unchecked and append `(blocked: reason)` to the task line) so it survives a restart, and report blocked tasks in the summary.
 - **Token tracking**: If token capture fails (snapshot command errors) or `token-tracker.sh delta` signals a stale/unmeasurable snapshot pair (nonzero exit / `STALE` prefix), skip the metadata insertion and continue normally. Do NOT block the workflow on token tracking issues, and never write a `task-meta` comment from a stale delta.
 
 ## Output Format

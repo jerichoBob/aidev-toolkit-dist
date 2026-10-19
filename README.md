@@ -309,9 +309,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.105.3
+0.105.4
 
 ### Release Notes
+
+#### v0.105.4 (2026-10-19) — author: robert.w.seaton.jr@gmail.com
+
+- fix: sdd-code checks task boxes immediately so progress survives restarts [`5b840d3`]
+- docs: add specs v120-v124 to README and spec files [`0194c94`]
 
 #### v0.105.3 (2026-10-18) — author: robert.w.seaton.jr@gmail.com
 
