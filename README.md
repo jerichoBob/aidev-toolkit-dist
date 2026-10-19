@@ -309,9 +309,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.105.4
+0.106.0
 
 ### Release Notes
+
+#### v0.106.0 (2026-10-19) — author: robert.w.seaton.jr@gmail.com
+
+- feat: /aid-update shows a readable what's-new changelog (date, version, change summaries) instead of `chore: publish` commits [`19252ca`]
 
 #### v0.105.4 (2026-10-19) — author: robert.w.seaton.jr@gmail.com
 
