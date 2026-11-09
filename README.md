@@ -309,9 +309,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.106.1
+0.106.2
 
 ### Release Notes
+
+#### v0.106.2 (2026-11-09) — author: robert.w.seaton.jr@gmail.com
+
+- docs: add specs v125-v130 and update v121 for project-local commands [`12968d6`]
+- chore: add feedback-ingest data/scripts, arch-review output and handoffs [`f727f6a`]
 
 #### v0.106.1 (2026-10-19) — author: robert.w.seaton.jr@gmail.com
 
