@@ -309,9 +309,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.106.2
+0.106.3
 
 ### Release Notes
+
+#### v0.106.3 (2026-11-11) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): add specs v131-v135 (handoff auto-offer, browser-harness paste, guard fixes, AI-dev patterns) [`c04a196`]
+- chore: add guard heredoc repro, feedback data and handoff [`f26a75d`]
 
 #### v0.106.2 (2026-11-09) — author: robert.w.seaton.jr@gmail.com
 
