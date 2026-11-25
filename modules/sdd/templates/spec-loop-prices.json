@@ -1,0 +1,4 @@
+{
+  "_note": "USD per million tokens. Used only to ESTIMATE dollars when no exact figure (cost-state or headless total_cost_usd) exists. claude-sonnet-5-5 derived 2026-11-25 from an observed headless result: 22926 cache-write + 2 in + 4 out tokens cost $0.057359 (in 2.0, out 10.0, cache write 2.5; cache read 0.1, derived from the session cost-state total $4.2144 over 13.65M cache-read tokens). Models not listed give no estimate (reported unknown, never zero). Add or correct entries as prices change.",
+  "claude-sonnet-5-5": {"input": 2.0, "output": 10.0, "cache_write": 2.5, "cache_read": 0.1}
+}

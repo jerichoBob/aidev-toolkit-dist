@@ -80,6 +80,107 @@ class Allows(unittest.TestCase):
                 self.assertFalse(blocked(cmd), cmd)
 
 
+NL = "\n"
+
+
+def heredoc(head, *body, word="EOF", quote="'", tail=""):
+    """Build `head <<'EOF'` + body lines + terminator (+ tail) without a heredoc in this source."""
+    return head + f" <<{quote}{word}{quote}" + NL + NL.join(body) + NL + word + (NL + tail if tail else "")
+
+
+class Heredocs(unittest.TestCase):
+    """v133: rm that is only heredoc body text is allowed; anything that could run it stays blocked."""
+
+    def test_repro_cases_a_to_e(self):
+        gh = 'gh issue create --body "$(cat <<\'EOF\'' + NL
+        cases = {
+            "A mid-line rm": (gh + "the word rm appears here" + NL + "EOF" + NL + ')"', False),
+            "B body line starts with rm": (gh + "rm is mentioned" + NL + "EOF" + NL + ')"', False),
+            "C apostrophes in body": (gh + "it's about rm and the user's files" + NL + "EOF" + NL + ')"', False),
+            "D echo with quoted rm": ('echo "rm -rf is dangerous"', False),
+            "E real rm": ("rm -rf /tmp/aidev-repro-x", True),
+        }
+        for label, (cmd, want) in cases.items():
+            with self.subTest(case=label):
+                self.assertEqual(blocked(cmd), want, label)
+
+    def test_data_sinks_allow_rm_text_in_the_body(self):
+        for cmd in [
+            heredoc("cat", "rm -rf /"),
+            heredoc("cat > notes.md", "rm file", "sudo rm -rf x"),
+            heredoc("tee notes.md", "rm file"),
+            heredoc("gh issue create --title t --body-file -", "rm file"),
+            heredoc("git commit -F -", "fix: rm handling", "", "it's fine"),
+            heredoc('git commit -m "$(cat', "rm is only text", tail=')"'),
+            heredoc("cat", "rm file", quote=""),  # unquoted, but no substitution in the body
+            heredoc("cat", "rm file", quote='"'),
+            heredoc("cat", "it's", "rm", "isn't", word="END"),
+        ]:
+            with self.subTest(cmd=cmd):
+                self.assertFalse(blocked(cmd), cmd)
+
+    def test_interpreter_heredocs_are_still_analysed(self):
+        for cmd in [
+            heredoc("bash", "rm file"),
+            heredoc("sh", "echo hi", "rm file"),
+            heredoc("zsh", "rm -rf x"),
+            heredoc("python3", "import os", "os.remove('x')"),
+            heredoc("sudo bash", "rm file"),
+            heredoc("source /dev/stdin", "rm file"),
+            heredoc('bash -c "$(cat', "rm file", tail=')"'),
+            heredoc('eval "$(cat', "rm file", tail=')"'),
+            heredoc('sh -c "$(cat', "rm file", tail=')"'),
+        ]:
+            with self.subTest(cmd=cmd):
+                self.assertTrue(blocked(cmd), cmd)
+
+    def test_unknown_receiver_fails_closed(self):
+        self.assertTrue(blocked(heredoc("somecmd", "rm file")))
+        self.assertTrue(blocked(heredoc("ssh host", "rm file")))
+
+    def test_piping_or_chaining_the_body_onward_keeps_it_in_scope(self):
+        self.assertTrue(blocked(heredoc("cat", "rm file").replace("<<'EOF'", "<<'EOF' | bash")))
+        self.assertTrue(blocked(heredoc("cat", "rm file").replace("<<'EOF'", "<<'EOF' | sh -s")))
+        self.assertTrue(blocked(heredoc("cat", "echo hi", tail="rm file")))
+
+    def test_unquoted_heredoc_with_substitution_is_not_skipped(self):
+        # An unquoted heredoc expands $( ) and backticks, so those would run.
+        self.assertTrue(blocked(heredoc("cat", "$(rm file)", quote="")))
+        self.assertTrue(blocked(heredoc("cat", "`rm file`", quote="")))
+        # A quoted one does not expand them.
+        self.assertFalse(blocked(heredoc("cat", "$(rm file)")))
+
+    def test_missing_terminator_is_not_skipped(self):
+        self.assertTrue(blocked("cat <<'EOF'" + NL + "rm file"))
+
+    def test_marker_inside_a_quoted_string_is_not_a_heredoc(self):
+        self.assertTrue(blocked('echo "<<EOF"' + NL + "rm file" + NL + "EOF"))
+        self.assertTrue(blocked("echo '<<EOF'" + NL + "rm file" + NL + "EOF"))
+
+    def test_real_delete_after_or_around_the_heredoc_still_blocks(self):
+        self.assertTrue(blocked(heredoc("cat", "just text", tail="rm file")))
+        self.assertTrue(blocked("rm file && " + heredoc("cat", "just text")))
+        self.assertTrue(blocked(heredoc("cat", "just text") + " && rm file"))
+
+    def test_dash_heredoc_with_tab_indented_terminator(self):
+        cmd = "cat <<-EOF" + NL + "\trm file" + NL + "\tEOF"
+        self.assertFalse(blocked(cmd))
+
+    def test_crude_fallback_ignores_identified_heredoc_bodies_only(self):
+        # An unbalanced quote in a real command still hits the crude pattern.
+        self.assertTrue(blocked("echo 'unterminated; rm file"))
+        # An apostrophe inside a recognised data body does not.
+        self.assertFalse(blocked(heredoc("cat", "it's about rm", "the user's files")))
+
+    def test_analyze_output_keeps_its_shape(self):
+        keys = {"blocked", "reasons", "rm"}
+        self.assertEqual(set(guard.analyze(heredoc("cat", "rm file"), CWD)), keys)
+        r = guard.analyze(heredoc("bash", "rm file"), CWD)
+        self.assertEqual(set(r), keys)
+        self.assertTrue(r["blocked"])
+        self.assertIsNotNone(r["rm"])
+
+
 class Listing(unittest.TestCase):
     def test_lists_what_rm_would_remove_including_globs_and_dirs(self):
         with tempfile.TemporaryDirectory() as d:
@@ -148,22 +249,19 @@ class CommandLine(unittest.TestCase):
         self.assertTrue(json.loads(p.stdout)["blocked"])
 
 
-def _installer_function():
+def _configure_functions():
+    """Every configure_* function defined in install.sh, keyed by name (real source text)."""
     with open(INSTALL) as f:
         text = f.read()
-    m = re.search(r"^configure_destructive_guard_hook\(\) \{.*?^\}", text, re.S | re.M)
-    assert m, "configure_destructive_guard_hook not found in install.sh"
-    return m.group(0)
+    found = dict(
+        (m.group(1), m.group(0))
+        for m in re.finditer(r"^(configure_[A-Za-z0-9_]+)\(\) \{.*?^\}", text, re.S | re.M)
+    )
+    assert found, "no configure_* functions found in install.sh"
+    return found
 
 
-def _uninstall_python():
-    with open(UNINSTALL) as f:
-        text = f.read()
-    section = text.split("# Remove destructive-command guard hook from settings.json", 1)[1].split("# Remove toolkit directory", 1)[0]
-    m = re.search(r"<< 'PYTHON_SCRIPT'\n(.*?)\nPYTHON_SCRIPT", section, re.S)
-    assert m, "uninstall python block not found"
-    return m.group(1)
-
+GUARD_SCRIPT = "guard-destructive-commands.py"
 
 EXISTING = {
     "env": {"X": "1"},
@@ -177,11 +275,19 @@ EXISTING = {
 }
 
 
-class InstallAndUninstall(unittest.TestCase):
-    def install(self, home):
+class InstallerLeavesGuardOut(unittest.TestCase):
+    """v136: the toolkit installer and uninstaller no longer wire this guard into settings.json.
+
+    Real install.sh functions run against a real temporary HOME. The uninstaller keeps one cleanup
+    step (spec v136 Open Question 3): it removes a toolkit guard entry an earlier install wrote, and
+    nothing else. /aid-update does not remove it.
+    """
+
+    def run_function(self, name, home):
+        fns = _configure_functions()
         return subprocess.run(
-            ["bash", "-c", _installer_function() + "\nconfigure_destructive_guard_hook"],
-            env={**os.environ, "HOME": home}, capture_output=True, text=True, timeout=30,
+            ["bash", "-c", fns[name] + "\n" + name],
+            env={**os.environ, "HOME": home}, capture_output=True, text=True, timeout=60,
         )
 
     def settings(self, home):
@@ -193,62 +299,79 @@ class InstallAndUninstall(unittest.TestCase):
         with open(os.path.join(home, ".claude", "settings.json"), "w") as f:
             json.dump(data, f)
 
-    def guard_commands(self, s):
-        return [h["command"] for e in s["hooks"]["PreToolUse"] for h in e["hooks"] if "guard-destructive-commands.py" in h["command"]]
+    def hook_commands(self, s):
+        return [h.get("command", "") for entries in s.get("hooks", {}).values() for e in entries for h in e.get("hooks", [])]
 
-    def test_install_into_existing_settings_keeps_everything_and_adds_one_hook(self):
+    def test_install_has_no_guard_function_or_step(self):
+        with open(INSTALL) as f:
+            text = f.read()
+        self.assertNotIn("configure_destructive_guard_hook", text)
+        self.assertNotIn(GUARD_SCRIPT, text)
+        self.assertNotIn("Configuring destructive-command guard hook", text)
+
+    def run_uninstall_guard_block(self, home):
+        with open(UNINSTALL) as f:
+            text = f.read()
+        marker = "Removing destructive-command guard hook"
+        self.assertIn(marker, text)
+        block = text.split(marker, 1)[1].split("<< 'PYTHON_SCRIPT'\n", 1)[1].split("\nPYTHON_SCRIPT", 1)[0]
+        return subprocess.run(
+            ["python3", "-I", "-c", block],
+            env={**os.environ, "HOME": home}, capture_output=True, text=True, timeout=60,
+        )
+
+    def test_uninstall_removes_only_the_toolkit_guard_entry(self):
+        toolkit = {"type": "command", "command": "python3 ~/.claude/aidev-toolkit/scripts/" + GUARD_SCRIPT}
         with tempfile.TemporaryDirectory() as home:
-            self.write_settings(home, json.loads(json.dumps(EXISTING)))
-            p = self.install(home)
+            data = json.loads(json.dumps(EXISTING))
+            data["hooks"]["PreToolUse"].append({"matcher": "Bash", "hooks": [toolkit]})
+            self.write_settings(home, data)
+            p = self.run_uninstall_guard_block(home)
             self.assertEqual(p.returncode, 0, p.stderr)
             s = self.settings(home)
-            self.assertEqual(s["env"], {"X": "1"})
-            self.assertEqual(s["hooks"]["UserPromptSubmit"], EXISTING["hooks"]["UserPromptSubmit"])
-            self.assertEqual(s["hooks"]["PreToolUse"][1], EXISTING["hooks"]["PreToolUse"][1])
-            bash = s["hooks"]["PreToolUse"][0]
-            self.assertEqual(bash["hooks"][0], EXISTING["hooks"]["PreToolUse"][0]["hooks"][0])
-            self.assertEqual(
-                self.guard_commands(s), ["python3 -I ~/.claude/aidev-toolkit/scripts/guard-destructive-commands.py"]
-            )
+            self.assertFalse([c for c in self.hook_commands(s) if GUARD_SCRIPT in c])
+            self.assertEqual(s, EXISTING)  # the maintainer's own hooks are untouched
 
-    def test_install_is_idempotent(self):
+    def test_uninstall_leaves_settings_alone_when_no_toolkit_guard_entry(self):
         with tempfile.TemporaryDirectory() as home:
             self.write_settings(home, json.loads(json.dumps(EXISTING)))
-            self.install(home)
-            self.install(home)
-            self.assertEqual(len(self.guard_commands(self.settings(home))), 1)
-
-    def test_install_with_no_settings_file_creates_one(self):
-        with tempfile.TemporaryDirectory() as home:
-            os.makedirs(os.path.join(home, ".claude"))
-            p = self.install(home)
-            self.assertEqual(p.returncode, 0, p.stderr)
-            s = self.settings(home)
-            self.assertEqual(s["hooks"]["PreToolUse"][0]["matcher"], "Bash")
-            self.assertEqual(len(self.guard_commands(s)), 1)
-
-    def test_uninstall_removes_only_the_guard(self):
-        with tempfile.TemporaryDirectory() as home:
-            self.write_settings(home, json.loads(json.dumps(EXISTING)))
-            self.install(home)
-            p = subprocess.run([sys.executable, "-c", _uninstall_python()], env={**os.environ, "HOME": home},
-                               capture_output=True, text=True, timeout=30)
+            p = self.run_uninstall_guard_block(home)
             self.assertEqual(p.returncode, 0, p.stderr)
             self.assertEqual(self.settings(home), EXISTING)
 
-    def test_uninstall_drops_an_entry_it_leaves_empty(self):
+    def test_uninstall_without_settings_file_is_a_no_op(self):
+        with tempfile.TemporaryDirectory() as home:
+            p = self.run_uninstall_guard_block(home)
+            self.assertEqual(p.returncode, 0, p.stderr)
+
+    def test_every_configure_function_leaves_the_guard_out(self):
+        for name in _configure_functions():
+            with self.subTest(function=name):
+                with tempfile.TemporaryDirectory() as home:
+                    self.write_settings(home, json.loads(json.dumps(EXISTING)))
+                    p = self.run_function(name, home)
+                    self.assertEqual(p.returncode, 0, p.stderr)
+                    s = self.settings(home)
+                    self.assertFalse([c for c in self.hook_commands(s) if GUARD_SCRIPT in c], name)
+                    # The maintainer's own hooks are left exactly as they were.
+                    for entry in EXISTING["hooks"]["PreToolUse"]:
+                        for hook in entry["hooks"]:
+                            self.assertIn(hook["command"], self.hook_commands(s))
+
+    def test_a_fresh_home_gets_no_guard_hook_from_any_function(self):
         with tempfile.TemporaryDirectory() as home:
             os.makedirs(os.path.join(home, ".claude"))
-            self.install(home)
-            subprocess.run([sys.executable, "-c", _uninstall_python()], env={**os.environ, "HOME": home},
-                           capture_output=True, text=True, timeout=30, check=True)
-            self.assertNotIn("PreToolUse", self.settings(home).get("hooks", {}))
+            for name in _configure_functions():
+                self.run_function(name, home)
+            path = os.path.join(home, ".claude", "settings.json")
+            if os.path.exists(path):
+                self.assertFalse([c for c in self.hook_commands(self.settings(home)) if GUARD_SCRIPT in c])
 
-    def test_uninstall_without_settings_is_a_no_op(self):
-        with tempfile.TemporaryDirectory() as home:
-            p = subprocess.run([sys.executable, "-c", _uninstall_python()], env={**os.environ, "HOME": home},
-                               capture_output=True, text=True, timeout=30)
-            self.assertEqual(p.returncode, 0, p.stderr)
+    def test_the_failure_test_lists_exactly_the_functions_install_defines(self):
+        with open(os.path.join(HERE, "test-install-configure-failure.sh")) as f:
+            text = f.read()
+        listed = set(re.findall(r"configure_[A-Za-z0-9_]+", text.split("for fn in", 1)[1].split("; do", 1)[0]))
+        self.assertEqual(listed, set(_configure_functions()))
 
 
 if __name__ == "__main__":

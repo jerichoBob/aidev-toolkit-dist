@@ -1,0 +1,1 @@
+{"type":"result","total_cost_usd":0.057359,"usage":{"input_tokens":2,"cache_creation_input_tokens":22926,"cache_read_input_tokens":0,"output_tokens":4},"modelUsage":{"us.anthropic.claude-sonnet-5-5":{"costUSD":0.057359}}}

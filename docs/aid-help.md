@@ -128,6 +128,7 @@ and become slash commands in any project. Full architecture writeup:
 
 - `/sdd-spec-prioritize [N]` — Recommend top N specs to focus on next
 - `/sdd-spec-status <vN>` — Show phase-by-phase progress for a specific spec
+- `/sdd-spec-loop [--dry-run] [--max-passes N] [--budget-tokens N | --budget-usd N]` — Build eligible specs in turn until the queue, pass limit or budget runs out; gated tasks are parked and asked at the end
 - `/sdd-spec-owner <version> [set <email> | unset]` — Set or unset spec owner
 - `/sdd-spec-tagging` — Commit tagging convention reference
 - `/sdd-specs-doctor [--dry-run]` — Migrate spec files to YAML frontmatter format
@@ -1080,6 +1081,28 @@ Create a new specification document from a description.
 
 ---
 
+## If `$ARGUMENTS` is "sdd-spec-loop"
+
+<!-- OUTPUT -->
+
+## `/sdd-spec-loop` — Build Eligible Specs Until the Budget Runs Out
+
+**Usage:** `/sdd-spec-loop [--dry-run] [--max-passes N] [--budget-tokens N | --budget-usd N]`
+
+Picks the next spec you own that has no incomplete dependency or external blocker, builds its buildable tasks with `/sdd-code`, runs the project's tests, and moves on, until the queue is empty, the pass limit (default 4) or the budget is reached. Tasks that deploy, write to a real environment, send messages, delete, touch `~/.claude`, need a sign-off, or that it cannot classify are **parked, never performed**, and asked one per turn at the end. Commit and push happen only if the project sets `allow_commit`. Config lives in a `spec-loop` section of `.aid/config.yaml`. Each run writes `.claude/data/spec-loop/<run-id>/` (per-pass log, parked questions, final report).
+
+**Examples:**
+
+```text
+/sdd-spec-loop --dry-run              Show the queue and which next tasks are gates
+/sdd-spec-loop --max-passes 1         One supervised pass
+/sdd-spec-loop --budget-usd 5         Stop before a pass once about $5 is spent
+```
+
+<!-- /OUTPUT -->
+
+---
+
 ## If `$ARGUMENTS` is "sdd-spec-prioritize"
 
 <!-- OUTPUT -->
@@ -1306,6 +1329,7 @@ Code against the spec checklist.
 | -------------------------- | --------------------------------------------------- |
 | `/sdd-spec-prioritize [N]` | Recommend top N specs to focus on next (default: 5) |
 | `/sdd-code [vN]`           | Implement an entire spec end-to-end                 |
+| `/sdd-spec-loop`           | Build eligible specs in turn within a budget        |
 | `/sdd-spec-tagging`        | Commit tagging convention (`[vN:pN:sN]`)            |
 
 ---

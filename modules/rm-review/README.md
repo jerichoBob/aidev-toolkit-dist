@@ -10,7 +10,7 @@ Claude never deletes anything. You decide, one click at a time.
 
 ## Requirements
 
-- The destructive-command guard installed (`scripts/install.sh` does this). The mod asks the guard's script what an `rm` would remove, so there is one detector, not two.
+- The destructive-command guard wired into your `settings.json` by hand (`scripts/install.sh` no longer does this since spec v136; see `docs/destructive-command-guard.md`). The mod asks the guard's script what an `rm` would remove, so there is one detector, not two.
 - macOS. Trash and Reveal use `~/.Trash` and `open -R`.
 
 ## Try it

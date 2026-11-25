@@ -1,0 +1,8 @@
+other_key: 1
+spec-loop:
+  owner_rule: mine_or_unowned   # solo project
+  allow_commit: true
+  test_command: "tests/run-all.sh"
+  max_passes: 6
+  extra_gates: [clinical threshold, rule config]
+after: x

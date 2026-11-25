@@ -17,6 +17,10 @@ Blocked:
 A blocked rm lists the files it would have removed, so the person can review and delete them
 (the optional rm-review mod, modules/rm-review/, shows that list in a side panel).
 
+Heredoc bodies fed to a data sink (cat, tee, gh, git commit -F -) are text and are skipped; anything else
+(shells, interpreters, piped or chained bodies, unquoted bodies with $( ) or backticks, a missing terminator)
+is analysed as before. See docs/destructive-command-guard.md.
+
 --analyze: print a JSON analysis of the command on stdin (used by the rm-review mod) and exit 0.
 
 Turning it off is for the person, not for Claude: set AIDEV_DESTRUCTIVE_GUARD=off in the environment
@@ -56,8 +60,78 @@ PY_DELETE = re.compile(
 CRUDE = re.compile(r"(^|[^A-Za-z0-9_.-])(rm|unlink|rmdir|shred|srm)([^A-Za-z0-9_-]|$)|rmtree|-delete\b")
 
 
+
+# Heredoc bodies fed to a known data sink are text, not commands (dist issue #34).
+HEREDOC = re.compile(r"(?<!<)<<(-?)[ \t]*(?:'([^'\n]+)'|\"([^\"\n]+)\"|(\\?)([A-Za-z_][A-Za-z0-9_]*))")
+HEREDOC_SINKS = {"cat", "tee", "gh"}  # plus `git commit -F -`; anything else fails closed
+INTERPRETER_WORD = re.compile(r"^(python[0-9.]*|node|nodejs|deno|bun|perl|ruby|php|lua|osascript|pwsh|powershell|awk|gawk)$")
+
+
 def base(token):
     return os.path.basename(token)
+
+
+def _heredoc_receiver_is_sink(prefix):
+    """True when the text before `<<` ends in a command that only reads the heredoc as data.
+
+    Fails closed: any interpreter or unrecognised receiver returns False. Works on raw text, not shlex,
+    because the prefix of a `"$(cat <<'EOF'` line has an open quote that shlex rejects.
+    """
+    # The marker must be live shell syntax, not text inside a quoted string.
+    if len(re.findall(r"(?<!\\)'", prefix)) % 2:
+        return False
+    after_last_dquote = prefix[prefix.rfind('"') + 1:] if len(re.findall(r'(?<!\\)"', prefix)) % 2 else None
+    if after_last_dquote is not None and "$(" not in after_last_dquote and "`" not in after_last_dquote:
+        return False
+    # If an interpreter appears anywhere before the marker, the body could be run (bash -c "$(cat <<EOF ...)").
+    for w in re.findall(r"[A-Za-z0-9_./+-]+", prefix):
+        b = base(w)
+        if w == "." or b in SHELLS or b in {"eval", "source", "exec"} or INTERPRETER_WORD.match(b):
+            return False
+    seg = re.split(r"\$\(|`|\|\||&&|[|;&(]", prefix)[-1].split()
+    while seg and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", seg[0]):
+        seg = seg[1:]
+    if not seg:
+        return False
+    head = base(seg[0])
+    if head in HEREDOC_SINKS:
+        return True
+    return head == "git" and "commit" in seg and bool(re.search(r"(^|\s)-F\s*-(\s|$)|--file[= ]-", " ".join(seg)))
+
+
+def strip_heredoc_bodies(command):
+    """Drop heredoc bodies that are plain data, keeping the command line and terminator.
+
+    A body is dropped only when its terminator is present, the receiver is a known data sink
+    (cat, tee, gh, git commit -F -), nothing after the marker pipes or chains onward, and an
+    unquoted heredoc's body has no $( ) or backtick substitution (those would run). In every other
+    case the text is left alone, so it is analysed exactly as before.
+    """
+    if "<<" not in command:
+        return command
+    lines = command.replace("\r\n", "\n").split("\n")
+    out, i = [], 0
+    while i < len(lines):
+        line = lines[i]
+        out.append(line)
+        i += 1
+        for m in HEREDOC.finditer(line):
+            dash = bool(m.group(1))
+            word = m.group(2) or m.group(3) or m.group(5)
+            quoted = bool(m.group(2) or m.group(3) or m.group(4))
+            end = next((j for j in range(i, len(lines)) if (lines[j].lstrip("\t") if dash else lines[j]) == word), None)
+            if end is None:
+                continue  # no terminator: leave everything for the normal analysis
+            body = lines[i:end]
+            strip = (
+                _heredoc_receiver_is_sink(line[:m.start()])
+                and not re.search(r"[|;&`<]|\$\(", line[m.end():])
+                and (quoted or not any("$(" in b or "`" in b for b in body))
+            )
+            out.extend([lines[end]] if strip else lines[i:end + 1])
+            i = end + 1
+            break  # one heredoc per line is handled; later markers stay in the text
+    return "\n".join(out)
 
 
 def tokenize(command):
@@ -127,6 +201,8 @@ def scan(command, cwd, result, depth=0):
         result["reasons"].append("command nesting is too deep to check")
         result["blocked"] = True
         return
+    if depth == 0:
+        command = strip_heredoc_bodies(command)
     try:
         simple = tokenize(command)
     except ValueError:
@@ -318,7 +394,7 @@ def main(argv):
     try:
         result = analyze(command, cwd)
     except Exception as exc:  # fail closed on obvious deletes, open otherwise
-        if CRUDE.search(command):
+        if CRUDE.search(strip_heredoc_bodies(command)):
             print(f"BLOCKED: delete-looking command and the checker failed ({type(exc).__name__}). Nothing was run.", file=sys.stderr)
             return 2
         return 0

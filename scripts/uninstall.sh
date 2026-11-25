@@ -40,7 +40,7 @@ SKILLS=(
     "backbone-setup.md" "handoff.md"
     "sdd-code.md" "sdd-code-spec.md" "sdd-spec-prioritize.md" "sdd-spec.md"
     "sdd-spec-owner.md" "sdd-specs.md" "sdd-specs-update.md" "sdd-spec-tagging.md"
-    "sdd-specs-doctor.md" "sdd-specs-archive.md" "sdd-init.md" "sdd-spec-status.md"
+    "sdd-specs-doctor.md" "sdd-specs-archive.md" "sdd-init.md" "sdd-spec-status.md" "sdd-spec-loop.md"
 )
 
 for skill in "${SKILLS[@]}"; do

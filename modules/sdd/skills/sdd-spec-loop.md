@@ -1,0 +1,79 @@
+---
+name: sdd-spec-loop
+tier: extended
+description: "Build eligible specs in turn until the queue, a pass limit or a token budget runs out; gated tasks are parked and asked at the end"
+argument-hint: "[--dry-run] [--max-passes N] [--budget-tokens N | --budget-usd N]"
+disable-model-invocation: true
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, AskUserQuestion, Skill
+---
+
+# Spec Loop
+
+Keep asking "what's next?" on its own: pick the next spec the developer can build, build it, test it, move on. Stop at an empty queue, the pass limit or the budget. Anything that needs a person is parked, never performed, and asked at the end.
+
+Design: `specs/spec-v137-spec-loop.md`. Token measurement: `docs/spec-loop-token-spend.md`.
+
+Helper scripts (all read-only except `park` and the run record):
+
+```bash
+Q=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-queue.py
+B=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-budget.py
+G=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-gates.py
+```
+
+## Arguments
+
+- `--dry-run` — print the queue and what each next task would do; change nothing (AC-2).
+- `--max-passes N` — default from config `max_passes` (4 if no config) (AC-6).
+- `--budget-tokens N` / `--budget-usd N` — stop before starting a pass once spend reaches it (AC-5). Neither given: pass limit only.
+
+## Step 1: Config and queue
+
+1. `python3 $G config` — effective config (`spec-loop` section of `.aid/config.yaml`, else conservative defaults: owner rule `mine`, commit not allowed, 4 passes).
+2. `python3 $Q [--include-unowned]` (add the flag only when `owner_rule` is `mine_or_unowned`). It lists eligible specs (AC-1) and every excluded spec with its reason.
+3. Classify each eligible spec's unchecked tasks, one per line on stdin: `python3 $G classify --stdin <<'TASKS'` ... `TASKS`. **Never put task text in a shell argument or double quotes**: it comes from a spec file and contains backticks and quotes the shell would execute. A task is **gated** or **buildable**; unknown is gated.
+
+**`--dry-run`:** print the queue in order, and per spec the next task and whether it is gated (with the gate kind). Print the excluded list. Stop. Write nothing.
+
+## Step 2: Start the run
+
+1. Run id: `$(date +%Y%m%d-%H%M%S)`; `export SPEC_LOOP_RUN_ID=<run-id>` so every script log line carries it. Run directory: `.claude/data/spec-loop/<run-id>/` (create it).
+2. Budget start reading, from this session's transcript (newest `*.jsonl` in `~/.claude/projects/<cwd with / replaced by ->/`):
+   `python3 $B reading --transcript <file> > <run-dir>/start.json`. If it fails, tell the developer and run on the pass limit only.
+3. Append a structured line to `<run-dir>/run.log` for every step: `ts run=<id> pass=<n> spec=<vN> step=<name> outcome=<ok|fail|stop> detail=<original message>`.
+
+## Step 3: One pass (repeat)
+
+Before each pass:
+
+1. **Pass limit:** stop if passes done >= max passes (stop reason `pass-limit`).
+2. **Budget:** `python3 $B check --since <run-dir>/start.json --transcript <file> [--budget-tokens N] [--budget-usd N]`. Exit 3 means stop (reason `budget`); record the reading. Exit 2 means the meter could not read spend, or cannot price it for `--budget-usd`: stop (reason `meter-error`) rather than run unmetered when a budget was given.
+3. **Concurrency (AC-8):** `git fetch`. If the remote moved: with a clean working tree run `git pull --rebase`; a conflict or a dirty tree stops the loop (reason `conflict`). After a rebase re-run Step 1's queue.
+4. Take the top eligible spec. If the queue is empty, stop (reason `queue-empty`).
+
+The pass:
+
+1. **Park gated tasks (AC-4).** For each unchecked task of the spec classified gated, run `python3 $G park --run-dir <run-dir> --spec <vN> --stdin <<'TASK'` with the task text as the body (quoted heredoc, never an argument), then append `(blocked: gate <kind>, parked by spec-loop <run-id>)` to that task line in `specs/README.md`, so `/sdd-code` skips it. Never perform a gated task.
+2. If no buildable task remains, record the pass as `parked-only`, count it, and go to the next spec.
+3. Snapshot the README checklist (which boxes are already ticked), then run `/sdd-code <vN> --skip-questions --no-stats` (Skill tool). It builds the buildable tasks and ticks their boxes.
+4. **Tests (AC-3):** run the config `test_command` (else `tests/run-all.sh` if it exists, else none, and say so). Record the result.
+   - Pass: keep the ticked boxes.
+   - Fail: untick every box this pass ticked (restore from the snapshot), append `(blocked: tests failed in spec-loop <run-id>)` to those lines, and count a failing pass.
+5. **Commit:** only if config `allow_commit` is true **and** tests passed: `/commit-push`. Otherwise leave changes in the working tree and say so. Never push from a failing state (AC-7).
+6. **Per-pass record (AC-9):** append one JSON line to `<run-dir>/passes.jsonl`: spec, tasks built, tasks parked, test result, commit hash(es), `python3 $B delta <run-dir>/start.json --transcript <file>` (tokens and dollars so far), gates hit, pass number.
+
+**Failure stop (AC-7):** two consecutive failing passes, or any merge conflict, stops the loop (reason `repeated-failure` / `conflict`).
+
+## Step 4: Final report
+
+Write `<run-dir>/report.md`: run id, stop reason, per pass (spec, tasks built, tests, commits, tokens and dollars), total spend, parked questions count, excluded specs, and any assumption made. Print a short version. Remind the developer that dollars are exact only when the transcript carries `cost-state`, otherwise estimated.
+
+## Step 5: Parked questions (AC-10)
+
+`python3 $G parked --run-dir <run-dir>` lists them. If none, finish. Otherwise ask them **one per `AskUserQuestion` call, in order, never batched**. For each: explain it from zero (the spec's name and what it is for, the task in plain words, why the loop stopped, what each answer changes), recommended option first, then the alternatives, then "Leave parked". Append the answer to `<run-dir>/parked.md` as `Answer ({date}): ...`. If an answer makes a task safe to build, remove its `(blocked: gate ...)` marker so the next run picks it up. Never perform the gated action in this skill.
+
+## Rules
+
+- A gated task is never performed by the loop, whatever the answer: answers only record decisions or unblock the task for a later run (or the developer does it by hand).
+- Never touch `~/.claude`, create branches, delete files, or send messages from a pass.
+- Scripts and run data live in the project (`.claude/data/spec-loop/`); nothing goes to a temp file the developer cannot find.

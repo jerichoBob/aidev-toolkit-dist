@@ -40,10 +40,18 @@ fi
 
 # branch — git branch + status symbols
 if [[ "$(jq -r '.components.branch // true' "$CONFIG" 2>/dev/null)" == "true" ]] && [[ -n "$cwd" ]]; then
-  branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null)
+  # Read-only git calls must never take the index lock: a refresh cancelled
+  # mid-run can otherwise leave a stale .git/index.lock (dist issue #34).
+  # --no-optional-locks needs git 2.15+; older git falls back to plain git.
+  if git --no-optional-locks version >/dev/null 2>&1; then
+    git_ro=(git --no-optional-locks)
+  else
+    git_ro=(git)
+  fi
+  branch=$("${git_ro[@]}" -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null)
   if [[ -n "$branch" ]]; then
     symbols=""
-    gs=$(git -C "$cwd" -c core.useBuiltinFSMonitor=false status --porcelain 2>/dev/null)
+    gs=$("${git_ro[@]}" -C "$cwd" -c core.useBuiltinFSMonitor=false status --porcelain 2>/dev/null)
     echo "$gs" | grep -q "^[MARC]"   && symbols+="✈"
     echo "$gs" | grep -q "^ M\|^M " && symbols+="✭"
     echo "$gs" | grep -q "^ D\|^D " && symbols+="✗"

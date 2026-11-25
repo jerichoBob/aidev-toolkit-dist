@@ -1,0 +1,4 @@
+spec-loop:
+  owner_rule: everyone
+  max_passes: lots
+  allow_commit: maybe

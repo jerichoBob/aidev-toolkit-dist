@@ -242,6 +242,7 @@ One-time setup per person: enable the Google Chat API in a Cloud project, save a
 | `/sdd-next-phase`     | Show all tasks in the current phase                             |
 | `/sdd-code-phase`     | Implement all tasks in the current phase                        |
 | `/sdd-spec-prioritize`| Recommend top N specs to focus on next                          |
+| `/sdd-spec-loop`      | Build eligible specs in turn until the queue, pass limit or budget runs out |
 | `/sdd-spec-status`    | Show phase-by-phase progress for a specific spec                |
 | `/sdd-spec-owner`     | Set or unset spec owner                                         |
 | `/sdd-spec-tagging`   | Commit tagging convention reference                             |
@@ -309,9 +310,40 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.106.3
+0.108.0
 
 ### Release Notes
+
+#### v0.108.0 (2026-11-25) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): `/sdd-spec-loop` — build eligible specs until the queue, pass limit or token budget runs out; queue, budget meter and gate classifier scripts; v137 phases 0-4 (first real runs pending)
+
+#### v0.107.2 (2026-11-23) — author: robert.w.seaton.jr@gmail.com
+
+- fix(uninstall): remove toolkit guard hook entry from settings.json; answer v136 open questions [`6d66523`]
+- chore(specs): archive completed spec v103 to specs/completed/ [`084c0e3`]
+
+#### v0.107.1 (2026-11-17) — author: robert.w.seaton.jr@gmail.com
+
+- docs: add safety-rules-most-restrictive-wins principle to philosophy [`08da9b5`]
+- chore: add session handoffs [`d7367e0`]
+
+#### v0.107.0 (2026-11-17) — author: robert.w.seaton.jr@gmail.com
+
+- fix(statusline,guard): v133 lock-free status line + heredoc text; v136 stop installing guard hook [`4162d76`]
+
+#### v0.106.6 (2026-11-17) — author: robert.w.seaton.jr@gmail.com
+
+- docs: add repo-holds-whole-story and connected-sources principles to philosophy [`8e6618e`]
+
+#### v0.106.5 (2026-11-16) — author: robert.w.seaton.jr@gmail.com
+
+- docs: add aidev-toolkit philosophy draft (stable-but-evolving, tool-enforced principles) [`2dc9c49`]
+
+#### v0.106.4 (2026-11-16) — author: robert.w.seaton.jr@gmail.com
+
+- docs: move AI-dev patterns starting-point doc to data/ and update references [`cd0d480`]
+- docs: add AI-dev patterns session deck and generator script [`69784aa`]
 
 #### v0.106.3 (2026-11-11) — author: robert.w.seaton.jr@gmail.com
 
