@@ -24,12 +24,13 @@ Config (.aid/config.yaml), all keys optional:
     priority: default           # default | oldest | newest | fewest-gated | roi | work-order
     work_order_file: specs/work-order.md   # used by priority: work-order
     categories_file: specs/spec-categories.md   # Value column feeds priority: roi
+    gated_cost: 2.0             # priority: roi cost of each gated task (a buildable task costs 1)
     extra_gates: [clinical threshold, rule config]
 """
 import argparse, json, os, re, sys, datetime
 
 DEFAULTS = {'owner_rule': 'mine', 'allow_commit': False, 'test_command': '', 'max_passes': 4, 'extra_gates': [],
-            'priority': 'default', 'work_order_file': '', 'categories_file': ''}
+            'priority': 'default', 'work_order_file': '', 'categories_file': '', 'gated_cost': 2.0}
 
 # (kind, regex, who decides, what each answer changes, recommended)
 GATES = [
@@ -67,6 +68,8 @@ def _val(v):
         return v.lower() == 'true'
     if re.fullmatch(r'-?\d+', v):
         return int(v)
+    if re.fullmatch(r'-?\d+\.\d+', v):
+        return float(v)
     return v
 
 
@@ -100,6 +103,12 @@ def load_config(path='.aid/config.yaml'):
     if cfg['priority'] not in ('default', 'oldest', 'newest', 'fewest-gated', 'roi', 'work-order'):
         log('config', 'bad-priority', value=cfg['priority'], using='default')
         cfg['priority'] = 'default'
+    if isinstance(cfg['gated_cost'], bool) or not isinstance(cfg['gated_cost'], (int, float)) or cfg['gated_cost'] < 0:
+        if not (isinstance(cfg['gated_cost'], str) and re.fullmatch(r'\d+(\.\d+)?', cfg['gated_cost'])):
+            log('config', 'bad-gated-cost', value=cfg['gated_cost'], using=DEFAULTS['gated_cost'])
+            cfg['gated_cost'] = DEFAULTS['gated_cost']
+        else:
+            cfg['gated_cost'] = float(cfg['gated_cost'])
     if not isinstance(cfg['extra_gates'], list):
         cfg['extra_gates'] = [str(cfg['extra_gates'])]
     if not isinstance(cfg['max_passes'], int) or cfg['max_passes'] < 1:

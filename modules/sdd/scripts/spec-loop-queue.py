@@ -27,7 +27,7 @@ import argparse, importlib.util, json, os, re, subprocess, sys
 STRATEGIES = ('default', 'oldest', 'newest', 'fewest-gated', 'roi', 'work-order')
 DEFAULT_CATEGORIES = os.path.join('specs', 'spec-categories.md')
 DEFAULT_VALUE = 3.0
-GATED_COST = 0.25
+GATED_COST = 2.0  # a gated task is a human interruption: it costs more than a task the loop builds
 DEFAULT_WORK_ORDER = os.path.join('specs', 'work-order.md')
 
 HEADER = re.compile(r'^##\s+v(\d+(?:\.\d+)?)\s*[:—–-]\s*(.*)$')
@@ -191,11 +191,12 @@ def rank(queue, strategy, specs, gates_cfg=None, work_order=None, cat_values=Non
         if strategy == 'fewest-gated':
             queue.sort(key=lambda q: (q['gated'],) + default(q))
         else:
+            gated_cost = float((gates_cfg or {}).get('gated_cost', GATED_COST))
             for q in queue:
                 if not q['value_explicit']:
                     q['value'] = (cat_values or {}).get(q['version'], DEFAULT_VALUE)
                 buildable = q['left'] - q['gated']
-                cost = buildable + GATED_COST * q['gated']
+                cost = buildable + gated_cost * q['gated']
                 q['roi'] = round(q['value'] / cost, 3) if buildable > 0 else 0.0
             queue.sort(key=lambda q: (-q['roi'],) + default(q))
     elif strategy == 'work-order':

@@ -310,9 +310,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.109.1
+0.110.0
 
 ### Release Notes
+
+#### v0.110.0 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): `/sdd-spec` checks drafted criteria for overlap and contradiction against open and completed specs; new `specs-parse.sh requirements` index (v128; interactive resolution still parked) [`e2477be`]
+- fix(sdd): `/sdd-spec-loop --priority roi` weighs gated tasks heavily (`gated_cost`, default 2.0) so gate-heavy specs no longer rank first [`fdc31be`]
 
 #### v0.109.1 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
 

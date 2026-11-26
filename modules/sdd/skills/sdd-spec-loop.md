@@ -25,7 +25,7 @@ G=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-gates.py
 
 - `--dry-run` — print the queue and what each next task would do; change nothing (AC-2).
 - `--priority <strategy>` — how the queue is ordered; overrides `priority` in config (default `default`):
-  `default` (in progress first, then fewest tasks left), `oldest` (lowest version first), `newest` (highest version first), `fewest-gated` (fewest tasks the loop must park first), `roi` (highest value per unit of work: the spec's `value: 1-5` frontmatter, else its category's Value in `specs/spec-categories.md` (`categories_file` in config), else 3, divided by buildable tasks left plus 0.25 per gated task), `work-order` (follow `work_order_file`, default `specs/work-order.md`: one `vN` per line, `#` comments; unlisted specs follow in default order).
+  `default` (in progress first, then fewest tasks left), `oldest` (lowest version first), `newest` (highest version first), `fewest-gated` (fewest tasks the loop must park first), `roi` (highest value per unit of work: the spec's `value: 1-5` frontmatter, else its category's Value in `specs/spec-categories.md` (`categories_file` in config), else 3, divided by buildable tasks left plus `gated_cost` (default 2) per gated task, since a gate stops the automation), `work-order` (follow `work_order_file`, default `specs/work-order.md`: one `vN` per line, `#` comments; unlisted specs follow in default order).
 - `--max-passes N` — default from config `max_passes` (4 if no config) (AC-6).
 - `--budget-tokens N` / `--budget-usd N` — stop before starting a pass once spend reaches it (AC-5). Neither given: pass limit only.
 

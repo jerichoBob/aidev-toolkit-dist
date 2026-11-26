@@ -68,7 +68,7 @@ CAT="$PF/categories.md"
 ordc() { order --priority roi --categories-file "$@"; }
 check "roi: category value feeds spec with no value: (v11 5 > v10 1.6)" "$(ordc "$CAT")" "v11 v10 v12"
 check "roi: spec value: beats its category (v10 stays 2)" "$(python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --json --config "$PF/none.yaml" --priority roi --categories-file "$CAT" 2>/dev/null | python3 -c 'import json,sys; d={q["version"]:q["value"] for q in json.load(sys.stdin)["queue"]}; print(d["v10"], d["v11"])')" "2.0 5.0"
-check "roi: missing categories file falls back to 3 (v11 1.5 < v10 1.6)" "$(ordc "$PF/nope.md")" "v10 v11 v12"
+check "roi: missing categories file falls back to 3 (v11 1.5 > v10 0.67)" "$(ordc "$PF/nope.md")" "v11 v10 v12"
 check "work-order: listed specs first, rest default" "$(order --priority work-order --work-order-file "$PF/work-order.md")" "v12 v11 v10"
 check "config sets the strategy" "$(order --config "$PF/config-newest.yaml")" "v12 v11 v10"
 check "flag overrides config" "$(order --config "$PF/config-newest.yaml" --priority oldest)" "v10 v11 v12"
@@ -78,6 +78,19 @@ python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org -
 if [ "$rc" -eq 2 ]; then pass "unknown strategy exits 2"; else fail "unknown strategy exit code $rc"; fi
 python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --priority work-order --work-order-file "$PF/missing.md" >/dev/null 2>&1; rc=$?
 if [ "$rc" -eq 2 ]; then pass "missing work-order file exits 2"; else fail "missing work-order exit code $rc"; fi
+
+echo ""
+echo "Test: roi weighs gated tasks heavily (gated_cost)"
+GF="$REPO_DIR/tests/fixtures/spec-loop-gated"
+gorder() { # gorder <config> -> versions in roi order
+    python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$GF/specs" --owner me@x.org --json --priority roi --config "$1" 2>/dev/null \
+        | python3 -c 'import json,sys; print(" ".join(q["version"] for q in json.load(sys.stdin)["queue"]))'
+}
+check "default gated_cost 2: all-buildable v21 (1.0) beats value-5 gate-heavy v20 (0.5)" "$(gorder "$GF/none.yaml")" "v21 v20"
+check "gated_cost 0.25 from config reverses it (v20 1.67 > v21 1.0)" "$(gorder "$GF/config-cheap-gates.yaml")" "v20 v21"
+check "negative gated_cost falls back to the default" "$(gorder "$GF/config-bad-gated-cost.yaml")" "v21 v20"
+check "config exposes gated_cost default" "$(python3 "$SCRIPTS/spec-loop-gates.py" config --file "$GF/none.yaml" 2>/dev/null)" '"gated_cost": 2.0'
+check "config reads gated_cost override" "$(python3 "$SCRIPTS/spec-loop-gates.py" config --file "$GF/config-cheap-gates.yaml" 2>/dev/null)" '"gated_cost": 0.25'
 
 echo ""
 echo "Test: spec-loop-budget.py (AC-5)"

@@ -4,7 +4,7 @@ set -euo pipefail
 # specs-parse.sh — Shared parsing infrastructure for SDD module
 # Reads specs/README.md and outputs structured data for skill consumption.
 # Usage: specs-parse.sh <subcommand>
-# Subcommands: status, next-task, next-phase, next-version, staleness, structure, spec-list, spec-roles
+# Subcommands: status, next-task, next-phase, next-version, staleness, structure, spec-list, spec-roles, requirements
 
 README="specs/README.md"
 
@@ -339,6 +339,66 @@ cmd_next_version() {
   echo $(( max + 1 ))
 }
 
+# Emit a compact requirement index for overlap/contradiction checks (spec v128).
+# Usage: cmd_requirements
+# Covers specs/ and specs/completed/ (a missing completed/ is skipped, not an error).
+# Output, tab-separated, one block per spec in version order:
+#   SPEC<TAB>vN<TAB>name<TAB>status<TAB>open|completed<TAB>file
+#   US<TAB>vN<TAB><user-story line>      (list items under a "User Stories" heading)
+#   AC<TAB>vN<TAB><criterion line>       (list items under an "Acceptance Criteria" heading)
+# Only those two sections are read, so cost tracks criteria size, not file size. A spec with no such
+# section yields just its SPEC line.
+cmd_requirements() {
+  local rows dir f ver loc
+  rows=$(for dir in specs specs/completed; do
+    [[ -d "$dir" ]] || continue
+    for f in "$dir"/spec-v*.md; do
+      [[ -f "$f" ]] || continue
+      if [[ "$(basename "$f")" =~ ^spec-v([0-9]+(\.[0-9]+)?)- ]]; then
+        printf '%s\t%s\n' "${BASH_REMATCH[1]}" "$f"
+      fi
+    done
+  done | sort -V -k1,1)
+
+  echo "REQUIREMENTS:"
+  [[ -n "$rows" ]] || return 0
+  while IFS=$'\t' read -r ver f; do
+    loc=open
+    [[ "$f" == specs/completed/* ]] && loc=completed
+    awk -v ver="v$ver" -v loc="$loc" -v file="$f" '
+      function clean(s) {
+        sub(/^[^:]*:[[:space:]]*/, "", s); sub(/[[:space:]]+#.*$/, "", s)
+        gsub(/"/, "", s); gsub(/\047/, "", s); sub(/[[:space:]]+$/, "", s)
+        return s
+      }
+      function emit() {
+        print "SPEC\t" ver "\t" (name == "" ? "-" : name) "\t" (status == "" ? "-" : status) "\t" loc "\t" file
+        printed = 1
+      }
+      BEGIN { fm = 0; printed = 0; sec = "" }
+      NR == 1 && $0 == "---" { fm = 1; next }
+      fm == 1 {
+        if ($0 == "---") { fm = 2; emit(); next }
+        if ($0 ~ /^name:/) name = clean($0)
+        else if ($0 ~ /^status:/) status = clean($0)
+        next
+      }
+      {
+        if (!printed) emit()
+        if ($0 ~ /^##[#]?[[:space:]]/) {
+          h = tolower($0)
+          if (h ~ /acceptance criteria/) sec = "AC"
+          else if (h ~ /user stor/) sec = "US"
+          else sec = ""
+          next
+        }
+        if (sec != "" && $0 ~ /^[[:space:]]*(-|\*|[0-9]+\.)[[:space:]]/) print sec "\t" ver "\t" $0
+      }
+      END { if (!printed) emit() }
+    ' "$f" || echo "WARN: could not read $f" >&2
+  done <<< "$rows"
+}
+
 # --- Main dispatch ---
 case "${1:-}" in
   status)       cmd_status ;;
@@ -349,8 +409,9 @@ case "${1:-}" in
   structure)    cmd_structure ;;
   spec-list)    cmd_spec_list "${@:2}" ;;
   spec-roles)   cmd_spec_roles "${2:-}" ;;
+  requirements) cmd_requirements ;;
   *)
-    echo "Usage: specs-parse.sh <status|next-task|next-phase|next-version|staleness|structure|spec-list|spec-roles>"
+    echo "Usage: specs-parse.sh <status|next-task|next-phase|next-version|staleness|structure|spec-list|spec-roles|requirements>"
     exit 1
     ;;
 esac

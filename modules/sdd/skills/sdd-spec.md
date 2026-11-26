@@ -350,6 +350,24 @@ For each **required**-severity principle other than AP-005 (already handled in S
 
 For each gap patched, note it: original state → what was added/changed → principle ID. Add a line to the spec's Technical Notes section: "Architecture principles applied: [list of principle IDs that triggered additions/rewrites]". If no gaps found, continue silently — do not pad the spec with restatements of principles that already hold.
 
+4.8. **Check the draft for overlap and contradiction** (always run; after the draft is formed and before the file is written):
+
+Build the requirement index. It covers open specs (`specs/`) and completed specs (`specs/completed/`) and reads only each spec's User Stories and Acceptance Criteria, so it stays compact on large spec sets. A missing `specs/completed/` is skipped, not an error.
+
+```bash
+~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh requirements
+```
+
+Output is tab-separated: `SPEC<TAB>vN<TAB>name<TAB>status<TAB>open|completed<TAB>file`, followed by that spec's `US<TAB>vN<TAB>...` and `AC<TAB>vN<TAB>...` lines.
+
+Compare each drafted acceptance criterion against the `AC` and `US` lines of every other spec (judge from the text; no external services):
+
+- **Overlap**: a drafted criterion restates or extends an existing one. Record the existing spec (`vN`, open or completed), its requirement ID and text, and the drafted criterion.
+- **Contradiction**: a drafted criterion cannot hold together with an existing one. Record both requirements side by side with their spec versions.
+- **Nothing found**: say so in one line (`Overlap check: no overlap or contradiction found against {count} specs`) and continue exactly as before.
+
+Findings are listed in the report (Step 3). Interactive resolution (asking which requirement stands, extending an existing spec, recording an override) is not wired in yet; it is tracked in spec v128 Phase 2.
+
 1. **Write the file**: Save to `specs/spec-v{N}-{short-name}.md`
 
    **If spec-guard is enabled and this write (or the README update in the next step) fails**: report to the user that v{N} was reserved on the remote but never used, and that they should run `spec-guard.sh release {N}` if the number should be freed for reuse. Do NOT automatically release it — a failed write could still be retried by the same caller, and auto-releasing would reopen the race spec-guard exists to close.
@@ -369,6 +387,7 @@ For each gap patched, note it: original state → what was added/changed → pri
    - Confirm: Quick Status table updated with correct progress (0/{TASK_COUNT})
    - **Security section**: Confirm it was populated (not boilerplate). Summarize in one line what was set for AuthN, AuthZ, and Audit Logging (AP-005).
    - **Architecture principles**: If principles were loaded (Step 0.7), list which ones triggered a task addition/rewrite in Step 4.7 (or "no gaps found" if none did). If principles weren't found, say so.
+   - **Overlap check** (Step 4.8): the one-line "no overlap" result, or each finding (existing spec and requirement, drafted criterion, overlap or contradiction)
    - **spec-guard**: One line noting whether it's enabled or disabled for this project (from Step 1's check), e.g. `spec-guard: disabled (default) — /sdd-spec --config to view/change`
    - Next steps: Edit the spec file to flesh out details, then run `/sdd-code v{N}`
 

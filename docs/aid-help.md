@@ -1067,7 +1067,8 @@ Create a new specification document from a description.
 2. Resolves the spec template — prefers a local `specs/TEMPLATE.md` if present, otherwise falls back to the toolkit's global template. Reports which source was used.
 3. Creates kebab-case filename: `spec-v{N}-{short-name}.md`
 4. Fills template with Why/What/How from your description
-5. Updates `specs/README.md` with new spec section
+5. Compares the drafted acceptance criteria with those in open specs (`specs/`) and completed specs (`specs/completed/`) and reports any overlap or contradiction (one line when there is none)
+6. Updates `specs/README.md` with new spec section
 
 **Examples:**
 
