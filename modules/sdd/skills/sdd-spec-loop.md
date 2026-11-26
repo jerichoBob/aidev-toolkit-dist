@@ -2,7 +2,7 @@
 name: sdd-spec-loop
 tier: extended
 description: "Build eligible specs in turn until the queue, a pass limit or a token budget runs out; gated tasks are parked and asked at the end"
-argument-hint: "[--dry-run] [--max-passes N] [--budget-tokens N | --budget-usd N]"
+argument-hint: "[--dry-run] [--priority STRATEGY] [--max-passes N] [--budget-tokens N | --budget-usd N]"
 disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob, AskUserQuestion, Skill
 ---

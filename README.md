@@ -310,9 +310,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.109.0
+0.109.1
 
 ### Release Notes
+
+#### v0.109.1 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
+
+- docs(sdd): show `--priority` in the `/sdd-spec-loop` argument hint and help [`c83919b`]
 
 #### v0.109.0 (2026-11-25) — author: robert.w.seaton.jr@gmail.com
 
