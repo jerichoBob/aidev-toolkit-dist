@@ -39,7 +39,7 @@ G=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-gates.py
 
 ## Step 2: Start the run
 
-1. Run id: `$(date +%Y%m%d-%H%M%S)`; `export SPEC_LOOP_RUN_ID=<run-id>` so every script log line carries it. Run directory: `.claude/data/spec-loop/<run-id>/` (create it).
+1. Run id: `$(date +%Y%m%d-%H%M%S)`; `export SPEC_LOOP_RUN_ID=<run-id>` so every script log line carries it. Run directory: `.claude/tmp/spec-loop/<run-id>/` (create it).
 2. Budget start reading, from this session's transcript (newest `*.jsonl` in `~/.claude/projects/<cwd with / replaced by ->/`):
    `python3 $B reading --transcript <file> > <run-dir>/start.json`. If it fails, tell the developer and run on the pass limit only.
 3. Append a structured line to `<run-dir>/run.log` for every step: `ts run=<id> pass=<n> spec=<vN> step=<name> outcome=<ok|fail|stop> detail=<original message>`.
@@ -72,10 +72,10 @@ Write `<run-dir>/report.md`: run id, stop reason, per pass (spec, tasks built, t
 
 ## Step 5: Parked questions (AC-10)
 
-`python3 $G parked --run-dir <run-dir>` lists them. If none, finish. Otherwise ask them **one per `AskUserQuestion` call, in order, never batched**. For each: explain it from zero (the spec's name and what it is for, the task in plain words, why the loop stopped, what each answer changes), recommended option first, then the alternatives, then "Leave parked". Append the answer to `<run-dir>/parked.md` as `Answer ({date}): ...`. If an answer makes a task safe to build, remove its `(blocked: gate ...)` marker so the next run picks it up. Never perform the gated action in this skill.
+`python3 $G parked --run-dir <run-dir>` lists them. If none, finish. Otherwise ask them **one per `AskUserQuestion` call, in order, never batched**. For each: explain it from zero (the spec's name and what it is for, the task in plain words, why the loop stopped, what each answer changes), recommended option first, then the alternatives, then "Leave parked". Append the answer to `<run-dir>/parked.md` as `Answer ({date}): ...`. The run directory is disposable (`.claude/tmp/`, gitignored), so also record the decision where it lasts: in the spec file (`Resolved ({date}): ...` under its Open Questions, or as a note on the task) and, when the task becomes safe to build or is closed, in `specs/README.md`. If an answer makes a task safe to build, remove its `(blocked: gate ...)` marker so the next run picks it up. Never perform the gated action in this skill.
 
 ## Rules
 
 - A gated task is never performed by the loop, whatever the answer: answers only record decisions or unblock the task for a later run (or the developer does it by hand).
 - Never touch `~/.claude`, create branches, delete files, or send messages from a pass.
-- Scripts and run data live in the project (`.claude/data/spec-loop/`); nothing goes to a temp file the developer cannot find.
+- Scripts live in the project (`.claude/scripts/`). Run data (logs, readings, reports, parked questions) is low-reuse and goes to `.claude/tmp/spec-loop/` (gitignored); nothing goes to a system temp file the developer cannot find.

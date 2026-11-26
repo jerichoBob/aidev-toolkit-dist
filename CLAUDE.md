@@ -98,6 +98,10 @@ How it works:
 
 Ephemeral scripts are wasted tokens. If you create a script to complete a task, write that script to the appropriate location in the current project's `.claude/` dir so that it can be studied and used again.
 
+### Disposable Output Goes to `.claude/tmp/`
+
+Generated output that is not a project artifact and has low reuse value (run logs, budget readings, snapshots, per-run reports, one-off analysis dumps) goes to `.claude/tmp/`, which is gitignored, so it never clutters `git status` and the developer need not review it. Scripts still go to `.claude/scripts/`. Anything that records a decision or is worth reusing belongs in the spec, README or `.claude/data/` instead, never only in tmp.
+
 ## Rules
 
 - **Always use `/commit-push`** for syncing local changes with remote (smart commit + push workflow).

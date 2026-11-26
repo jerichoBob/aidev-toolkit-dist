@@ -310,9 +310,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.110.0
+0.110.1
 
 ### Release Notes
+
+#### v0.110.1 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
+
+- chore(sdd): `/sdd-spec-loop` run data goes to gitignored `.claude/tmp/spec-loop/`; parked answers are recorded in the spec; disposable-output convention added to CLAUDE.md [`39e0106`]
 
 #### v0.110.0 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
 

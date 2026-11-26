@@ -1090,7 +1090,7 @@ Create a new specification document from a description.
 
 **Usage:** `/sdd-spec-loop [--dry-run] [--priority STRATEGY] [--max-passes N] [--budget-tokens N | --budget-usd N]`
 
-Picks the next spec you own that has no incomplete dependency or external blocker, builds its buildable tasks with `/sdd-code`, runs the project's tests, and moves on, until the queue is empty, the pass limit (default 4) or the budget is reached. Tasks that deploy, write to a real environment, send messages, delete, touch `~/.claude`, need a sign-off, or that it cannot classify are **parked, never performed**, and asked one per turn at the end. Commit and push happen only if the project sets `allow_commit`. Config lives in a `spec-loop` section of `.aid/config.yaml`. Each run writes `.claude/data/spec-loop/<run-id>/` (per-pass log, parked questions, final report).
+Picks the next spec you own that has no incomplete dependency or external blocker, builds its buildable tasks with `/sdd-code`, runs the project's tests, and moves on, until the queue is empty, the pass limit (default 4) or the budget is reached. Tasks that deploy, write to a real environment, send messages, delete, touch `~/.claude`, need a sign-off, or that it cannot classify are **parked, never performed**, and asked one per turn at the end. Commit and push happen only if the project sets `allow_commit`. Config lives in a `spec-loop` section of `.aid/config.yaml`. Each run writes `.claude/tmp/spec-loop/<run-id>/` (per-pass log, parked questions, final report).
 
 **Examples:**
 
