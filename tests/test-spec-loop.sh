@@ -52,6 +52,34 @@ after=$(find "$FIX" -type f | xargs cat | shasum)
 if [ "$before" = "$after" ]; then pass "queue is read-only"; else fail "queue modified files"; fi
 
 echo ""
+echo "Test: spec-loop-queue.py priority strategies"
+PF="$REPO_DIR/tests/fixtures/spec-loop-priority"
+order() { # order <extra args...> -> space-separated versions
+    python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --json --config "$PF/none.yaml" "$@" 2>/dev/null \
+        | python3 -c 'import json,sys; print(" ".join(q["version"] for q in json.load(sys.stdin)["queue"]))'
+}
+check "default: in progress, then fewest left" "$(order)" "v10 v12 v11"
+check "oldest: lowest version first" "$(order --priority oldest)" "v10 v11 v12"
+check "newest: highest version first" "$(order --priority newest)" "v12 v11 v10"
+check "fewest-gated: all-buildable spec first" "$(order --priority fewest-gated)" "v11 v10 v12"
+check "roi: value per buildable task (v11 2.5 > v10 1.6 > all-gated v12 0)" "$(order --priority roi --categories-file "$PF/categories.md")" "v11 v10 v12"
+check "roi score in json" "$(python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --json --config "$PF/none.yaml" --priority roi --categories-file "$PF/categories.md" 2>/dev/null)" '"roi": 2.5'
+CAT="$PF/categories.md"
+ordc() { order --priority roi --categories-file "$@"; }
+check "roi: category value feeds spec with no value: (v11 5 > v10 1.6)" "$(ordc "$CAT")" "v11 v10 v12"
+check "roi: spec value: beats its category (v10 stays 2)" "$(python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --json --config "$PF/none.yaml" --priority roi --categories-file "$CAT" 2>/dev/null | python3 -c 'import json,sys; d={q["version"]:q["value"] for q in json.load(sys.stdin)["queue"]}; print(d["v10"], d["v11"])')" "2.0 5.0"
+check "roi: missing categories file falls back to 3 (v11 1.5 < v10 1.6)" "$(ordc "$PF/nope.md")" "v10 v11 v12"
+check "work-order: listed specs first, rest default" "$(order --priority work-order --work-order-file "$PF/work-order.md")" "v12 v11 v10"
+check "config sets the strategy" "$(order --config "$PF/config-newest.yaml")" "v12 v11 v10"
+check "flag overrides config" "$(order --config "$PF/config-newest.yaml" --priority oldest)" "v10 v11 v12"
+check "bad config priority falls back to default" "$(order --config "$PF/config-bogus.yaml")" "v10 v12 v11"
+check "header names the strategy" "$(python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --config "$PF/none.yaml" --priority oldest 2>/dev/null | head -1)" "priority: oldest"
+python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --priority nope >/dev/null 2>&1; rc=$?
+if [ "$rc" -eq 2 ]; then pass "unknown strategy exits 2"; else fail "unknown strategy exit code $rc"; fi
+python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --priority work-order --work-order-file "$PF/missing.md" >/dev/null 2>&1; rc=$?
+if [ "$rc" -eq 2 ]; then pass "missing work-order file exits 2"; else fail "missing work-order exit code $rc"; fi
+
+echo ""
 echo "Test: spec-loop-budget.py (AC-5)"
 B="$SCRIPTS/spec-loop-budget.py"
 BF="$FIX/budget"

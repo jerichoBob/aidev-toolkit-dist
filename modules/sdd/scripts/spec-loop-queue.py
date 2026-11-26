@@ -2,12 +2,33 @@
 """spec-loop-queue.py — eligibility queue for /sdd-spec-loop (spec v137, AC-1, AC-2).
 
 Reads specs/README.md checklists and specs/spec-v{N}-*.md frontmatter, prints the specs the loop may build
-(ranked: in progress first, then fewest tasks left) and every excluded spec with its reason. Read-only.
+(ranked by the chosen priority strategy) and every excluded spec with its reason. Read-only.
 
 Usage: spec-loop-queue.py [--specs-dir DIR] [--owner EMAIL] [--include-unowned] [--json]
-Exit 0 always on readable input; exit 2 if specs/README.md is missing.
+                          [--priority STRATEGY] [--work-order-file FILE] [--categories-file FILE] [--config FILE]
+Exit 0 always on readable input; exit 2 if specs/README.md (or a requested work-order file) is missing.
+
+Priority strategies (flag overrides `priority` in the spec-loop section of .aid/config.yaml; default `default`):
+  default       in progress first, then fewest tasks left, then lowest version.
+  oldest        lowest version number first.
+  newest        highest version number first.
+  fewest-gated  fewest unchecked tasks the loop must park (gated or already blocked) first, then default order.
+                Surfaces the specs the loop can build most of, so passes are not spent parking.
+  roi           highest value per unit of work first. value = the spec's `value:` frontmatter, else its category's Value in
+                `categories_file` (default specs/spec-categories.md), else 3 (all 1-5);
+                cost = buildable tasks left + 0.25 per gated task (parking still costs you a question).
+                A spec with nothing buildable scores 0. Ties use the default order.
+  work-order    follow the order listed in a work-order file (`work_order_file` in config, default
+                specs/work-order.md): one spec per line, `v12` or `- v12`, `#` comments and blank lines ignored.
+                Specs not listed follow, in default order.
 """
-import argparse, json, os, re, subprocess, sys
+import argparse, importlib.util, json, os, re, subprocess, sys
+
+STRATEGIES = ('default', 'oldest', 'newest', 'fewest-gated', 'roi', 'work-order')
+DEFAULT_CATEGORIES = os.path.join('specs', 'spec-categories.md')
+DEFAULT_VALUE = 3.0
+GATED_COST = 0.25
+DEFAULT_WORK_ORDER = os.path.join('specs', 'work-order.md')
 
 HEADER = re.compile(r'^##\s+v(\d+(?:\.\d+)?)\s*[:—–-]\s*(.*)$')
 LOOSE_HEADER = re.compile(r'^##\s+v\d')
@@ -99,7 +120,92 @@ def default_owner():
     return ''
 
 
-def build(specs_dir, owner, include_unowned):
+def load_gates():
+    """Import the sibling gate classifier (hyphenated filename, so importlib)."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'spec-loop-gates.py')
+    spec = importlib.util.spec_from_file_location('spec_loop_gates', path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def parse_work_order(path):
+    """Return versions in file order. Raises OSError if unreadable."""
+    order = []
+    for ln in open(path, encoding='utf-8').read().splitlines():
+        ln = ln.split('#')[0].strip()
+        m = re.match(r'^(?:[-*]\s+)?(?:\[[ xX]\]\s+)?v?(\d+(?:\.\d+)?)\b', ln)
+        if m and 'v' + m.group(1) not in order:
+            order.append('v' + m.group(1))
+    return order
+
+
+def parse_categories(path):
+    """Return {vN: value} from a markdown table with `Specs` and `Value` columns. {} if absent/unreadable (logged)."""
+    try:
+        lines = open(path, encoding='utf-8').read().splitlines()
+    except OSError as e:
+        log('categories', 'unreadable', path=path, error=e)
+        return {}
+    out, cols = {}, None
+    for ln in lines:
+        if not ln.startswith('|'):
+            cols = None
+            continue
+        cells = [c.strip() for c in ln.strip().strip('|').split('|')]
+        if cols is None:
+            low = [c.lower() for c in cells]
+            if 'specs' in low and 'value' in low:
+                cols = (low.index('specs'), low.index('value'))
+            continue
+        if set(''.join(cells)) <= set('-: '):
+            continue
+        try:
+            val = float(cells[cols[1]])
+        except (ValueError, IndexError):
+            log('categories', 'bad-value', row=cells[0] if cells else '?')
+            continue
+        if not 1 <= val <= 5:
+            log('categories', 'bad-value', row=cells[0], value=val)
+            continue
+        for v in re.findall(r'\bv(\d+(?:\.\d+)?)\b', cells[cols[0]]):
+            out['v' + v] = val
+    if not out:
+        log('categories', 'empty', path=path)
+    return out
+
+
+def rank(queue, strategy, specs, gates_cfg=None, work_order=None, cat_values=None):
+    """Sort queue in place for the strategy. specs maps vN -> parsed README entry (for task text)."""
+    num = lambda q: float(q['version'][1:])
+    default = lambda q: (not q['in_progress'], q['left'], num(q))
+    if strategy == 'oldest':
+        queue.sort(key=num)
+    elif strategy == 'newest':
+        queue.sort(key=lambda q: -num(q))
+    elif strategy in ('fewest-gated', 'roi'):
+        gates = load_gates()
+        for q in queue:
+            tasks = [t for c, t in specs[q['version']]['tasks'] if not c]
+            q['gated'] = sum(1 for t in tasks if re.search(r'\(blocked:', t, re.I) or gates.classify(t, gates_cfg)['gated'])
+        if strategy == 'fewest-gated':
+            queue.sort(key=lambda q: (q['gated'],) + default(q))
+        else:
+            for q in queue:
+                if not q['value_explicit']:
+                    q['value'] = (cat_values or {}).get(q['version'], DEFAULT_VALUE)
+                buildable = q['left'] - q['gated']
+                cost = buildable + GATED_COST * q['gated']
+                q['roi'] = round(q['value'] / cost, 3) if buildable > 0 else 0.0
+            queue.sort(key=lambda q: (-q['roi'],) + default(q))
+    elif strategy == 'work-order':
+        pos = {v: i for i, v in enumerate(work_order or [])}
+        queue.sort(key=lambda q: (pos.get(q['version'], len(pos)),) + default(q))
+    else:
+        queue.sort(key=default)
+
+
+def build(specs_dir, owner, include_unowned, strategy='default', gates_cfg=None, work_order=None, cat_values=None):
     readme = os.path.join(specs_dir, 'README.md')
     if not os.path.isfile(readme):
         raise FileNotFoundError(f'{readme} not found')
@@ -137,10 +243,18 @@ def build(specs_dir, owner, include_unowned):
         nxt = next(((i, t) for i, (c, t) in enumerate(s['tasks']) if not c), None)
         if nxt and re.search(r'\(blocked:', nxt[1], re.I):
             ex('external blocker: ' + nxt[1][nxt[1].lower().index('(blocked:'):][:80]); continue
-        queue.append({'version': ver, 'name': s['name'], 'done': s['done'], 'total': s['total'],
+        explicit = 'value' in fm
+        try:
+            value = float(fm.get('value', DEFAULT_VALUE))
+            if not 1 <= value <= 5:
+                raise ValueError(value)
+        except ValueError:
+            log('value', 'bad-value', spec=ver, value=fm.get('value'), using=DEFAULT_VALUE)
+            value = DEFAULT_VALUE
+        queue.append({'version': ver, 'value': value, 'value_explicit': explicit, 'name': s['name'], 'done': s['done'], 'total': s['total'],
                       'left': s['total'] - s['done'], 'in_progress': s['done'] > 0,
                       'next_task': nxt[1] if nxt else '', 'spec_file': path})
-    queue.sort(key=lambda q: (not q['in_progress'], q['left'], float(q['version'][1:])))
+    rank(queue, strategy, specs, gates_cfg, work_order, cat_values)
     return queue, excluded
 
 
@@ -150,19 +264,37 @@ def main(argv):
     ap.add_argument('--owner', default=None)
     ap.add_argument('--include-unowned', action='store_true')
     ap.add_argument('--json', action='store_true')
+    ap.add_argument('--priority', default=None, help='|'.join(STRATEGIES))
+    ap.add_argument('--work-order-file', default=None)
+    ap.add_argument('--categories-file', default=None)
+    ap.add_argument('--config', default='.aid/config.yaml')
     a = ap.parse_args(argv)
     owner = a.owner if a.owner is not None else default_owner()
     try:
-        queue, excluded = build(a.specs_dir, owner, a.include_unowned)
+        gates = load_gates()
+        cfg = gates.load_config(a.config)
+        strategy = a.priority if a.priority is not None else cfg.get('priority', 'default')
+        if strategy not in STRATEGIES:
+            print(f'ERROR: unknown priority "{strategy}" (use one of: {", ".join(STRATEGIES)})', file=sys.stderr)
+            log('queue', 'error', error=f'unknown priority {strategy}')
+            return 2
+        work_order = None
+        if strategy == 'work-order':
+            wo = a.work_order_file or cfg.get('work_order_file') or DEFAULT_WORK_ORDER
+            work_order = parse_work_order(wo)
+        cat_values = None
+        if strategy == 'roi':
+            cat_values = parse_categories(a.categories_file or cfg.get('categories_file') or DEFAULT_CATEGORIES)
+        queue, excluded = build(a.specs_dir, owner, a.include_unowned, strategy, cfg, work_order, cat_values)
     except (OSError, UnicodeDecodeError) as e:
         log('queue', 'error', error=e)
         print(f'ERROR: {e}', file=sys.stderr)
         return 2
-    log('queue', 'ok', eligible=len(queue), excluded=len(excluded), owner=owner or '-')
+    log('queue', 'ok', eligible=len(queue), excluded=len(excluded), owner=owner or '-', priority=strategy)
     if a.json:
-        print(json.dumps({'owner': owner, 'queue': queue, 'excluded': excluded}, indent=2))
+        print(json.dumps({'owner': owner, 'priority': strategy, 'queue': queue, 'excluded': excluded}, indent=2))
         return 0
-    print(f'Eligible ({len(queue)}) — owner: {owner or "(none)"}')
+    print(f'Eligible ({len(queue)}) — owner: {owner or "(none)"} — priority: {strategy}')
     for i, q in enumerate(queue, 1):
         print(f'{i}. {q["version"]}\t{q["done"]}/{q["total"]}\t{q["name"]}\n   next: {q["next_task"][:140]}')
     print(f'\nExcluded ({len(excluded)})')

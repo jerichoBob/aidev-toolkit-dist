@@ -24,13 +24,15 @@ G=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-gates.py
 ## Arguments
 
 - `--dry-run` — print the queue and what each next task would do; change nothing (AC-2).
+- `--priority <strategy>` — how the queue is ordered; overrides `priority` in config (default `default`):
+  `default` (in progress first, then fewest tasks left), `oldest` (lowest version first), `newest` (highest version first), `fewest-gated` (fewest tasks the loop must park first), `roi` (highest value per unit of work: the spec's `value: 1-5` frontmatter, else its category's Value in `specs/spec-categories.md` (`categories_file` in config), else 3, divided by buildable tasks left plus 0.25 per gated task), `work-order` (follow `work_order_file`, default `specs/work-order.md`: one `vN` per line, `#` comments; unlisted specs follow in default order).
 - `--max-passes N` — default from config `max_passes` (4 if no config) (AC-6).
 - `--budget-tokens N` / `--budget-usd N` — stop before starting a pass once spend reaches it (AC-5). Neither given: pass limit only.
 
 ## Step 1: Config and queue
 
 1. `python3 $G config` — effective config (`spec-loop` section of `.aid/config.yaml`, else conservative defaults: owner rule `mine`, commit not allowed, 4 passes).
-2. `python3 $Q [--include-unowned]` (add the flag only when `owner_rule` is `mine_or_unowned`). It lists eligible specs (AC-1) and every excluded spec with its reason.
+2. `python3 $Q [--include-unowned] [--priority <strategy>]` (add `--include-unowned` only when `owner_rule` is `mine_or_unowned`; add `--priority` only when the developer passed it, else the script uses config). It prints the strategy in its header; show it in the report. Use the same flags every time the queue is re-run. It lists eligible specs (AC-1) and every excluded spec with its reason.
 3. Classify each eligible spec's unchecked tasks, one per line on stdin: `python3 $G classify --stdin <<'TASKS'` ... `TASKS`. **Never put task text in a shell argument or double quotes**: it comes from a spec file and contains backticks and quotes the shell would execute. A task is **gated** or **buildable**; unknown is gated.
 
 **`--dry-run`:** print the queue in order, and per spec the next task and whether it is gated (with the gate kind). Print the excluded list. Stop. Write nothing.

@@ -310,9 +310,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.108.0
+0.109.0
 
 ### Release Notes
+
+#### v0.109.0 (2026-11-25) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): add priority strategies to `/sdd-spec-loop` (`--priority` oldest, newest, fewest-gated, roi, work-order; roi values specs by `value:` or category in `specs/spec-categories.md`) [`2feb564`]
 
 #### v0.108.0 (2026-11-25) — author: robert.w.seaton.jr@gmail.com
 

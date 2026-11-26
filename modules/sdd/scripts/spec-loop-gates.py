@@ -21,11 +21,15 @@ Config (.aid/config.yaml), all keys optional:
     allow_commit: false
     test_command: ""            # empty = tests/run-all.sh if present, else none
     max_passes: 4
+    priority: default           # default | oldest | newest | fewest-gated | roi | work-order
+    work_order_file: specs/work-order.md   # used by priority: work-order
+    categories_file: specs/spec-categories.md   # Value column feeds priority: roi
     extra_gates: [clinical threshold, rule config]
 """
 import argparse, json, os, re, sys, datetime
 
-DEFAULTS = {'owner_rule': 'mine', 'allow_commit': False, 'test_command': '', 'max_passes': 4, 'extra_gates': []}
+DEFAULTS = {'owner_rule': 'mine', 'allow_commit': False, 'test_command': '', 'max_passes': 4, 'extra_gates': [],
+            'priority': 'default', 'work_order_file': '', 'categories_file': ''}
 
 # (kind, regex, who decides, what each answer changes, recommended)
 GATES = [
@@ -93,6 +97,9 @@ def load_config(path='.aid/config.yaml'):
     if cfg['owner_rule'] not in ('mine', 'mine_or_unowned'):
         log('config', 'bad-owner-rule', value=cfg['owner_rule'], using='mine')
         cfg['owner_rule'] = 'mine'
+    if cfg['priority'] not in ('default', 'oldest', 'newest', 'fewest-gated', 'roi', 'work-order'):
+        log('config', 'bad-priority', value=cfg['priority'], using='default')
+        cfg['priority'] = 'default'
     if not isinstance(cfg['extra_gates'], list):
         cfg['extra_gates'] = [str(cfg['extra_gates'])]
     if not isinstance(cfg['max_passes'], int) or cfg['max_passes'] < 1:
