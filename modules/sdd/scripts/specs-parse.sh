@@ -8,7 +8,45 @@ set -euo pipefail
 
 README="specs/README.md"
 
+# Recognized layer suffixes for sibling specs sharing one base number
+# (e.g. "## v68-api: ..." and "## v68-ui: ..."). Pipe-separated; to add one,
+# append it here (e.g. "api|ui|cli"). Anything else that looks like a suffix is
+# NOT recognized and keeps the legacy behavior (spec-v118, AC-7).
+LAYER_SUFFIXES="api|ui"
+
+# Spec header: ## v{N}[-{suffix}]: {Name}  (also v2.1; separators : — – -)
+# Captures: 1=number 3=-suffix (with dash, or empty) 4=suffix 5=name
+HEADER_RE="^##[[:space:]]+v([0-9]+(\\.[0-9]+)?)(-(${LAYER_SUFFIXES}))?[[:space:]]*[:—–-][[:space:]]*(.*)"
+
 die() { echo "ERROR: $*" >&2; exit 1; }
+
+# resolve_spec_file <base> <suffix> [dir...]
+# Print the spec file for base number <base>. With a recognized <suffix> the lookup is
+# anchored at the end of the slug (spec-v{base}-*-{suffix}.md); more than one match is an
+# error naming every match (no silent head -1). Without a suffix it is the legacy lookup.
+# Default dir: specs. Returns 1 on ambiguity.
+resolve_spec_file() {
+  local base="$1" suffix="$2"; shift 2
+  local dirs=("$@"); (( ${#dirs[@]} )) || dirs=(specs)
+  local matches=() d f
+  if [[ -z "$suffix" ]]; then
+    for d in "${dirs[@]}"; do
+      ls "$d"/spec-v"${base}"-*.md 2>/dev/null
+    done | head -1
+    return 0
+  fi
+  for d in "${dirs[@]}"; do
+    for f in "$d"/spec-v"${base}"-*-"${suffix}".md; do
+      [[ -f "$f" ]] && matches+=("$f")
+    done
+  done
+  if (( ${#matches[@]} > 1 )); then
+    echo "ERROR: ambiguous spec files for v${base}-${suffix}: ${matches[*]}" >&2
+    return 1
+  fi
+  (( ${#matches[@]} )) && echo "${matches[0]}"
+  return 0
+}
 
 # macOS vs Linux stat for mtime
 file_mtime() {
@@ -35,7 +73,7 @@ cmd_status() {
   while IFS= read -r line; do
     # Match spec headers: ## v{N}: {Name} or ## v{N} — {Name} or ## v{N} - {Name}
     # Supports decimal versions like v2.1, v4.2
-    if [[ "$line" =~ ^##[[:space:]]+v([0-9]+(\.[0-9]+)?)[[:space:]]*[:—–-][[:space:]]*(.*) ]]; then
+    if [[ "$line" =~ $HEADER_RE ]]; then
       # Emit previous spec if any
       if [[ -n "$version" ]]; then
         local status
@@ -50,8 +88,8 @@ cmd_status() {
         fi
         printf "%s\t%s\t%d\t%d\t%s\n" "$version" "$name" "$done" "$total" "$status" >> "$temp_output"
       fi
-      version="v${BASH_REMATCH[1]}"
-      name="${BASH_REMATCH[3]}"
+      version="v${BASH_REMATCH[1]}${BASH_REMATCH[3]}"
+      name="${BASH_REMATCH[5]}"
       # Trim trailing whitespace
       name="${name%"${name##*[![:space:]]}"}"
       done=0
@@ -93,13 +131,13 @@ cmd_next_task() {
 
   while IFS= read -r line; do
     # Spec header (supports decimal versions like v2.1, v4.2)
-    if [[ "$line" =~ ^##[[:space:]]+v([0-9]+(\.[0-9]+)?)[[:space:]]*[:—–-][[:space:]]*(.*) ]]; then
-      version="v${BASH_REMATCH[1]}"
-      name="${BASH_REMATCH[3]}"
+    if [[ "$line" =~ $HEADER_RE ]]; then
+      version="v${BASH_REMATCH[1]}${BASH_REMATCH[3]}"
+      name="${BASH_REMATCH[5]}"
       name="${name%"${name##*[![:space:]]}"}"
       phase=""
       # Find the spec file
-      spec_file=$(ls specs/spec-v"${BASH_REMATCH[1]}"-*.md 2>/dev/null | head -1 || true)
+      spec_file=$(resolve_spec_file "${BASH_REMATCH[1]}" "${BASH_REMATCH[4]}") || exit 1
     fi
     # Phase header: ### Phase N: Name or ### Name
     if [[ "$line" =~ ^###[[:space:]]+(.*) ]]; then
@@ -132,12 +170,12 @@ cmd_next_phase() {
 
   # First pass: find which spec+phase has the first unchecked item
   while IFS= read -r line; do
-    if [[ "$line" =~ ^##[[:space:]]+v([0-9]+(\.[0-9]+)?)[[:space:]]*[:—–-][[:space:]]*(.*) ]]; then
-      version="v${BASH_REMATCH[1]}"
-      name="${BASH_REMATCH[3]}"
+    if [[ "$line" =~ $HEADER_RE ]]; then
+      version="v${BASH_REMATCH[1]}${BASH_REMATCH[3]}"
+      name="${BASH_REMATCH[5]}"
       name="${name%"${name##*[![:space:]]}"}"
       phase=""
-      spec_file=$(ls specs/spec-v"${BASH_REMATCH[1]}"-*.md 2>/dev/null | head -1 || true)
+      spec_file=$(resolve_spec_file "${BASH_REMATCH[1]}" "${BASH_REMATCH[4]}") || exit 1
     fi
     if [[ "$line" =~ ^###[[:space:]]+(.*) ]]; then
       phase="${BASH_REMATCH[1]}"
@@ -172,9 +210,9 @@ cmd_next_phase() {
   echo "TASKS:"
 
   while IFS= read -r line; do
-    if [[ "$line" =~ ^##[[:space:]]+v([0-9]+(\.[0-9]+)?)[[:space:]]*[:—–-][[:space:]]*(.*) ]]; then
-      version="v${BASH_REMATCH[1]}"
-      name="${BASH_REMATCH[3]}"
+    if [[ "$line" =~ $HEADER_RE ]]; then
+      version="v${BASH_REMATCH[1]}${BASH_REMATCH[3]}"
+      name="${BASH_REMATCH[5]}"
       name="${name%"${name##*[![:space:]]}"}"
       phase=""
       if (( printing )); then
@@ -243,8 +281,15 @@ cmd_structure() {
       basename=$(basename "$f")
       # Extract version number (supports decimal like v2.1, v4.2)
       if [[ "$basename" =~ spec-v([0-9]+(\.[0-9]+)?) ]]; then
-        local vnum="${BASH_REMATCH[1]}"
-        if ! grep -qE "^## v${vnum}[[:space:]]*[:—–-]" "$README" 2>/dev/null; then
+        local vnum="${BASH_REMATCH[1]}" fsuffix="" hdr_re
+        # Suffix = recognized layer suffix at the END of the slug, not next to the number
+        if [[ "$basename" =~ -(${LAYER_SUFFIXES})\.md$ ]]; then fsuffix="${BASH_REMATCH[1]}"; fi
+        if [[ -n "$fsuffix" ]]; then
+          hdr_re="^## v${vnum}-${fsuffix}[[:space:]]*[:—–-]"
+        else
+          hdr_re="^## v${vnum}[[:space:]]*[:—–-]"
+        fi
+        if ! grep -qE "$hdr_re" "$README" 2>/dev/null; then
           echo "  $f"
         fi
       fi
@@ -294,7 +339,11 @@ cmd_spec_roles() {
   version="${version#v}"
 
   local spec_file
-  spec_file=$(ls specs/spec-v"${version}"-*.md specs/completed/spec-v"${version}"-*.md 2>/dev/null | head -1 || true)
+  if [[ "$version" =~ ^([0-9]+(\.[0-9]+)?)-(${LAYER_SUFFIXES})$ ]]; then
+    spec_file=$(resolve_spec_file "${BASH_REMATCH[1]}" "${BASH_REMATCH[3]}" specs specs/completed) || exit 1
+  else
+    spec_file=$(ls specs/spec-v"${version}"-*.md specs/completed/spec-v"${version}"-*.md 2>/dev/null | head -1 || true)
+  fi
   [[ -n "$spec_file" ]] || die "No spec file found for version v${version}"
 
   local frontmatter

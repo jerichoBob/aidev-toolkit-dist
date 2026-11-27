@@ -3,7 +3,7 @@ name: sdd-specs-archive
 tier: extended
 description: Move completed specs to specs/completed/ to keep the active spec list clean.
 argument-hint: "[--dry-run]"
-allowed-tools: Read, Edit, Bash(mkdir:*), Bash(git:*), Bash(ls:*), Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/fix-spec-links.sh:*), AskUserQuestion
+allowed-tools: Read, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/archive-complete-specs.sh:*), Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/fix-spec-links.sh:*), AskUserQuestion
 ---
 
 # SDD Specs Archive
@@ -20,13 +20,24 @@ Move all `✅ Complete` spec files from `specs/` to `specs/completed/`. Status i
 - **(empty)**: Interactive — shows what will be archived, asks for confirmation
 - **--dry-run**: Preview what would be archived without making any changes
 
+## Script
+
+The listing, the move and the link repair live in one script. **Do not re-derive any of that logic inline** (no `ls` loops, no README parsing, no hand-built `git mv`): call the script, so the run costs no tokens for logic that never changes.
+
+```bash
+A=~/.claude/aidev-toolkit/modules/sdd/scripts/archive-complete-specs.sh
+```
+
+- `$A` (list mode, default): read-only. Prints `version<TAB>name<TAB>path` for each spec to archive, then `count=N`. Exit 0 even when N is 0.
+- `$A --apply`: creates `specs/completed/`, moves all files with one `git mv`, rewrites links to the moved specs, verifies them, and exits non-zero if any spec link is still unresolved.
+
+The script acts on the git root of the current directory and reads status through `specs-parse.sh status`.
+
 ## Instructions
 
-### Step 1: Read Quick Status Table
+### Step 1: List
 
-Read `specs/README.md`. Extract all rows from the Quick Status table where Status column contains `✅ Complete`.
-
-If no complete specs found:
+Run `$A`. If it prints `count=0`:
 
 ```text
 No completed specs to archive.
@@ -34,19 +45,9 @@ No completed specs to archive.
 
 Stop.
 
-### Step 2: Collect Spec Files
+### Step 2: Show Preview
 
-Run a single glob pass over all spec files, instead of one `ls` per spec:
-
-```bash
-ls specs/spec-v*.md 2>/dev/null
-```
-
-Match the resulting filenames in-memory against the list of complete version numbers from Step 1 (parse each filename's `v{N}` prefix and compare against the complete-version set). Build a list of: version, name, file path — one `ls` call total, regardless of how many specs are being archived.
-
-### Step 3: Show Preview
-
-Display what will happen:
+Display what will happen, from the script's rows:
 
 ```text
 Specs to Archive (✅ Complete)
@@ -61,17 +62,17 @@ README: status retained as ✅ Complete (file location is the archive indicator)
 Links: R would be rewritten, U would stay unresolved
 ```
 
-Compute R and U for the preview with the link fixer in dry-run mode (it reads the current tree, so run it on the not-yet-moved files by passing the same file list; it only counts links it can resolve to a real file):
+Get R and U from the link fixer in dry-run mode (it reads the current tree, so links to files that have not moved yet are not counted; the real counts come after the move):
 
 ```bash
 ~/.claude/aidev-toolkit/modules/sdd/scripts/fix-spec-links.sh --dry-run fix
 ```
 
-Read `rewritten=` and `unresolved=` from its `step=summary` line. Links to files that have not moved yet are not counted; the real counts come after Step 6.
+Read `rewritten=` and `unresolved=` from its `step=summary` line.
 
-If `--dry-run`: print preview and stop. Do NOT make any changes.
+If `--dry-run`: print the preview and stop. Do NOT make any changes.
 
-### Step 4: Confirm
+### Step 3: Confirm
 
 Use AskUserQuestion:
 
@@ -86,35 +87,11 @@ Options:
 
 If cancelled, stop.
 
-### Step 5: Create specs/completed/
+### Step 4: Archive
 
-```bash
-mkdir -p specs/completed
-```
+Run `$A --apply`. Print each `step=rewrite` line it emits (file, line, old target, new target). Read `moved=` and the `rewritten=` and `unresolved=` values from its output. If it exits non-zero, list the unresolved links with file and line and do NOT claim success in Step 5.
 
-### Step 6: Move Spec Files
-
-Move all matched files in a single `git mv` invocation instead of one call per spec:
-
-```bash
-git mv specs/spec-v1-foo.md specs/spec-v2-bar.md ... specs/completed/
-```
-
-Build the file list from the paths collected in Step 2 and pass them all to one `git mv` call (git mv accepts multiple source paths when the destination is a directory). If any file from the archive list is missing on disk, drop it from the batch, print a warning for it, and continue with the rest in the same call.
-
-### Step 6.5: Fix Links
-
-After the move, rewrite every markdown link to a moved spec so it resolves from the linking file (README, specs, docs), then verify:
-
-```bash
-S=~/.claude/aidev-toolkit/modules/sdd/scripts/fix-spec-links.sh
-$S fix <moved files from Step 2>
-$S verify
-```
-
-Anchors and link text are preserved; the rewrite is idempotent. Print each `step=rewrite` line (file, line, old target, new target). Read `rewritten=` from the `fix` summary and `unresolved=` from the `verify` summary. If `verify` exits non-zero, list the unresolved links and do NOT claim success in Step 7.
-
-### Step 7: Confirm
+### Step 5: Confirm
 
 ```text
 Archive Complete

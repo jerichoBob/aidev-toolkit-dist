@@ -1,11 +1,12 @@
 #!/bin/bash
 #
-# aidev toolkit sdd-specs-archive batched glob/move test (spec-v108, Phase 6)
+# aidev toolkit sdd-specs-archive batched glob/move test (spec-v108, Phase 6; spec-v138)
 #
-# Verifies the batching approach described in
-# modules/sdd/skills/sdd-specs-archive.md: a single `ls` glob pass matched
-# in-memory against complete version numbers, and a single `git mv` call
-# covering all matched files. Uses a real temp git repo — no mocks.
+# Verifies the batching approach: a single glob pass matched in-memory against
+# complete version numbers, and a single `git mv` call covering all matched files.
+# Since spec-v138 that logic lives in modules/sdd/scripts/archive-complete-specs.sh and the
+# skill only calls it, so this file also asserts the script batches (one git mv) and that
+# the skill no longer carries the inline steps. Uses a real temp git repo — no mocks.
 #
 
 set -e
@@ -16,6 +17,7 @@ FAIL=0
 pass() { echo "  ✓ $1"; ((PASS++)) || true; }
 fail() { echo "  ✗ $1"; ((FAIL++)) || true; }
 
+REPO_DIR_FOR_V138="$(cd "$(dirname "$0")/.." && pwd)"
 TEST_REPO=$(mktemp -d)
 cleanup() { rm -rf "$TEST_REPO"; }
 trap cleanup EXIT
@@ -94,6 +96,26 @@ if [ -f specs/spec-v3-gamma.md ]; then
     pass "non-archived spec (v3) remains in specs/"
 else
     fail "v3 should not have been moved"
+fi
+
+# spec-v138: the real script batches, and the skill calls it instead of carrying the steps inline
+cd "$REPO_DIR_FOR_V138"
+SCRIPT="modules/sdd/scripts/archive-complete-specs.sh"
+SKILL="modules/sdd/skills/sdd-specs-archive.md"
+if [ "$(grep -cE '^[[:space:]]*git mv ' "$SCRIPT")" -eq 1 ]; then
+    pass "archive-complete-specs.sh issues one git mv for the whole batch"
+else
+    fail "script should contain exactly one git mv"
+fi
+if grep -q "archive-complete-specs.sh" "$SKILL" && ! grep -qE '^ls specs/spec-v\*\.md|^git mv specs/spec-v1-foo' "$SKILL"; then
+    pass "skill calls the script and no longer embeds the ls/git mv steps"
+else
+    fail "skill still carries inline listing/move steps"
+fi
+if grep -q "Do not re-derive" "$SKILL" || grep -q "not re-derive" "$SKILL"; then
+    pass "skill states the do-not-re-derive rule"
+else
+    fail "skill missing do-not-re-derive note"
 fi
 
 echo ""

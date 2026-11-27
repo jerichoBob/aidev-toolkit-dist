@@ -49,6 +49,8 @@ Common mistakes:
 
 When adding features that use new commands, update `allowed-tools` in the same commit.
 
+**Deterministic steps ship as scripts the skill declares.** If a step is mechanical (list, match, move, rewrite, count), write it once as a script, call it by its installed path, and list that path in `allowed-tools`. Do not describe the logic in prose for the model to re-derive on every run. Add a one-line note in the skill ("do not re-derive this inline") so the next edit does not undo it.
+
 ## Tool Selection (Native-First Pattern)
 
 **Always prefer native tools over Bash for file operations.** Native tools require no permission prompts and are faster.

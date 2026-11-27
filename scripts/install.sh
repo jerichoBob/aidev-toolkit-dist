@@ -249,7 +249,7 @@ configure_permissions() {
     local SETTINGS_FILE="$CLAUDE_DIR/settings.json"
 
     # Permissions needed for /aid-update to run without prompts
-    local PERMS_JSON='["Bash(git -C ~/.claude/aidev-toolkit *)","Bash(~/.claude/aidev-toolkit/scripts/install.sh *)","Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)","Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)","Bash(~/.claude/aidev-toolkit/scripts/log-usage.sh *)"]'
+    local PERMS_JSON='["Bash(git -C ~/.claude/aidev-toolkit *)","Bash(~/.claude/aidev-toolkit/scripts/install.sh *)","Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)","Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)","Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/archive-complete-specs.sh *)","Bash(~/.claude/aidev-toolkit/scripts/log-usage.sh *)"]'
 
     # Try jq first (cleanest JSON manipulation)
     if command -v jq &> /dev/null; then
@@ -279,7 +279,8 @@ permissions_to_add = [
     "Bash(~/.claude/aidev-toolkit/scripts/install.sh *)",
     "Bash(~/.claude/aidev-toolkit/scripts/screenshots.sh *)",
     "Bash(~/.claude/aidev-toolkit/scripts/tile-image.sh *)",
-    "Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)"
+    "Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/specs-parse.sh *)",
+    "Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/archive-complete-specs.sh *)"
 ]
 
 # Load existing settings or create new
@@ -573,6 +574,8 @@ done
 
 # Ensure SDD scripts are executable
 chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/specs-parse.sh" 2>/dev/null || true
+chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/archive-complete-specs.sh" 2>/dev/null || true
+chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/fix-spec-links.sh" 2>/dev/null || true
 chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/user-email.sh" 2>/dev/null || true
 chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/token-tracker.sh" 2>/dev/null || true
 chmod +x "$TOOLKIT_DIR/modules/sdd/scripts/stats-parse.sh" 2>/dev/null || true

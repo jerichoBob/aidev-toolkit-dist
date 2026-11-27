@@ -261,6 +261,14 @@ This will:
 - \`staleness\` - Compare file modification times
 - \`structure\` - Check specs/ directory integrity
 
+**\`archive-complete-specs.sh\`** — The one implementation behind \`/sdd-specs-archive\` (list, move, fix links):
+
+- (no args) - Read-only list of Complete specs still in \`specs/\`: \`version<TAB>name<TAB>path\` lines, then \`count=N\`
+- \`--apply\` - Create \`specs/completed/\`, move all files with one \`git mv\`, rewrite and verify links; exits non-zero if a spec link is unresolved
+- Reads status through \`specs-parse.sh status\`; acts on the git root of the current directory (\`ROOT\` overrides it for tests)
+
+**\`fix-spec-links.sh\`** — \`fix [moved files]\` rewrites links to moved specs, \`verify\` lists unresolved spec links (used by the archive script)
+
 ---
 
 ## Best Practices

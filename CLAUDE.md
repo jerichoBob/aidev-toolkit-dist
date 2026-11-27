@@ -39,6 +39,8 @@ The `modules/` directory holds self-contained skill groups. Each module has its 
 3. Add help entry in `docs/aid-help.md`
 4. Run install script to create symlink
 
+**Deterministic steps ship as scripts.** When a skill step is mechanical (listing, matching, moving, rewriting, counting), put it in a script under the module's `scripts/` and have the skill call it by installed path, listed in its `allowed-tools`. Do not let the model re-derive the logic inline on every run: that costs tokens each time and drifts. Example: `modules/sdd/scripts/archive-complete-specs.sh` behind `/sdd-specs-archive`.
+
 ### Architecture Principles
 
 Located in `architecture-principles/`. Each uses YAML frontmatter with:

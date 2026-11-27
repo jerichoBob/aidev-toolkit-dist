@@ -310,9 +310,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.111.0
+0.112.0
 
 ### Release Notes
+
+#### v0.112.0 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): `specs-parse.sh` supports layer-suffix spec versions (`## v68-api` / `## v68-ui`): suffix-aware headers, file lookup and `UNLINKED_SPECS`; ambiguous matches error instead of a silent first pick; unsuffixed output unchanged (v118, dist issue #20)
+- feat(sdd): `/sdd-specs-archive` calls the new `archive-complete-specs.sh` (list, move, link repair) instead of re-deriving the steps each run; the installer marks it executable and allow-lists it; "deterministic steps ship as scripts" convention added (v138)
+- docs(specs): v118, v122 and v138 marked complete; parked-question decisions recorded
 
 #### v0.111.0 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
 
