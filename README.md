@@ -310,9 +310,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.112.2
+0.112.3
 
 ### Release Notes
+
+#### v0.112.3 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): `spec-loop-queue.py --check-categories` reports `missing`, `fresh` or `stale` for `specs/spec-categories.md` (unlisted and dangling specs, completed specs included); `/sdd-spec-loop --priority roi` re-analyzes all specs as a product manager when it is not fresh, keeping edited Values (v139)
+- test(sdd): `tests/test-spec-loop-categories.sh` with committed fixtures (23 checks)
 
 #### v0.112.2 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
 

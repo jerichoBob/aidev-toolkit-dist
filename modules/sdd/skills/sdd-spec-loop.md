@@ -32,10 +32,21 @@ G=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-gates.py
 ## Step 1: Config and queue
 
 1. `python3 $G config` — effective config (`spec-loop` section of `.aid/config.yaml`, else conservative defaults: owner rule `mine`, commit not allowed, 4 passes).
-2. `python3 $Q [--include-unowned] [--priority <strategy>]` (add `--include-unowned` only when `owner_rule` is `mine_or_unowned`; add `--priority` only when the developer passed it, else the script uses config). It prints the strategy in its header; show it in the report. Use the same flags every time the queue is re-run. It lists eligible specs (AC-1) and every excluded spec with its reason.
-3. Classify each eligible spec's unchecked tasks, one per line on stdin: `python3 $G classify --stdin <<'TASKS'` ... `TASKS`. **Never put task text in a shell argument or double quotes**: it comes from a spec file and contains backticks and quotes the shell would execute. A task is **gated** or **buildable**; unknown is gated.
+2. **Category check (`roi` only; spec v139).** When the strategy is `roi` (from `--priority` or config), run `python3 $Q --check-categories` (add `--categories-file` only if config sets `categories_file`). It prints `missing`, `fresh` or `stale`, then `unlisted:` (specs in `specs/` or `specs/completed/` that no category row names) and `dangling:` (versions a row names that have no spec file). **The script decides whether to analyze, not you.** `fresh`: go on. Any other strategy: never run the check or the analysis.
+   - **`--dry-run`:** report the outcome and both lists, then go on to the queue. Do not run the analysis and do not write the file.
+   - **`missing` or `stale`:** run the **category analysis** below, then go on.
 
-**`--dry-run`:** print the queue in order, and per spec the next task and whether it is gated (with the gate kind). Print the excluded list. Stop. Write nothing.
+   **Category analysis.** Read the body of every spec in scope, completed (`specs/completed/`) and unfinished, not just titles. Think as a product manager: what is each spec *for*, and which coherent set of use-case categories covers the whole collection? Write `specs/spec-categories.md` (or `categories_file`) directly, without stopping to ask; Bob reviews the git diff, and you never commit it unless `allow_commit` is true. Format:
+   - One line giving the date and scope: how many completed and how many unfinished specs, and that bodies were read.
+   - A table with columns `Category | What it's for | Specs | Count | Value`. Every spec is in **exactly one** row. Write completed specs with a trailing `*` (`v12*`) so the parser can tell them apart; the queue parser accepts it. `Value` is 1-5.
+   - A paragraph under the table saying how Value is used (one per category, a spec's `value:` frontmatter overrides it, no category scores 3).
+   - `## Observations` and `## Open follow-ups` sections.
+   - **Keep edited Values.** If the file already exists, a row whose category name still exists **keeps its Value** even if you would choose another; only new categories get a Value you propose. List each Value kept and each proposed in the run report.
+   - **Re-check.** Run `python3 $Q --check-categories` again. If it is not `fresh`, fix the `unlisted` and `dangling` specs yourself (add the missing ones to the closest category, drop or correct the dangling ones) and re-check, for at most **2 repair attempts**. Still not `fresh`: stop the run with reason `categories` and list what remains. Do not give up on the first sign of difficulty and do not loop past 2.
+3. `python3 $Q [--include-unowned] [--priority <strategy>]` (add `--include-unowned` only when `owner_rule` is `mine_or_unowned`; add `--priority` only when the developer passed it, else the script uses config). It prints the strategy in its header; show it in the report. Use the same flags every time the queue is re-run. It lists eligible specs (AC-1) and every excluded spec with its reason.
+4. Classify each eligible spec's unchecked tasks, one per line on stdin: `python3 $G classify --stdin <<'TASKS'` ... `TASKS`. **Never put task text in a shell argument or double quotes**: it comes from a spec file and contains backticks and quotes the shell would execute. A task is **gated** or **buildable**; unknown is gated.
+
+**`--dry-run`:** print the category check outcome (roi only), then the queue in order, and per spec the next task and whether it is gated (with the gate kind). Print the excluded list. Stop. Write nothing.
 
 ## Step 2: Start the run
 

@@ -1097,6 +1097,7 @@ Picks the next spec you own that has no incomplete dependency or external blocke
 ```text
 /sdd-spec-loop --dry-run              Show the queue and which next tasks are gates
 /sdd-spec-loop --priority roi         Order the queue by value per unit of work (default, oldest, newest, fewest-gated, roi, work-order)
+                                      With roi, specs/spec-categories.md is re-analyzed when it is missing or stale
 /sdd-spec-loop --max-passes 1         One supervised pass
 /sdd-spec-loop --budget-usd 5         Stop before a pass once about $5 is spent
 ```

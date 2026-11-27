@@ -269,6 +269,11 @@ This will:
 
 **\`fix-spec-links.sh\`** — \`fix [moved files]\` rewrites links to moved specs, \`verify\` lists unresolved spec links (used by the archive script)
 
+**\`spec-loop-queue.py\`** — The eligibility queue behind \`/sdd-spec-loop\` (read-only):
+
+- (no args) - Eligible specs in priority order, then every excluded spec with its reason; \`--priority roi\` also prints each spec's value, cost and gate kinds
+- \`--check-categories\` - Compare every spec in \`specs/\` and \`specs/completed/\` with \`specs/spec-categories.md\` and print \`missing\`, \`fresh\` or \`stale\`, then the \`unlisted:\` and \`dangling:\` versions. \`/sdd-spec-loop --priority roi\` runs it first and, when the result is not \`fresh\`, rewrites the categories file as a product-manager analysis of all specs, keeping the Values you edited. A version followed by \`*\` in the table marks a completed spec
+
 ---
 
 ## Best Practices

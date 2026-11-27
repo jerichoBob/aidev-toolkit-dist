@@ -6,7 +6,12 @@ Reads specs/README.md checklists and specs/spec-v{N}-*.md frontmatter, prints th
 
 Usage: spec-loop-queue.py [--specs-dir DIR] [--owner EMAIL] [--include-unowned] [--json]
                           [--priority STRATEGY] [--work-order-file FILE] [--categories-file FILE] [--config FILE]
+                          [--check-categories]
 Exit 0 always on readable input; exit 2 if specs/README.md (or a requested work-order file) is missing.
+
+--check-categories (spec v139): read-only; compares every spec file in specs/ and specs/completed/ with the versions named in
+the categories table and prints `missing`, `fresh` or `stale`, then `unlisted:` and `dangling:` version lists (or JSON with
+--json). A version in the table may carry a trailing `*` to mark it completed. Exit 0 for all three outcomes.
 
 Priority strategies (flag overrides `priority` in the spec-loop section of .aid/config.yaml; default `default`):
   default       in progress first, then fewest tasks left, then lowest version.
@@ -142,15 +147,10 @@ def parse_work_order(path):
     return order
 
 
-def parse_categories(path):
-    """Return {vN: value} from a markdown table with `Specs` and `Value` columns. {} if absent/unreadable (logged)."""
-    try:
-        lines = open(path, encoding='utf-8').read().splitlines()
-    except OSError as e:
-        log('categories', 'unreadable', path=path, error=e)
-        return {}
-    out, cols = {}, None
-    for ln in lines:
+def category_rows(path):
+    """Yield (cells, specs_idx, value_idx) for each data row of the categories table. Raises OSError if unreadable."""
+    cols = None
+    for ln in open(path, encoding='utf-8').read().splitlines():
         if not ln.startswith('|'):
             cols = None
             continue
@@ -162,19 +162,60 @@ def parse_categories(path):
             continue
         if set(''.join(cells)) <= set('-: '):
             continue
-        try:
-            val = float(cells[cols[1]])
-        except (ValueError, IndexError):
-            log('categories', 'bad-value', row=cells[0] if cells else '?')
-            continue
-        if not 1 <= val <= 5:
-            log('categories', 'bad-value', row=cells[0], value=val)
-            continue
-        for v in re.findall(r'\bv(\d+(?:\.\d+)?)\b', cells[cols[0]]):
-            out['v' + v] = val
+        yield cells, cols[0], cols[1]
+
+
+def parse_categories(path):
+    """Return {vN: value} from a markdown table with `Specs` and `Value` columns. {} if absent/unreadable (logged).
+    A version may carry a trailing `*` to mark it completed; the value still applies."""
+    out = {}
+    try:
+        for cells, si, vi in category_rows(path):
+            try:
+                val = float(cells[vi])
+            except (ValueError, IndexError):
+                log('categories', 'bad-value', row=cells[0] if cells else '?')
+                continue
+            if not 1 <= val <= 5:
+                log('categories', 'bad-value', row=cells[0], value=val)
+                continue
+            for v in re.findall(r'\bv(\d+(?:\.\d+)?)\b', cells[si]):
+                out['v' + v] = val
+    except OSError as e:
+        log('categories', 'unreadable', path=path, error=e)
+        return {}
     if not out:
         log('categories', 'empty', path=path)
     return out
+
+
+def spec_versions(specs_dir):
+    """Versions of every spec file in specs/ and specs/completed/ (sorted by number)."""
+    found = set()
+    for d in (specs_dir, os.path.join(specs_dir, 'completed')):
+        if os.path.isdir(d):
+            for f in os.listdir(d):
+                m = re.match(r'^spec-v(\d+(?:\.\d+)?)-.*\.md$', f)
+                if m:
+                    found.add('v' + m.group(1))
+    return sorted(found, key=lambda v: float(v[1:]))
+
+
+def check_categories(specs_dir, path):
+    """Compare spec files with the categories table. Returns {'outcome', 'unlisted', 'dangling'}.
+    missing = no readable table rows; stale = specs unlisted or rows naming specs with no file; else fresh."""
+    on_disk = spec_versions(specs_dir)
+    listed = set()
+    try:
+        for cells, si, _ in category_rows(path):
+            listed.update('v' + v for v in re.findall(r'\bv(\d+(?:\.\d+)?)\b', cells[si]))
+    except OSError as e:
+        log('categories', 'unreadable', path=path, error=e)
+    if not listed:
+        return {'outcome': 'missing', 'unlisted': on_disk, 'dangling': []}
+    unlisted = [v for v in on_disk if v not in listed]
+    dangling = sorted((v for v in listed if v not in set(on_disk)), key=lambda v: float(v[1:]))
+    return {'outcome': 'stale' if unlisted or dangling else 'fresh', 'unlisted': unlisted, 'dangling': dangling}
 
 
 def rank(queue, strategy, specs, gates_cfg=None, work_order=None, cat_values=None):
@@ -286,8 +327,25 @@ def main(argv):
     ap.add_argument('--priority', default=None, help='|'.join(STRATEGIES))
     ap.add_argument('--work-order-file', default=None)
     ap.add_argument('--categories-file', default=None)
+    ap.add_argument('--check-categories', action='store_true', help='report missing|fresh|stale for the categories file and exit')
     ap.add_argument('--config', default='.aid/config.yaml')
     a = ap.parse_args(argv)
+    if a.check_categories:
+        try:
+            cfg = load_gates().load_config(a.config)
+        except (OSError, UnicodeDecodeError) as e:
+            log('categories', 'error', error=e)
+            print(f'ERROR: {e}', file=sys.stderr)
+            return 2
+        res = check_categories(a.specs_dir, a.categories_file or cfg.get('categories_file') or DEFAULT_CATEGORIES)
+        log('categories', res['outcome'], unlisted=len(res['unlisted']), dangling=len(res['dangling']))
+        if a.json:
+            print(json.dumps(res, indent=2))
+        else:
+            print(res['outcome'])
+            print('unlisted: ' + ' '.join(res['unlisted']))
+            print('dangling: ' + ' '.join(res['dangling']))
+        return 0
     owner = a.owner if a.owner is not None else default_owner()
     try:
         gates = load_gates()
