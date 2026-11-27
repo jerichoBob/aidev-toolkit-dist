@@ -310,9 +310,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.113.2
+0.113.3
 
 ### Release Notes
+
+#### v0.113.3 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): archive completed v137 spec-loop spec to `specs/completed/` and fix its README link; add session handoffs
 
 #### v0.113.2 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 
