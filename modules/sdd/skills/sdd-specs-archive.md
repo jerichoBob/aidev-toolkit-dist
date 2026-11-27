@@ -3,7 +3,7 @@ name: sdd-specs-archive
 tier: extended
 description: Move completed specs to specs/completed/ to keep the active spec list clean.
 argument-hint: "[--dry-run]"
-allowed-tools: Read, Edit, Bash(mkdir:*), Bash(git:*), Bash(ls:*), AskUserQuestion
+allowed-tools: Read, Edit, Bash(mkdir:*), Bash(git:*), Bash(ls:*), Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/fix-spec-links.sh:*), AskUserQuestion
 ---
 
 # SDD Specs Archive
@@ -58,7 +58,16 @@ Specs to Archive (✅ Complete)
 
 Destination: specs/completed/
 README: status retained as ✅ Complete (file location is the archive indicator)
+Links: R would be rewritten, U would stay unresolved
 ```
+
+Compute R and U for the preview with the link fixer in dry-run mode (it reads the current tree, so run it on the not-yet-moved files by passing the same file list; it only counts links it can resolve to a real file):
+
+```bash
+~/.claude/aidev-toolkit/modules/sdd/scripts/fix-spec-links.sh --dry-run fix
+```
+
+Read `rewritten=` and `unresolved=` from its `step=summary` line. Links to files that have not moved yet are not counted; the real counts come after Step 6.
 
 If `--dry-run`: print preview and stop. Do NOT make any changes.
 
@@ -93,6 +102,18 @@ git mv specs/spec-v1-foo.md specs/spec-v2-bar.md ... specs/completed/
 
 Build the file list from the paths collected in Step 2 and pass them all to one `git mv` call (git mv accepts multiple source paths when the destination is a directory). If any file from the archive list is missing on disk, drop it from the batch, print a warning for it, and continue with the rest in the same call.
 
+### Step 6.5: Fix Links
+
+After the move, rewrite every markdown link to a moved spec so it resolves from the linking file (README, specs, docs), then verify:
+
+```bash
+S=~/.claude/aidev-toolkit/modules/sdd/scripts/fix-spec-links.sh
+$S fix <moved files from Step 2>
+$S verify
+```
+
+Anchors and link text are preserved; the rewrite is idempotent. Print each `step=rewrite` line (file, line, old target, new target). Read `rewritten=` from the `fix` summary and `unresolved=` from the `verify` summary. If `verify` exits non-zero, list the unresolved links and do NOT claim success in Step 7.
+
 ### Step 7: Confirm
 
 ```text
@@ -104,6 +125,8 @@ Archived: N specs
   ...
 
 Files moved to: specs/completed/
+Links rewritten: R
+Unresolved spec links: U   (must be 0 to claim success; otherwise list them with file and line)
 README: status retained as ✅ Complete for all archived specs
 
 Run /sdd-specs to see your active specs.

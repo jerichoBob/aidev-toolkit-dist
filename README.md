@@ -310,9 +310,15 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.110.1
+0.111.0
 
 ### Release Notes
+
+#### v0.111.0 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): `/sdd-specs-archive` rewrites and verifies markdown links to moved specs via new `fix-spec-links.sh` (fix/verify, anchors kept, idempotent, root-escape guard); v122, dist issue #28 [`1c77ee9`]
+- fix(sdd): `/sdd-spec-loop` classifier no longer gates code tasks containing "when present" and recognizes extract/build/generate/compute/convert/split/merge/validate/check as build verbs [`bc569c3`]
+- chore: project `.aid/config.yaml` sets the loop's `test_command` to clear `GH_TOKEN` for the test run only [`9f9552e`]
 
 #### v0.110.1 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
 
