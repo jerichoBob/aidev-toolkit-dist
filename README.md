@@ -310,9 +310,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.113.1
+0.113.2
 
 ### Release Notes
+
+#### v0.113.2 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): `/sdd-code` archives completed specs to `specs/completed/` automatically once the spec is complete and its tests pass (it calls `archive-complete-specs.sh --apply`); `--no-archive` opts out; the spec loop inherits it
 
 #### v0.113.1 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 

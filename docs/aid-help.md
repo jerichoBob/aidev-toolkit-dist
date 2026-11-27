@@ -40,7 +40,7 @@ Skills marked as core — your daily drivers. Run `/aid --all` to see everything
 - `/sdd-init [--force]` — Scaffold `specs/` directory for a new SDD project
 - `/sdd-spec <description>` — Create a new specification document
 - `/sdd-specs [--stats] [--deep] [--verify]` — Show specs status and token usage
-- `/sdd-code [version] [--skip-questions]` — Walk through open questions, then implement all remaining tasks in a spec (formerly `/sdd-code-spec`)
+- `/sdd-code [version] [--skip-questions] [--no-archive]` — Walk through open questions, then implement all remaining tasks in a spec; once the spec is complete and its tests pass, completed specs are archived to `specs/completed/` automatically (formerly `/sdd-code-spec`)
 
 Run `/aid <command>` for detailed help on any command. For Bedrock/model config: `/aid bedrock`
 
