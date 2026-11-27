@@ -310,9 +310,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.113.0
+0.113.1
 
 ### Release Notes
+
+#### v0.113.1 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): v137 (spec loop) complete: 11 of 11 tasks, after the first real run in grostak-v2
 
 #### v0.113.0 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 
