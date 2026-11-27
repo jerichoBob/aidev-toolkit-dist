@@ -310,9 +310,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.112.4
+0.112.5
 
 ### Release Notes
+
+#### v0.112.5 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): v139 complete and archived; `specs/spec-categories.md` now covers all 139 specs in 12 product-manager categories (reviewed); v14's example link no longer fails link verification, so `archive-complete-specs.sh --apply` exits 0
 
 #### v0.112.4 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 
