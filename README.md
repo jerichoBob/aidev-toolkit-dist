@@ -310,9 +310,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.112.1
+0.112.2
 
 ### Release Notes
+
+#### v0.112.2 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): `spec-loop-queue.py` prints each spec's roi as value (source) over cost (buildable plus gated tasks) with gate kinds; JSON adds `cost`, `buildable`, `gate_kinds`, `value_source` (v137)
+- docs(specs): new draft v139 (product-manager category analysis kept current in `specs/spec-categories.md`); v137 dry runs recorded as reviewed
 
 #### v0.112.1 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
 

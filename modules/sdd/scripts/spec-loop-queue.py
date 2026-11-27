@@ -16,8 +16,10 @@ Priority strategies (flag overrides `priority` in the spec-loop section of .aid/
                 Surfaces the specs the loop can build most of, so passes are not spent parking.
   roi           highest value per unit of work first. value = the spec's `value:` frontmatter, else its category's Value in
                 `categories_file` (default specs/spec-categories.md), else 3 (all 1-5);
-                cost = buildable tasks left + 0.25 per gated task (parking still costs you a question).
-                A spec with nothing buildable scores 0. Ties use the default order.
+                cost = buildable tasks left + `gated_cost` (default 2.0) per gated task, because a gate stops the automation
+                and costs you a question. A spec with nothing buildable scores 0. Ties use the default order.
+                The text output prints value (and its source), buildable and gated counts, cost, the score and the
+                gate kinds that are dragging it down, so the order can be checked by hand.
   work-order    follow the order listed in a work-order file (`work_order_file` in config, default
                 specs/work-order.md): one spec per line, `v12` or `- v12`, `#` comments and blank lines ignored.
                 Specs not listed follow, in default order.
@@ -187,16 +189,32 @@ def rank(queue, strategy, specs, gates_cfg=None, work_order=None, cat_values=Non
         gates = load_gates()
         for q in queue:
             tasks = [t for c, t in specs[q['version']]['tasks'] if not c]
-            q['gated'] = sum(1 for t in tasks if re.search(r'\(blocked:', t, re.I) or gates.classify(t, gates_cfg)['gated'])
+            kinds = {}
+            for t in tasks:
+                if re.search(r'\(blocked:', t, re.I):
+                    kinds['blocked'] = kinds.get('blocked', 0) + 1
+                else:
+                    c = gates.classify(t, gates_cfg)
+                    if c['gated']:
+                        kinds[c['kind']] = kinds.get(c['kind'], 0) + 1
+            q['gate_kinds'] = kinds
+            q['gated'] = sum(kinds.values())
         if strategy == 'fewest-gated':
             queue.sort(key=lambda q: (q['gated'],) + default(q))
         else:
             gated_cost = float((gates_cfg or {}).get('gated_cost', GATED_COST))
             for q in queue:
-                if not q['value_explicit']:
-                    q['value'] = (cat_values or {}).get(q['version'], DEFAULT_VALUE)
+                if q['value_explicit']:
+                    q['value_source'] = 'frontmatter'
+                elif q['version'] in (cat_values or {}):
+                    q['value'] = cat_values[q['version']]; q['value_source'] = 'category'
+                else:
+                    q['value'] = DEFAULT_VALUE; q['value_source'] = 'default'
                 buildable = q['left'] - q['gated']
                 cost = buildable + gated_cost * q['gated']
+                q['buildable'] = buildable
+                q['gated_cost'] = gated_cost
+                q['cost'] = round(cost, 3)
                 q['roi'] = round(q['value'] / cost, 3) if buildable > 0 else 0.0
             queue.sort(key=lambda q: (-q['roi'],) + default(q))
     elif strategy == 'work-order':
@@ -298,6 +316,13 @@ def main(argv):
     print(f'Eligible ({len(queue)}) — owner: {owner or "(none)"} — priority: {strategy}')
     for i, q in enumerate(queue, 1):
         print(f'{i}. {q["version"]}\t{q["done"]}/{q["total"]}\t{q["name"]}\n   next: {q["next_task"][:140]}')
+        if 'roi' in q:
+            gk = ', '.join(f'{k} x{n}' for k, n in sorted(q['gate_kinds'].items())) or 'none'
+            print(f'   roi {q["roi"]:.3f} = value {q["value"]:g} ({q["value_source"]}) / cost {q["cost"]:g}'
+                  f' ({q["buildable"]} buildable + {q["gated"]} gated x {q["gated_cost"]:g})   gates: {gk}')
+        elif 'gated' in q:
+            gk = ', '.join(f'{k} x{n}' for k, n in sorted(q['gate_kinds'].items())) or 'none'
+            print(f'   gated {q["gated"]} of {q["left"]} left   gates: {gk}')
     print(f'\nExcluded ({len(excluded)})')
     for e in excluded:
         print(f'- {e["version"]}\t{e["reason"]}')

@@ -66,6 +66,13 @@ check "roi: value per buildable task (v11 2.5 > v10 1.6 > all-gated v12 0)" "$(o
 check "roi score in json" "$(python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --json --config "$PF/none.yaml" --priority roi --categories-file "$PF/categories.md" 2>/dev/null)" '"roi": 2.5'
 CAT="$PF/categories.md"
 ordc() { order --priority roi --categories-file "$@"; }
+TXT=$(python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --config "$PF/none.yaml" --priority roi --categories-file "$CAT" 2>/dev/null)
+check "roi text output shows the score line (roi, value, cost)" "$TXT" "roi 2.500 = value"
+check "roi text output shows value source" "$TXT" "(category)"
+check "roi text output shows buildable and gated counts" "$TXT" "buildable +"
+check "roi text output lists gate kinds" "$TXT" "gates:"
+JS=$(python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --json --config "$PF/none.yaml" --priority roi --categories-file "$CAT" 2>/dev/null)
+check "roi json carries cost, buildable and gate_kinds" "$JS" '"gate_kinds"'
 check "roi: category value feeds spec with no value: (v11 5 > v10 1.6)" "$(ordc "$CAT")" "v11 v10 v12"
 check "roi: spec value: beats its category (v10 stays 2)" "$(python3 "$SCRIPTS/spec-loop-queue.py" --specs-dir "$PF/specs" --owner me@x.org --json --config "$PF/none.yaml" --priority roi --categories-file "$CAT" 2>/dev/null | python3 -c 'import json,sys; d={q["version"]:q["value"] for q in json.load(sys.stdin)["queue"]}; print(d["v10"], d["v11"])')" "2.0 5.0"
 check "roi: missing categories file falls back to 3 (v11 1.5 > v10 0.67)" "$(ordc "$PF/nope.md")" "v11 v10 v12"
