@@ -310,9 +310,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.112.0
+0.112.1
 
 ### Release Notes
+
+#### v0.112.1 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
+
+- chore(specs): archived v118, v122 and v138 with `archive-complete-specs.sh`; repaired 89 dead spec links in `specs/README.md` (86 rewritten to `completed/`, 3 repointed to renamed `hsl-*` files); one pre-existing dead link in archived v14 left reported [`8f5e3ed`]
 
 #### v0.112.0 (2026-11-26) — author: robert.w.seaton.jr@gmail.com
 
