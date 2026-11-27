@@ -96,7 +96,7 @@ and become slash commands in any project. Full architecture writeup:
 
 #### Toolkit & Auth
 
-- `/aid-login` — Authenticate via browser-based GitHub OAuth
+- `/aid-login` — Authenticate via browser-based GitHub OAuth (private beta: your account must be on the access list; request access at the dist repo issue tracker)
 - `/docs-update` — Update README.md and CLAUDE.md
 
 #### Analysis & Review
@@ -121,14 +121,14 @@ and become slash commands in any project. Full architecture writeup:
 - `/test-status` — Display results table from the last test run (no re-run)
 - `/status-footer [on|off] [--show <component>] [--hide <component>]` — Configure the Claude Code status footer
 - `/handoff [--task <scope>] [--no-save]` — Compress current conversation into an actionable briefing for a new thread (saved to disk by default)
-- `/continue [handoff filename or partial match]` — Resume work from the most recent `/handoff` briefing
+- `/continue [handoff filename or partial match]` — Resume work from the most recent `/handoff` briefing; states that the session is a continuation, shows its plan, and starts no work until you confirm or change the plan
 - `/fathom [list|date|today|external|search|view|transcript|summary|help]` — Browse, search, and read transcripts from Fathom meeting recordings
 
 #### Spec-Driven Development (SDD) — Extended
 
 - `/sdd-spec-prioritize [N]` — Recommend top N specs to focus on next
 - `/sdd-spec-status <vN>` — Show phase-by-phase progress for a specific spec
-- `/sdd-spec-loop [--dry-run] [--priority STRATEGY] [--max-passes N] [--budget-tokens N | --budget-usd N]` — Build eligible specs in turn until the queue, pass limit or budget runs out; gated tasks are parked and asked at the end
+- `/sdd-spec-loop [--dry-run] [--priority STRATEGY] [--max-passes N] [--budget-tokens N | --budget-usd N] [--commit | --no-commit]` — Build eligible specs in turn until the queue, pass limit or budget runs out; gated tasks are parked and asked at the end
 - `/sdd-spec-owner <version> [set <email> | unset]` — Set or unset spec owner
 - `/sdd-spec-tagging` — Commit tagging convention reference
 - `/sdd-specs-doctor [--dry-run]` — Migrate spec files to YAML frontmatter format
@@ -1088,7 +1088,7 @@ Create a new specification document from a description.
 
 ## `/sdd-spec-loop` — Build Eligible Specs Until the Budget Runs Out
 
-**Usage:** `/sdd-spec-loop [--dry-run] [--priority STRATEGY] [--max-passes N] [--budget-tokens N | --budget-usd N]`
+**Usage:** `/sdd-spec-loop [--dry-run] [--priority STRATEGY] [--max-passes N] [--budget-tokens N | --budget-usd N] [--commit | --no-commit]`
 
 Picks the next spec you own that has no incomplete dependency or external blocker, builds its buildable tasks with `/sdd-code`, runs the project's tests, and moves on, until the queue is empty, the pass limit (default 4) or the budget is reached. Tasks that deploy, write to a real environment, send messages, delete, touch `~/.claude`, need a sign-off, or that it cannot classify are **parked, never performed**, and asked one per turn at the end. Commit and push happen only if the project sets `allow_commit`. Config lives in a `spec-loop` section of `.aid/config.yaml`. Each run writes `.claude/tmp/spec-loop/<run-id>/` (per-pass log, parked questions, final report).
 
@@ -1100,6 +1100,7 @@ Picks the next spec you own that has no incomplete dependency or external blocke
                                       With roi, specs/spec-categories.md is re-analyzed when it is missing or stale
 /sdd-spec-loop --max-passes 1         One supervised pass
 /sdd-spec-loop --budget-usd 5         Stop before a pass once about $5 is spent
+/sdd-spec-loop --commit              Commit through /commit-push after each pass whose tests pass (default: config allow_commit)
 ```
 
 <!-- /OUTPUT -->

@@ -240,5 +240,25 @@ check "queue script exists" "$(ls "$SCRIPTS")" "spec-loop-queue.py"
 check "budget script exists" "$(ls "$SCRIPTS")" "spec-loop-budget.py"
 
 echo ""
+echo "Test: sign-off gate does not fire on build tasks that merely say 'confirm' (v137 classifier fix)"
+GC() { python3 "$SCRIPTS/spec-loop-gates.py" classify --stdin 2>/dev/null <<<"$1"; }
+check "a 'Confirm gate' in a skill rewrite is buildable" "$(GC 'Restructure Steps 3-4 into Plan, Confirm gate (`AskUserQuestion`), then Execute')" "buildable"
+check "'run tests/run-all.sh and confirm it passes' is buildable (the loop runs the suite)" "$(GC 'Run `tests/run-all.sh` and confirm it passes')" "buildable"
+check "'manual verification' stays a sign-off gate" "$(GC 'Manual verification: run `/sdd-code` on a spec and confirm the walk')" "sign-off"
+check "'confirm with the developer whether ...' stays a sign-off gate" "$(GC 'Confirm with the developer whether the audit is complete')" "sign-off"
+check "'/aid-update and confirm' stays gated as global-config" "$(GC 'Run `/aid-update` and confirm installed skills match')" "global-config"
+
+echo ""
+echo "Test: --commit / --no-commit flags and the categories note (skill text)"
+SKL="$(cat "$REPO_DIR/modules/sdd/skills/sdd-spec-loop.md")"
+check "argument-hint lists --commit | --no-commit" "$SKL" "[--commit | --no-commit]"
+check "--commit overrides allow_commit for the run" "$SKL" "overrides \`allow_commit\` in config"
+check "commit step honors the flag or the config" "$SKL" "\`--commit\` given, or config \`allow_commit\` true without \`--no-commit\`"
+check "commit never happens from a failing state" "$SKL" "Never push from a failing state"
+check "categories file is committed with the pass" "$SKL" "spec-categories.md\` and \`.claude/data/spec-categories-grouping.json\` when this run created or changed them"
+check "categories note is one line, not a warning" "$SKL" "report it in one line"
+check "help documents --commit" "$(cat "$REPO_DIR/docs/aid-help.md")" "/sdd-spec-loop --commit"
+
+echo ""
 echo "Results: $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

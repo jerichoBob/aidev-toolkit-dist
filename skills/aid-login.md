@@ -11,6 +11,10 @@ model: sonnet
 
 Authenticate with GitHub so aidev-toolkit knows who you are.
 
+## Private beta
+
+Login requires being on the private-beta access list: GitHub sign-in succeeds for anyone, but features tied to your identity are limited to listed accounts while the toolkit is in private beta. `/aid-login` prints this notice before the browser opens. To request access, open an issue at <https://github.com/jerichoBob/aidev-toolkit-dist/issues/new> with your GitHub username and the feature you want to use.
+
 ## Arguments
 
 - **(empty)**: Log in via browser (GitHub OAuth)

@@ -137,6 +137,26 @@ else
 fi
 
 echo ""
+echo "Test: skill text — framing, plan gate before execution, AskUserQuestion allowed, path validation unchanged (spec v124)..."
+
+CONT_SKILL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/skills/continue.md"
+CONT_TEXT="$(cat "$CONT_SKILL")"
+has_text() { case "$CONT_TEXT" in *"$1"*) return 0;; *) return 1;; esac; }
+line_of() { grep -n -- "$1" "$CONT_SKILL" | head -1 | cut -d: -f1; }
+
+if awk '/^allowed-tools:/ && /AskUserQuestion/ {f=1} END{exit !f}' "$CONT_SKILL"; then pass "allowed-tools includes AskUserQuestion"; else fail "allowed-tools is missing AskUserQuestion"; fi
+if has_text "sanctioned continuation" && has_text "authoritative record"; then pass "framing names the session a sanctioned continuation with the handoff as authoritative record"; else fail "framing statement missing"; fi
+if has_text "names the file by its path" || has_text "Name the file by its path"; then pass "framing names the handoff file by path"; else fail "framing does not name the file"; fi
+PLAN=$(line_of "### Step 3: Plan"); GATE=$(line_of "### Step 4: Confirm gate"); EXEC=$(line_of "### Step 5: Execute")
+if [ -n "$PLAN" ] && [ -n "$GATE" ] && [ -n "$EXEC" ] && [ "$PLAN" -lt "$GATE" ] && [ "$GATE" -lt "$EXEC" ]; then pass "order is Plan, Confirm gate, Execute"; else fail "steps not ordered Plan < Confirm gate < Execute (plan=$PLAN gate=$GATE exec=$EXEC)"; fi
+if has_text "Start no work until the answer arrives"; then pass "no work starts before the answer"; else fail "gate does not forbid work before the answer"; fi
+if has_text "Never execute a revised plan that has not been confirmed"; then pass "revised plan is reconfirmed before execution"; else fail "revise-and-reconfirm rule missing"; fi
+if has_text "Cancel, or no answer" && has_text "execute nothing"; then pass "cancel or no answer executes nothing"; else fail "cancel/no-answer path missing"; fi
+if has_text "Settled decisions" && has_text "Do not re-litigate"; then pass "settled decisions still treated as given"; else fail "settled-decisions rule missing"; fi
+if has_text "**Path validation (required before reading any user-supplied argument):**" && has_text "resolve the argument only against filenames actually present"; then pass "path validation text unchanged"; else fail "path validation text changed"; fi
+if has_text "use \`AskUserQuestion\` to have the user pick"; then pass "multiple-candidates picker unchanged"; else fail "candidate picker text changed"; fi
+
+echo ""
 echo "====================================="
 printf "Results: %d passed, %d failed\n" "$PASS" "$FAIL"
 echo ""

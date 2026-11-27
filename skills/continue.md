@@ -2,7 +2,7 @@
 name: continue
 description: Pick up work after a /clear by reading the most recent /handoff briefing and resuming from "What to do next". Use when the user says "continue", "pick up where we left off", or right after a /clear that followed a /handoff.
 argument-hint: "[handoff filename or partial match]"
-allowed-tools: Read, Glob, Bash(ls:*)
+allowed-tools: Read, Glob, Bash(ls:*), AskUserQuestion
 model: inherit
 ---
 
@@ -34,16 +34,31 @@ echo "$result"
 
 Read the located file in full. It follows the `/handoff` structure: What to do next, Source map, Key files, Settled decisions, Blockers and dependencies, Open questions.
 
-### Step 3: Resume
+Then state, in the conversation, that this session is a **sanctioned continuation** of the prior session and that the handoff file is its **authoritative record**. Name the file by its path, for example: "This session continues the prior one. `.claude/handoffs/handoff-2026-11-26-233620.md` is the authoritative record of where it left off." Later turns treat the briefing as the source of truth.
 
-- Treat everything in **Settled decisions** as given — do not re-litigate or re-ask about them.
-- Surface **Open questions** to the user before acting on anything they'd affect — these were explicitly left unresolved, not forgotten.
-- Check **Blockers and dependencies** against current reality (a blocker may have been resolved since the handoff was written — verify, don't assume either way).
-- Start executing from the numbered **What to do next** list, in order, unless a blocker or open question stops a specific item.
+### Step 3: Plan (read-only)
 
-### Step 4: Report
+Take no action beyond reading until Step 4 is answered. Present the plan:
 
-Briefly confirm which handoff file was loaded and summarize the immediate next action before starting it — don't silently start executing without telling the user what you picked up.
+- Which handoff file was loaded (one line).
+- The numbered **What to do next** items, in order.
+- The **Open questions** you will surface before acting on anything they affect.
+- The **Blockers and dependencies** you will re-verify (a blocker may have been resolved since the handoff was written: verify, don't assume either way).
+
+Treat everything in **Settled decisions** as given. Do not re-litigate or re-ask about them. Reading files to check a blocker is allowed while planning; changing anything is not.
+
+### Step 4: Confirm gate
+
+Ask with `AskUserQuestion`, one question, recommended option first: execute the plan as-is "(Recommended)", or change the plan. Start no work until the answer arrives.
+
+- **Execute as-is:** go to Step 5.
+- **Change the plan:** take the user's changes, show the revised plan (same shape as Step 3), and ask again. Repeat until the plan is confirmed. Never execute a revised plan that has not been confirmed.
+- **Cancel, or no answer:** execute nothing. Say that you are waiting, and stop.
+- **`AskUserQuestion` unavailable:** show the plan, ask the user in plain text to reply "go" or to give changes, and still start no work until they answer.
+
+### Step 5: Execute
+
+Surface the **Open questions** to the user before acting on anything they would affect: they were explicitly left unresolved, not forgotten. Then start executing from the numbered **What to do next** list, in order, unless a blocker or open question stops a specific item.
 
 ## Notes
 

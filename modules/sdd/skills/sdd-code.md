@@ -103,7 +103,7 @@ Implement all remaining phases and tasks in the current spec without stopping be
 
 ## Important
 
-- **Do not ask for confirmation between tasks or phases** — implement the entire spec end-to-end. The one exception is the up-front Open Questions walkthrough (Step 2, item 5), which happens before coding starts.
+- **Do not ask for confirmation between tasks or phases** — implement the entire spec end-to-end. The exceptions are the up-front Open Questions walkthrough (Step 2, item 5), which happens before coding starts, and the leftover walk (Step 3), which happens after the summary.
 - **ALWAYS check the box in specs/README.md the moment each task is finished** — incremental, never batched. The README is the durable record of progress: if the session dies or is cleared, the next `/sdd-code` run resumes from the first unchecked item. An unchecked finished task means redone work; a checked unfinished task means lost work. Token-tracking failures must never prevent or delay the checkbox update.
 - **Update spec file YAML frontmatter** when completing a spec (`status: complete`)
 - **Read the full spec file** for additional context on implementation details
@@ -141,3 +141,53 @@ Phase 1: {Phase Name}
 
 Version bumped: {old} -> {new}
 ```
+
+{If any leftover items exist and `--skip-questions` was not given: "Leftover items: {N}. Walking them one at a time next."}
+
+After this summary, run Step 3 (the leftover walk).
+
+## Step 3: Walk the Leftover Items One at a Time
+
+The summary above lists leftover items only as bullets. A bullet list is hard to act on, so after the summary, raise each leftover item on its own turn and let the user decide it. This reuses the Step 2 item 5 pattern (one `AskUserQuestion` per item).
+
+**Skip this step entirely** when there are no leftover items (no extra prompt appears) or when `$ARGUMENTS` contains `--skip-questions`.
+
+### Collect the items
+
+Leftover items are:
+
+1. Open Questions skipped in Step 2 item 5 (still unanswered)
+2. Tasks left unchecked and marked `(blocked: ...)` in `specs/README.md`
+3. Loose ends noted while coding: an assumption you made, a decision you deferred, a follow-up you found but did not build
+
+List them in that order. Do not invent items to have something to ask.
+
+### One item per turn
+
+For each item, in order, **one item per turn and one single-question `AskUserQuestion` call**. Never batch items into one call, and wait for the answer before moving on to the next, because later items often depend on earlier answers.
+
+**Before the call**, print a short message of at most four lines that the user can understand with no prior context:
+
+```text
+{Item n of N}: {what the item is, in plain words, naming the spec and task}
+Why it came up: {what happened that raised it}
+What each answer changes: {the effect of the recommended option vs. the others}
+If left undecided: {what happens next run or next session}
+```
+
+Option labels and descriptions alone do not satisfy this: the message text carries the explanation and the reason for the recommendation.
+
+**The call** offers 2-4 options, the recommended one first and labelled "(Recommended)", then the alternatives, then "Leave open". The reason for the recommendation is in the message text above, not only in the label.
+
+### Record the answer
+
+- **Open Question answered:** write `Resolved ({date}): {answer}` under the question in the spec file's `## Open Questions`. If the answer reshapes pending tasks, update `specs/README.md` and the spec file and say what changed.
+- **Blocked task unblocked:** remove its `(blocked: ...)` marker in `specs/README.md`; if the answer decides the task will not be done, note that on the task line.
+- **Loose end decided:** record it as a note in the spec file (`Resolved ({date}): ...` under Open Questions, or a line in its Changelog).
+
+### Failure paths
+
+- **No answer, cancel, or "Leave open":** leave the item open, note it in the final line below, and continue with the next item. Never block on an unanswered item.
+- **`AskUserQuestion` is unavailable:** fall back to the summary lists above (Blocked, Open questions skipped) and say that the walk could not run.
+
+End the step with one line: `Leftover items: {decided} decided, {open} left open.`

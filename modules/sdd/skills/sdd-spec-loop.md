@@ -2,7 +2,7 @@
 name: sdd-spec-loop
 tier: extended
 description: "Build eligible specs in turn until the queue, a pass limit or a token budget runs out; gated tasks are parked and asked at the end"
-argument-hint: "[--dry-run] [--priority STRATEGY] [--max-passes N] [--budget-tokens N | --budget-usd N]"
+argument-hint: "[--dry-run] [--priority STRATEGY] [--max-passes N] [--budget-tokens N | --budget-usd N] [--commit | --no-commit]"
 disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob, AskUserQuestion, Skill
 ---
@@ -26,6 +26,7 @@ G=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-gates.py
 - `--dry-run` — print the queue and what each next task would do; change nothing (AC-2).
 - `--priority <strategy>` — how the queue is ordered; overrides `priority` in config (default `default`):
   `default` (in progress first, then fewest tasks left), `oldest` (lowest version first), `newest` (highest version first), `fewest-gated` (fewest tasks the loop must park first), `roi` (highest value per unit of work: the spec's `value: 1-5` frontmatter, else its category's Value in `specs/spec-categories.md` (`categories_file` in config), else 3, divided by buildable tasks left plus `gated_cost` (default 2) per gated task, since a gate stops the automation), `work-order` (follow `work_order_file`, default `specs/work-order.md`: one `vN` per line, `#` comments; unlisted specs follow in default order).
+- `--commit` / `--no-commit` — commit when a pass's tests pass (`--commit`) or never (`--no-commit`), for this run only; overrides `allow_commit` in config (default: config, which is false when absent). A commit goes through `/commit-push`, so the version bump, changelog and push follow its rules, and it never happens from a failing state. Passing `--commit` is the developer's explicit approval to commit; the loop still never performs gated tasks.
 - `--max-passes N` — default from config `max_passes` (4 if no config) (AC-6).
 - `--budget-tokens N` / `--budget-usd N` — stop before starting a pass once spend reaches it (AC-5). Neither given: pass limit only.
 
@@ -40,7 +41,7 @@ G=~/.claude/aidev-toolkit/modules/sdd/scripts/spec-loop-gates.py
    1. `python3 $D` prints one line per spec (completed ones marked `*`): version, title, tags and the problem statement. Read it all. For any spec whose purpose is still unclear from that line, read its file.
    2. Think as a product manager: what is each spec *for*, and which coherent set of use-case categories covers the whole collection, completed and unfinished? Reuse the names already in the categories file where they still fit, so their Values are kept.
    3. Write the grouping as JSON to `.claude/data/spec-categories-grouping.json`: `{"scope_note", "categories": [{"name", "what", "value" (1-5, used only for a new category), "specs": ["v1", ...]}], "observations": [...], "follow_ups": [...]}`. Every spec in exactly one category; do not add `*` (the script does).
-   4. `python3 $R --grouping .claude/data/spec-categories-grouping.json --date $(date +%F)` writes `specs/spec-categories.md` (or `--out` the `categories_file`). It refuses to write if a spec is unlisted, listed twice or has no file; fix the grouping and rerun. It keeps the Value of every category already in the file and prints `kept values:` and `proposed values:` for the run report. Do not stop to ask; the developer reviews the git diff, and you never commit it unless `allow_commit` is true.
+   4. `python3 $R --grouping .claude/data/spec-categories-grouping.json --date $(date +%F)` writes `specs/spec-categories.md` (or `--out` the `categories_file`). It refuses to write if a spec is unlisted, listed twice or has no file; fix the grouping and rerun. It keeps the Value of every category already in the file and prints `kept values:` and `proposed values:` for the run report. Do not stop to ask, and do not present it as a warning: this is expected behavior, so report it in one line (`categories: created|updated, N specs, kept/proposed Values`). The developer reviews the git diff; it is committed with the pass only when committing is on (step 5 of a pass).
    5. **Re-check.** Run `python3 $Q --check-categories` again. If it is not `fresh`, fix the grouping for the `unlisted` and `dangling` specs and render again, for at most **2 repair attempts**. Still not `fresh`: stop the run with reason `categories` and list what remains. Do not give up on the first sign of difficulty and do not loop past 2.
 3. `python3 $Q [--include-unowned] [--priority <strategy>]` (add `--include-unowned` only when `owner_rule` is `mine_or_unowned`; add `--priority` only when the developer passed it, else the script uses config). It prints the strategy in its header; show it in the report. Use the same flags every time the queue is re-run. It lists eligible specs (AC-1) and every excluded spec with its reason.
 4. Classify each eligible spec's unchecked tasks, one per line on stdin: `python3 $G classify --stdin <<'TASKS'` ... `TASKS`. **Never put task text in a shell argument or double quotes**: it comes from a spec file and contains backticks and quotes the shell would execute. A task is **gated** or **buildable**; unknown is gated.
@@ -71,7 +72,7 @@ The pass:
 4. **Tests (AC-3):** run the config `test_command` (else `tests/run-all.sh` if it exists, else none, and say so). Record the result.
    - Pass: keep the ticked boxes.
    - Fail: untick every box this pass ticked (restore from the snapshot), append `(blocked: tests failed in spec-loop <run-id>)` to those lines, and count a failing pass.
-5. **Commit:** only if config `allow_commit` is true **and** tests passed: `/commit-push`. Otherwise leave changes in the working tree and say so. Never push from a failing state (AC-7).
+5. **Commit:** only if tests passed **and** committing is on: `--commit` given, or config `allow_commit` true without `--no-commit`. Then run `/commit-push`; the commit includes `specs/spec-categories.md` and `.claude/data/spec-categories-grouping.json` when this run created or changed them. Otherwise leave changes in the working tree and say so. Never push from a failing state (AC-7).
 6. **Per-pass record (AC-9):** append one JSON line to `<run-dir>/passes.jsonl`: spec, tasks built, tasks parked, test result, commit hash(es), `python3 $B delta <run-dir>/start.json --transcript <file>` (tokens and dollars so far), gates hit, pass number.
 
 **Failure stop (AC-7):** two consecutive failing passes, or any merge conflict, stops the loop (reason `repeated-failure` / `conflict`).

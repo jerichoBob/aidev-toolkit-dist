@@ -12,6 +12,7 @@ set -euo pipefail
 
 # ── Configuration ────────────────────────────────────────────────────────────
 WORKER_URL="https://aidev-auth.aidev-toolkit.workers.dev"
+REQUEST_ACCESS_URL="https://github.com/jerichoBob/aidev-toolkit-dist/issues/new"
 AIDEV_CLIENT_ID="Ov23lipRe973cOGquhk0"
 AUTH_FILE="${HOME}/.claude/aidev-toolkit/.auth"
 
@@ -62,6 +63,8 @@ read_token() {
 cmd_login() {
   echo -e "${BLUE}aidev-toolkit Login${NC}"
   echo "==================="
+  echo ""
+  echo -e "${YELLOW}Private beta:${NC} login requires being on the access list. Not on it yet? Request access: ${REQUEST_ACCESS_URL}"
   echo ""
 
   # Pick a random unprivileged port
@@ -161,7 +164,7 @@ login succeeded. Some aidev-toolkit features are currently limited to an
 allowlist while in private beta.
 
 To request access, open an issue at:
-  https://github.com/jerichoBob/aidev-toolkit-dist/issues/new
+  ${REQUEST_ACCESS_URL}
 mentioning your GitHub username and which feature you are trying to use.
 EOF
 )"

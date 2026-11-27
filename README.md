@@ -254,7 +254,7 @@ One-time setup per person: enable the Google Chat API in a Cloud project, save a
 
 | Command         | What it does                             |
 | --------------- | ---------------------------------------- |
-| `/aid-login`    | Authenticate via browser-based GitHub OAuth |
+| `/aid-login`    | Authenticate via browser-based GitHub OAuth (private beta: access list required) |
 | `/docs-update`  | Update README.md and CLAUDE.md           |
 
 </details>
@@ -310,9 +310,18 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.112.5
+0.113.0
 
 ### Release Notes
+
+#### v0.113.0 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): `/sdd-spec-loop --commit` and `--no-commit` choose per run whether a passing pass is committed through `/commit-push` (default: `allow_commit` in config); the categories file created by the roi analysis is committed with the pass and reported in one line (v137, v139)
+- fix(sdd): the spec-loop gate classifier no longer gates build tasks that merely say "confirm" ("Confirm gate", "confirm it passes"); manual verification and `/aid-update` still gate; "restructure" is a build verb
+- feat(sdd): `/sdd-code` walks leftover open items one per turn after its summary, with a plain-language message and a recommended option first (v121)
+- feat(auth): `/aid-login` prints a private-beta notice with the request-access link before the browser opens; installer hints, skill and docs say access is allowlisted (v120)
+- feat(continue): `/continue` states it is a sanctioned continuation, shows its plan and waits for confirmation before acting (v124)
+- feat(guidance): the global template tells Claude to follow every list of blockers with the paths that reach the goal (v129; delivery to existing `CLAUDE.md` files is decided: offer to append, not yet built)
 
 #### v0.112.5 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 

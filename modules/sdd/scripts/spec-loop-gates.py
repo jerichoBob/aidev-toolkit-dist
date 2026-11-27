@@ -44,12 +44,12 @@ GATES = [
      'the developer', 'Approve: an outbound message or external artifact is created. Decline: stays open.', 'Decline; the developer sends it'),
     ('destructive', r'\bdelete\b|\bremove (the )?(file|dir|folder)|\brm\b|\bdrop\b|\bforce[- ]push\b|\breset --hard\b|\bpurge\b|\bwipe\b',
      'the developer', 'Approve: something is destroyed. Decline: stays open.', 'Decline; the developer deletes it'),
-    ('sign-off', r'\bconfirm\b|\bdecide\b|\bdecision\b|\bresolve\b.*\bopen question|\bsign[- ]?off\b|\bapprov|\breviewed by\b|\bpresent (it|them|this|the options?|a choice)\b|\bask\b|\bwhether\b|\bwith (bob|the developer|the user)\b|\bfirst real run\b',
+    ('sign-off', r'\bconfirm\b(?!\s+(gate|step|prompt|question|dialog|button|flow)\b)(?!.*\b(passes|pass|succeeds|exits? 0)\b)|\bmanual(ly)? (verification|check|test)\b|\bdecide\b|\bdecision\b|\bresolve\b.*\bopen question|\bsign[- ]?off\b|\bapprov|\breviewed by\b|\bpresent (it|them|this|the options?|a choice)\b|\bask\b|\bwhether\b|\bwith (bob|the developer|the user)\b|\bfirst real run\b',
      'a person (named in the task, else the developer)', 'The answer is recorded and the task is then buildable or closed.', 'Ask at the end of the run'),
 ]
 COMMIT = ('commit-push', r'\bcommit\b|\bpush\b|\bgit add\b',
           'the developer (or set allow_commit in config)', 'Approve: changes are committed or pushed. Decline: left in the working tree.', 'Allow commit only on a passing test run')
-BUILD = re.compile(r'^\W*(add|create|write|implement|fix|update|extend|refactor|document|draft|make|wire|define|rewrite|rename|replace|change|record|list|include|ensure|teach|support|parse|emit|test|tests|cover|handle|use|read|apply|bump|expose|surface|show|print|log|extract|build|generate|compute|convert|split|merge|validate|check)\b', re.I)
+BUILD = re.compile(r'^\W*(add|create|write|restructure|reorganize|implement|fix|update|extend|refactor|document|draft|make|wire|define|rewrite|rename|replace|change|record|list|include|ensure|teach|support|parse|emit|test|tests|cover|handle|use|read|apply|bump|expose|surface|show|print|log|extract|build|generate|compute|convert|split|merge|validate|check)\b', re.I)
 BUILD_ANY = re.compile(r'`[^`]*\.(md|sh|py|json|yaml|yml|js|ts)`|\btests?\b|\bscript\b|\bskill\b|\bdoc(s|umentation)?\b', re.I)
 
 
