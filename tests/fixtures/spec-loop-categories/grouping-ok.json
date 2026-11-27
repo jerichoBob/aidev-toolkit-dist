@@ -1,0 +1,4 @@
+{"scope_note": "Fixture.", "categories": [
+  {"name": "Core", "what": "The core", "value": 1, "specs": ["v1", "v2"]},
+  {"name": "Extra", "what": "More", "value": 2, "specs": ["v3", "v4"]}],
+ "observations": ["One observation."], "follow_ups": ["One follow-up."]}

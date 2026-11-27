@@ -73,6 +73,46 @@ check "order unchanged with a completed marker" "$ORD" "v11 v10 v12"
 check "v11* still takes its category value" "$ORD" "category"
 
 echo ""
+echo "Test: spec-digest.py prints one line per spec, completed marked (AC-13)"
+DG=$(python3 "$SCRIPTS/spec-digest.py" --specs-dir "$CF/render/specs" 2>/dev/null)
+check "open spec has no star" "$DG" "v1 |"
+check "completed spec is starred" "$DG" "v2* |"
+check "title, tags and problem statement appear" "$DG" "Demo Spec | tags: [sdd, demo] | As a dev, I want a digest"
+check "one line per spec (4)" "$(echo "$DG" | wc -l | tr -d ' ')" "4"
+
+echo ""
+echo "Test: spec-categories-render.py (AC-5, AC-6, AC-13)"
+R="$SCRIPTS/spec-categories-render.py"
+OUTF=$(mktemp)
+python3 "$R" --grouping "$CF/grouping-ok.json" --specs-dir "$CF/render/specs" --out "$OUTF" --date 2026-01-01 2>/dev/null; RC=$?
+[ "$RC" -eq 0 ] && pass "valid grouping renders (exit 0)" || fail "render exit $RC"
+T=$(cat "$OUTF")
+check "completed spec starred in the table" "$T" "v1, v2*"
+check "count column computed" "$T" "| v3, v4 | 2 |"
+check "new category uses the JSON value" "$T" "| 2 |"
+check "observations rendered" "$T" "- One observation."
+check "scope line counts completed and open" "$T" "4 specs: 1 completed"
+python3 "$SCRIPTS/spec-loop-queue.py" --check-categories --specs-dir "$CF/render/specs" --categories-file "$OUTF" --config "$CF/none.yaml" 2>/dev/null | sed -n 1p | grep -q fresh \
+    && pass "rendered file passes --check-categories (fresh)" || fail "rendered file is not fresh"
+# existing Value is kept over the JSON value
+KEEP=$(mktemp); cp "$CF/fresh/categories.md" "$KEEP"
+python3 "$R" --grouping "$CF/grouping-ok.json" --specs-dir "$CF/render/specs" --out "$KEEP" 2>/dev/null
+check "existing category keeps its Value (4, not the JSON 1)" "$(grep '^| Core' "$KEEP")" "| 4 |"
+# refusals write nothing
+for g in missing dup; do
+    NEW="$OUTF.$g"
+    python3 "$R" --grouping "$CF/grouping-$g.json" --specs-dir "$CF/render/specs" --out "$NEW" >/dev/null 2>"$OUTF.err"; RC=$?
+    [ "$RC" -eq 1 ] && pass "$g grouping refused (exit 1)" || fail "$g grouping exit $RC"
+    [ ! -e "$NEW" ] && pass "$g grouping wrote nothing" || fail "$g grouping wrote a file"
+done
+python3 "$R" --grouping "$CF/grouping-missing.json" --specs-dir "$CF/render/specs" --out "$OUTF.x" >/dev/null 2>"$OUTF.err"
+check "refusal names the unlisted spec" "$(cat "$OUTF.err")" "v2 is in no category"
+python3 "$R" --grouping "$CF/grouping-dup.json" --specs-dir "$CF/render/specs" --out "$OUTF.y" >/dev/null 2>"$OUTF.err"
+check "refusal names the double-listed spec" "$(cat "$OUTF.err")" "v2 listed twice"
+python3 "$R" --grouping "$CF/nope.json" --specs-dir "$CF/render/specs" --out "$OUTF.z" >/dev/null 2>&1; RC=$?
+[ "$RC" -eq 2 ] && pass "unreadable grouping exits 2" || fail "unreadable grouping exit $RC"
+
+echo ""
 echo "Test: skill and docs describe the check and analysis step (AC-3, AC-11)"
 SK="$REPO_DIR/modules/sdd/skills/sdd-spec-loop.md"
 if grep -q -- "--check-categories" "$SK" 2>/dev/null; then
@@ -80,6 +120,8 @@ if grep -q -- "--check-categories" "$SK" 2>/dev/null; then
     check "skill runs the analysis only on missing or stale" "$(cat "$SK")" "stale"
     check "skill preserves edited Values" "$(cat "$SK")" "keep"
     check "modules/sdd/README describes it" "$(cat "$REPO_DIR/modules/sdd/README.md")" "check-categories"
+    check "skill calls the digest script" "$(cat "$SK")" "spec-digest.py"
+    check "skill calls the renderer" "$(cat "$SK")" "spec-categories-render.py"
     check "aid-help describes it" "$(cat "$REPO_DIR/docs/aid-help.md")" "spec-categories.md"
 else
     fail "skill does not mention --check-categories yet (Phase 2 pending)"

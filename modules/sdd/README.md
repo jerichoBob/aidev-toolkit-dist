@@ -274,6 +274,10 @@ This will:
 - (no args) - Eligible specs in priority order, then every excluded spec with its reason; \`--priority roi\` also prints each spec's value, cost and gate kinds
 - \`--check-categories\` - Compare every spec in \`specs/\` and \`specs/completed/\` with \`specs/spec-categories.md\` and print \`missing\`, \`fresh\` or \`stale\`, then the \`unlisted:\` and \`dangling:\` versions. \`/sdd-spec-loop --priority roi\` runs it first and, when the result is not \`fresh\`, rewrites the categories file as a product-manager analysis of all specs, keeping the Values you edited. A version followed by \`*\` in the table marks a completed spec
 
+**\`spec-digest.py\`** — Read-only. One line per spec in \`specs/\` and \`specs/completed/\` (version, \`*\` if completed, title, tags, problem statement); the input to the category analysis
+
+**\`spec-categories-render.py\`** — Renders \`specs/spec-categories.md\` from a grouping JSON the model writes: marks completed specs, counts them, keeps existing category Values, and refuses to write unless every spec is listed exactly once
+
 ---
 
 ## Best Practices

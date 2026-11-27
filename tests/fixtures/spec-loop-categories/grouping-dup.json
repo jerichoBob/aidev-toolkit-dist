@@ -1,0 +1,3 @@
+{"categories": [
+  {"name": "Core", "what": "The core", "value": 1, "specs": ["v1", "v2"]},
+  {"name": "Again", "what": "Dup", "value": 1, "specs": ["v2"]}]}

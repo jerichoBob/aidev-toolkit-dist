@@ -310,9 +310,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.112.3
+0.112.4
 
 ### Release Notes
+
+#### v0.112.4 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): the `/sdd-spec-loop` category analysis calls shipped scripts: `spec-digest.py` (one line per spec) and `spec-categories-render.py` (renders `specs/spec-categories.md` from a grouping JSON, keeps existing Values, refuses to write unless every spec is listed exactly once) (v139)
+- test(sdd): `tests/test-spec-loop-categories.sh` grows to 44 checks
 
 #### v0.112.3 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 
