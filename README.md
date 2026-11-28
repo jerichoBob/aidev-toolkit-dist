@@ -320,9 +320,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.114.1
+0.114.2
 
 ### Release Notes
+
+#### v0.114.2 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): v129 (global guidance) complete, 10 of 10: the manual `/aid-update` check passed and issue #33 is closed
 
 #### v0.114.1 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 
