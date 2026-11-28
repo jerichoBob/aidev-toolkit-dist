@@ -3,7 +3,7 @@ name: commit-push
 tier: core
 description: Same as /commit but auto-pushes after completion.
 argument-hint: "[version]"
-allowed-tools: Read, Glob, Grep, Edit, Write, Bash(git:*), Bash(gh:*), Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/close-spec-issues.sh*), AskUserQuestion
+allowed-tools: Read, Glob, Grep, Edit, Write, Bash(git:*), Bash(gh:*), Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/close-spec-issues.sh*), Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/archive-complete-specs.sh*), AskUserQuestion
 model: inherit
 ---
 
@@ -111,7 +111,7 @@ Done! Version 1.2.4 pushed.
    ~/.claude/aidev-toolkit/modules/sdd/scripts/close-spec-issues.sh --apply
    ```
 
-   It closes the GitHub issue linked from each Complete spec whose tasks are all checked and whose work is now pushed, and it is idempotent: nothing to close means no output beyond `count=0`, and a repeat run changes nothing. Log one line, `Issues closed: N`, plus any `skipped:<reason>` it printed for a spec you just worked on. If a line ends in `closed` or `already-closed`, the script checked off that spec's "Close GitHub issue" task in `specs/README.md`: commit that file as `docs(specs): record closed issue(s)` and push it, with no version bump. Never re-derive the script's logic inline. Skip this step when the push failed or was skipped.
+   It closes the GitHub issue linked from each Complete spec whose tasks are all checked and whose work is now pushed, and it is idempotent: nothing to close means no output beyond `count=0`, and a repeat run changes nothing. Log one line, `Issues closed: N`, plus any `skipped:<reason>` it printed for a spec you just worked on. If a line ends in `closed` or `already-closed`, the script checked off that spec's "Close GitHub issue" task in `specs/README.md`, which can make the spec Complete. Then run `~/.claude/aidev-toolkit/modules/sdd/scripts/archive-complete-specs.sh --apply` (idempotent; moves every Complete spec to `specs/completed/` and fixes links) so the spec is archived in the same pass that closed its issue, report `Archived: N`, commit the changes as `docs(specs): record closed issue(s) and archive`, and push, with no version bump. Never re-derive the script's logic inline. Skip this step when the push failed or was skipped.
 
 4. **Run tests** (if `tests/run-all.sh` exists):
 

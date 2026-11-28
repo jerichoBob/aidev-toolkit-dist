@@ -154,6 +154,8 @@ has "$SK" "do not re-derive its logic inline" && pass "skill does not re-derive 
 has "$SK" "Issues closed: {N}" && pass "summary reports the result" || fail "summary line"
 CP="$(cat "$REPO/skills/commit-push.md")"
 has "$CP" "close-spec-issues.sh --apply" && pass "commit-push runs the script after the push" || fail "commit-push call"
+has "$CP" "archive-complete-specs.sh --apply" && pass "commit-push archives in the same pass as the close" || fail "commit-push archive step"
+has "$CP" "archive-complete-specs.sh*)" && pass "commit-push allows the archive script" || fail "commit-push archive allowed-tools"
 has "$CP" "Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/close-spec-issues.sh*)" && pass "commit-push allows the script" || fail "commit-push allowed-tools"
 IN="$(cat "$REPO/scripts/install.sh")"
 has "$IN" "close-spec-issues.sh *" && pass "installer allows the script" || fail "installer permission"

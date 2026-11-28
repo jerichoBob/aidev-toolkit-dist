@@ -320,9 +320,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.116.0
+0.116.1
 
 ### Release Notes
+
+#### v0.116.1 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
+
+- feat(commit-push): after the post-push step closes a finished spec's issue, it also archives completed specs in the same pass and commits the result (v140)
 
 #### v0.116.0 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
 
