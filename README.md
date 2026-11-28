@@ -320,9 +320,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.116.2
+0.116.3
 
 ### Release Notes
+
+#### v0.116.3 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): decision recorded 2026-11-28 (v136): the installer does not add the destructive-command guard hook; users who want it add the settings entry by hand (see `docs/destructive-command-guard.md`). An existing toolkit guard entry is left alone by `/aid-update` and removed only by uninstall
 
 #### v0.116.2 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
 
