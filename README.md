@@ -320,9 +320,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.116.1
+0.116.2
 
 ### Release Notes
+
+#### v0.116.2 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): v133 (statusline lock-free git, guard heredoc fix) verified on the installed copy; issue #34 closes with the post-push step
 
 #### v0.116.1 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
 
