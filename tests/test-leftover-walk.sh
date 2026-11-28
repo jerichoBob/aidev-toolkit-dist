@@ -75,5 +75,15 @@ check "Step 2 item 5 still walks Open Questions" "$ALL" "Walk through the spec's
 check "Important lists both exceptions" "$ALL" "the leftover walk (Step 3)"
 
 echo ""
+echo "Test: reusable snippet for project-local commands (docs/leftover-walk-snippet.md)"
+SNIP="$(cat "$(dirname "$0")/../docs/leftover-walk-snippet.md" 2>/dev/null)"
+check "snippet doc exists and names the one-item-per-turn rule" "$SNIP" "one item per turn and one single-question"
+check "snippet keeps the --skip-questions switch" "$SNIP" "--skip-questions"
+check "snippet keeps the recommended-first option rule" "$SNIP" "labelled \"(Recommended)\""
+check "snippet has the failure paths" "$SNIP" "AskUserQuestion\` unavailable"
+check "snippet records the audit of toolkit commands" "$SNIP" "Audit result for toolkit commands"
+check "snippet names the project-local commands" "$SNIP" "/commit-push-x"
+
+echo ""
 echo "Results: $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

@@ -320,9 +320,17 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.115.2
+0.116.0
 
 ### Release Notes
+
+#### v0.116.0 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
+
+- docs(sdd): `docs/leftover-walk-snippet.md` is a reusable block for any command that ends with open items, with the audit of every toolkit command (only `/sdd-code`, `/sdd-spec-loop` and `/sdd-spec` qualify; the first two already comply) (v121)
+
+#### v0.115.3 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): v140 (the issue-close step) complete after its first live run and archived
 
 #### v0.115.2 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
 
