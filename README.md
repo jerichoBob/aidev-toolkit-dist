@@ -320,13 +320,9 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.115.3
+0.115.2
 
 ### Release Notes
-
-#### v0.115.3 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
-
-- docs(specs): v140 (the issue-close step) complete after its first live run and archived
 
 #### v0.115.2 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
 
