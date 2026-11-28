@@ -320,9 +320,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.115.0
+0.115.1
 
 ### Release Notes
+
+#### v0.115.1 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
+
+- docs(specs): v120 and v124 are finished except closing their GitHub issues (#27, #25), which the new post-push step closes; v121's test run and install check are confirmed
 
 #### v0.115.0 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
 
