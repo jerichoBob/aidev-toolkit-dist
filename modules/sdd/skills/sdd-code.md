@@ -3,7 +3,7 @@ name: sdd-code
 display-name: "/sdd-code"
 tier: core
 description: "Implement ALL remaining phases and tasks in a spec without stopping"
-argument-hint: "[spec-version] [--no-stats] [--skip-questions] [--no-archive]"
+argument-hint: "[spec-version] [--no-stats] [--skip-questions] [--no-archive] [--no-close]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/*:*), Bash(git:*), Bash(date:*), AskUserQuestion
 ---
 
@@ -98,6 +98,7 @@ Implement all remaining phases and tasks in the current spec without stopping be
    - Update the spec file's YAML frontmatter `status` field to `complete`
    - Run any relevant tests if they exist
    - **Archive (automatic):** unless `$ARGUMENTS` contains `--no-archive`, and only when the spec is now complete **and** its tests passed, run `~/.claude/aidev-toolkit/modules/sdd/scripts/archive-complete-specs.sh --apply`. It moves every `✅ Complete` spec still in `specs/` to `specs/completed/` with one `git mv`, rewrites and verifies the links, and is idempotent (nothing to move means no change). Do not ask for confirmation and do not re-derive its logic inline. Report `Archived: N specs`. If it exits non-zero, list the unresolved links it printed (file and line) and do not claim the archive succeeded; the spec stays complete either way. Skip this step when tests failed or the spec is not complete
+   - **Close the linked issue (automatic):** unless `$ARGUMENTS` contains `--no-close`, and only when the spec is now complete **and** its tests passed, run `~/.claude/aidev-toolkit/modules/sdd/scripts/close-spec-issues.sh --apply`. It closes the GitHub issue named by the spec's `github_issue` and `github_issue_repo` frontmatter only when every task is checked, the work is committed and pushed, and the issue is still open; otherwise it prints `skipped:<reason>` and the issue stays open. It is idempotent and also runs after `/commit-push` pushes, so a skip for `uncommitted` or `not-pushed` here is normal and completes later. Do not ask for confirmation and do not re-derive its logic inline. Report `Issues closed: N`. If it exits non-zero, say which close failed and do not claim success. Skip this step when tests failed or the spec is not complete
    - Bump the version (patch for fixes, minor for features)
    - If architecture principles were loaded, suggest `/arch-review` in the summary as the formal compliance check — the inline principle-awareness in item 7 is not a substitute for a full audit
    - Report a summary of what was implemented
@@ -141,6 +142,8 @@ Phase 1: {Phase Name}
 {Open questions skipped (assumptions made): (if any)}
 
 Archived: {N} specs to specs/completed/ {(or: skipped: --no-archive / tests failed / nothing to archive)}
+
+Issues closed: {N} {(or: skipped: --no-close / tests failed / <reason from the script, e.g. not-pushed: runs again after /commit-push>)}
 
 Version bumped: {old} -> {new}
 ```

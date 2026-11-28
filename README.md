@@ -320,9 +320,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.114.2
+0.115.0
 
 ### Release Notes
+
+#### v0.115.0 (2026-11-28) — author: robert.w.seaton.jr@gmail.com
+
+- feat(sdd): a finished spec closes its linked GitHub issue: `/sdd-code` runs `close-spec-issues.sh --apply` after the archive step and `/commit-push` runs it again after the push; it closes only when every task is checked, the work is committed and pushed and the issue is open, is idempotent, writes an audit line, and `--no-close` opts out (v140)
+- docs(specs): v140 added; manual verification of a real close remains
 
 #### v0.114.2 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 
