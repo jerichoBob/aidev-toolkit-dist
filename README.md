@@ -320,9 +320,13 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.114.0
+0.114.1
 
 ### Release Notes
+
+#### v0.114.1 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- fix(guidance): `offer-global-guidance.sh --pending` exits 1 when there is nothing to offer (no `CLAUDE.md`, rule already present, or already asked), so `/aid-update` never asks a pointless question (v129)
 
 #### v0.114.0 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 

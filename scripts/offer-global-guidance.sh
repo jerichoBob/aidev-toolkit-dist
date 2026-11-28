@@ -30,10 +30,12 @@ audit() { # action outcome
 }
 
 # Fresh installs get the whole template from install.sh; nothing to offer without a file or a rule to offer.
-[ -f "$CLAUDE_MD" ] || exit 0
+# Nothing to offer exits 1 for --pending (so callers do not ask) and 0 for every other mode.
+NOTHING=0; [ "${1:-}" = "--pending" ] && NOTHING=1
+[ -f "$CLAUDE_MD" ] || exit $NOTHING
 RULE="$(grep -F "$MARKER" "$TEMPLATE" 2>/dev/null | head -1)"
-[ -n "$RULE" ] || exit 0
-grep -qF "$MARKER" "$CLAUDE_MD" && exit 0
+[ -n "$RULE" ] || exit $NOTHING
+grep -qF "$MARKER" "$CLAUDE_MD" && exit $NOTHING
 
 append_rule() {
     {

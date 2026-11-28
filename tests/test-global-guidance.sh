@@ -49,6 +49,10 @@ export HOME="$TMP/h3"; mkdir -p "$HOME/.claude"; printf 'x\n' > "$HOME/.claude/C
 "$OFFER" --pending && fail "--pending after decline" || pass "--pending: quiet after decline"
 [ "$(count "$HOME/.claude/CLAUDE.md")" = "0" ] && pass "--decline leaves the file alone" || fail "decline changed file"
 grep -q "action=offer.*outcome=declined" "$HOME/.config/aidev/guidance-audit.log" && pass "decline audited" || fail "decline not audited"
+"$OFFER" --pending && fail "--pending: already asked must not be pending" || pass "--pending: exit 1 once asked"
+export HOME="$TMP/h4"; mkdir -p "$HOME/.claude"
+"$OFFER" --pending && fail "--pending: no CLAUDE.md must not be pending" || pass "--pending: exit 1 with no CLAUDE.md"
+export HOME="$TMP/h3"
 SK="$REPO_DIR/skills/aid-update.md"
 grep -q "offer-global-guidance.sh --pending" "$SK" && grep -q "AskUserQuestion" "$SK" && pass "aid-update skill asks via AskUserQuestion" || fail "skill missing the question"
 
