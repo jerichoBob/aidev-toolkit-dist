@@ -645,6 +645,11 @@ if [ "$QUIET" = false ] && [ ! -f "$CLAUDE_DIR/CLAUDE.md" ]; then
     fi
 fi
 
+# Existing global CLAUDE.md: offer the blockers-to-paths rule once, never overwrite (v129)
+if [ -f "$CLAUDE_DIR/CLAUDE.md" ] && [ -x "$TOOLKIT_DIR/scripts/offer-global-guidance.sh" ]; then
+    "$TOOLKIT_DIR/scripts/offer-global-guidance.sh" || true
+fi
+
 echo ""
 echo -e "${GREEN}Installation complete!${NC}"
 echo ""

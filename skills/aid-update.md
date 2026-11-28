@@ -11,6 +11,8 @@ allowed-tools:
   - "Bash(~/.claude/aidev-toolkit/scripts/install.sh*)"
   - "Bash(ln -sf ~/.claude/aidev-toolkit/skills/*.md ~/.claude/commands/)"
   - "Bash(~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh*)"
+  - "Bash(~/.claude/aidev-toolkit/scripts/offer-global-guidance.sh*)"
+  - AskUserQuestion
 model: haiku
 ---
 
@@ -39,6 +41,14 @@ git -C ~/.claude/aidev-toolkit pull
 ```bash
 ~/.claude/aidev-toolkit/modules/sdd/scripts/user-email.sh ensure
 ```
+
+1. Offer the global guidance rule (v129). The installer cannot ask from inside Claude Code, so ask here. Run:
+
+```bash
+~/.claude/aidev-toolkit/scripts/offer-global-guidance.sh --pending
+```
+
+   Exit 0 means an offer is waiting: `~/.claude/CLAUDE.md` exists, lacks the blockers-to-paths rule, and the user has not been asked. Exit 1 means do nothing. On exit 0, use `AskUserQuestion` with one question: append the rule to `~/.claude/CLAUDE.md` (existing content is kept) "(Recommended)", or leave the file alone. On yes run `offer-global-guidance.sh --append`; on no run `offer-global-guidance.sh --decline` so it is never asked again. Never edit `CLAUDE.md` any other way.
 
 1. Display the result based on what happened:
 

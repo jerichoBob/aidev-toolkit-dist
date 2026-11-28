@@ -296,6 +296,16 @@ Full definitions in `architecture-principles/`.
 
 ---
 
+## Global Guidance
+
+`templates/global-claude.md` carries a rule for `~/.claude/CLAUDE.md`: when you have a known goal, every list of blockers is followed by the paths that reach it (what it takes, who does it, how long, a recommendation and a first step), and no path is invented when none exists.
+
+- **Fresh install**: the installer copies the template, so the rule is already there.
+- **Existing `~/.claude/CLAUDE.md`**: your file is never overwritten. On a terminal the installer offers to append the rule once and records that it asked (`~/.config/aidev/guidance-offered`). Without a terminal (for example `/aid-update` inside Claude Code) it prints a one-line hint instead. Add the rule any time with `~/.claude/aidev-toolkit/scripts/offer-global-guidance.sh --append`.
+- Every append writes an audit line to `~/.config/aidev/guidance-audit.log`. Repeat runs never duplicate the rule.
+
+---
+
 ## Clean Install / Uninstall
 
 ```bash
@@ -310,9 +320,14 @@ Full definitions in `architecture-principles/`.
 
 ## Version
 
-0.113.3
+0.114.0
 
 ### Release Notes
+
+#### v0.114.0 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
+
+- feat(guidance): existing `~/.claude/CLAUDE.md` files are offered the blockers-to-paths rule once and never overwritten; `/aid-update` asks through `AskUserQuestion`, `offer-global-guidance.sh --append` adds it any time, and appends are audited (v129)
+- docs(specs): v129 wording reviewed (8/10); the manual `/aid-update` check and closing issue #33 remain
 
 #### v0.113.3 (2026-11-27) — author: robert.w.seaton.jr@gmail.com
 
